@@ -119,7 +119,6 @@ const sendSlack: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
   }
   postMessage();
 
-
   return formatJSONResponse({
     message: `Hello ${event.body.name} your message was sent, welcome to the exciting Serverless world!`,
     event,

@@ -36,7 +36,6 @@ const sendSlack: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
     };
   });
 
-  // Use slack functionality to make authorized API requests
   const client = new WebClient(process.env.metatavu_bot_token, {
     logLevel: LogLevel.DEBUG,
   });

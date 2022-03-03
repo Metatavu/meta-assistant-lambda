@@ -3,7 +3,7 @@ import { formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 require("dotenv").config({ path: __dirname + "/../../../../../.env" });
 import { WebClient, LogLevel } from "@slack/web-api";
-import moment from 'moment';
+import moment from "moment";
 
 import { PersonDto, TimeEntryTotalDto, UseTimebankData } from "./schema";
 import timebankData from "./timebankdata";

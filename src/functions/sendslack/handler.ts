@@ -1,4 +1,4 @@
-import type { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
+import { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 require("dotenv").config({ path: __dirname + "/../../../../../.env" });

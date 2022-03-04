@@ -16,6 +16,7 @@ namespace TimeUtilities {
       const time = dur.shiftTo("hours", "minutes");
       return `${time.hours}h ${time.minutes} minutes`;
     };
+
 };
 
 export default TimeUtilities;

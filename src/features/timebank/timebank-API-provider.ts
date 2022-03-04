@@ -14,14 +14,9 @@ namespace TimeBankApiProvider {
   export const getTimebankUsers = async (): Promise<PersonDto[]> => {
     try {
       const response = await fetch("https://time-bank-api.metatavu.io/timebank/persons");
-      const Data = await response.json();
-      return Data.filter((person) => {
-        if (person.default_role === null) {
-          return;
-        } else {
-          return person;
-        }
-      });
+      const data = await response.json();
+
+      return data.filter(person => person.default_role !== null);
     } catch (error) {
       console.error("Error while loading persons");
       Promise.reject(error);

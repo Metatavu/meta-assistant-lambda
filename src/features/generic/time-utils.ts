@@ -1,7 +1,7 @@
 import { Duration } from "luxon";
 
 /**
- *  namespace for time utilities
+ * Namespace for time utilities
  */
 namespace TimeUtilities {
 

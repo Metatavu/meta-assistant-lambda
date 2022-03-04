@@ -1,33 +1,17 @@
+/**
+ * Serverless schema type
+ */
 export default {
   type: "object",
   properties: {
-    name: { type: 'string' }
+    name: { type: "string" },
   },
-  required: ['name']
+  required: ["name"],
 } as const;
 
-export type PersonData = {
-  id: number;
-  first_name: string;
-  last_name: string;
-}
-
-export type TimeData = {
-  person: number;
-  date: string;
-  expected: number;
-  logged: number;
-}
-
-export type UseTimebankData = {
-  expected: number;
-    logged: number;
-    Pid: number;
-    date: string;
-    id: number;
-    name: string;
-}
-
+/**
+ * PersonDto type
+ */
 export type PersonDto = {
   id: number;
   first_name: string;
@@ -52,18 +36,12 @@ export type PersonDto = {
   created_at: string;
   updated_at: string;
   start_date: string;
-  
-}
-export type TimeEntryTotalDto = {
-  id: number;
-  total: number;
-  logged: number;
-  expected: number;
-  internalTime: number;
-  projectTime: number;
-}
+};
 
-export interface TimeEntry {
+/**
+ * TimeEntry type
+ */
+export type TimeEntry = {
   externalId: string;
   person: number;
   internalTime: number;
@@ -72,10 +50,15 @@ export interface TimeEntry {
   expected: number;
   total: number;
   date: string;
-}
+};
 
-export type TimeEntryTotalId = {
-  year: number;
-  month: number;
-  week: number;
+/**
+ * FormattedTimebankData interface
+ */
+export interface FormattedTimebankData {
+  id: number;
+  name: string;
+  expected: number;
+  logged: number;
+  date: string;
 }

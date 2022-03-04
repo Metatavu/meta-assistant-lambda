@@ -45,8 +45,7 @@ namespace SlackApiUtilities {
   /**
    * Create message based on specific users timebank data
    *
-   * @param formattedTimebankData list of relevant timebank data
-   * @param id of timebank user
+   * @param filteredTimebankData list of relevant timebank data
    * @returns string message if id match
    */
   const constructSingleDayMessage = (filteredTimebankData: FormattedTimebankData) => {

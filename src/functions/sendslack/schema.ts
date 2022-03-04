@@ -61,4 +61,5 @@ export interface FormattedTimebankData {
   expected: number;
   logged: number;
   date: string;
+  slackId?: string;
 }

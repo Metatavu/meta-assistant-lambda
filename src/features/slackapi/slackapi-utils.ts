@@ -20,34 +20,14 @@ namespace SlackApiUtilities {
    *
    * @returns Promise of slack user data
    */
-  export const getSlackUserData = async (): Promise<Member[]> => {
-    let userData: Member[] = [];
-
-    /**
-     * Put Slack Users from getUsersList into userData
-     *
-     * @param usersArray
-     */
-    const saveUsers = (usersArray: Member[]) => {
-      userData = usersArray.map((user) => {
-        return { name: user.real_name, id: user.id };
-      });
-    };
-
-    /**
-     * Request list of Slack Users
-     */
-    const getUsersList = async () => {
-      try {
-        const result = await client.users.list();
-        saveUsers(result.members);
-      } catch (error) {
-        console.error("Error while loading slack users list");
-        Promise.reject(error);
-      }
-    };
-    await getUsersList();
-    return userData;
+  export const getSlackUsers = async (): Promise<Member[]> => {
+    try {
+      const result = await client.users.list();
+      return result.members;
+    } catch (error) {
+      console.error("Error while loading slack users list");
+      Promise.reject(error);
+    }
   };
 
     /**
@@ -69,41 +49,35 @@ namespace SlackApiUtilities {
    * @param id of timebank user
    * @returns string message if id match
    */
-  const customMessage = (formattedTimebankData: FormattedTimebankData[], id: number) => {
-    let message: string = "";
-    for (let each of formattedTimebankData) {
-      if (each.id === id) {
-        message = `Hi ${each.name}, yesterday (${DateTime.fromISO(
-          each.date
-        ).toFormat("dd-MM-yyyy")}) you worked ${timeConversion(each.logged)} 
-              with an expected time of ${timeConversion(
-                each.expected
-              )}. Have a great rest of the day!\n`;
-        return message;
-      }
-    }
-    return "Something went wrong with your data today, please contact support";
+  const constructSingleDayMessage = (filteredTimebankData: FormattedTimebankData) => {
+    const { name, logged, expected, date } = filteredTimebankData;
+    const displayDate = DateTime.fromISO(date).toFormat("dd-MM-yyyy");
+
+    return `Hi ${name}, yesterday (${displayDate}) you worked ${timeConversion(logged)} with an expected time of ${timeConversion(expected)}. Have a great rest of the day!`;
   };
-  
+
+
   /**
-   * Post custom timebank data to matching slack user channel
+   * Post a slack message to users
+   *
+   * @param slackUsers list of slack users
+   * @param formattedTimebankData list of formatted timebank data
    */
-  export const postMessage = async (formattedTimebankData: FormattedTimebankData[], userData: Member[]) => {
-    await userData.forEach((slackUser) => {
-      formattedTimebankData.forEach((timebankUser) => {
-        if (slackUser.name === timebankUser.name) {
-          try {
-            client.chat.postMessage({
-              channel: slackUser.id,
-              text: customMessage(formattedTimebankData, timebankUser.id)
-            });
-          }
-          catch (error) {
-            console.error("Error while posting slack messages");
-            Promise.reject(error);
-          }
+  export const postMessage = (slackUsers: Member[], formattedTimebankData: FormattedTimebankData[]) => {
+    slackUsers.forEach(slackUser => {
+      const timeBankData = formattedTimebankData.filter(data => data.slackId === slackUser?.id);
+
+      if (timeBankData?.length === 1) {
+        try {
+          client.chat.postMessage({
+            channel: slackUser.id,
+            text: constructSingleDayMessage(timeBankData[0])
+          });
         }
-      });
+        catch (error) {
+          console.error(`Error while posting slack messages to user ${slackUser.real_name}`);
+        }
+      }
     });
   };
 };

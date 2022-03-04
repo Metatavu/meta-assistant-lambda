@@ -5,13 +5,13 @@ import { PersonDto, TimeEntry } from "@functions/sendslack/schema";
  * Namespace for timebank API provider
  */
 namespace TimeBankApiProvider {
-  
+
   /**
-   * gets person data from TimeBank API
-   * 
+   * Get list of timebank users from TimeBank API
+   *
    * @returns valid persons data
    */
-  export const getPersons = async (): Promise<PersonDto[]> => {
+  export const getTimebankUsers = async (): Promise<PersonDto[]> => {
     try {
       const response = await fetch("https://time-bank-api.metatavu.io/timebank/persons");
       const Data = await response.json();
@@ -30,11 +30,11 @@ namespace TimeBankApiProvider {
 
   /**
    * Get time entries for specific timebank user
-   * 
+   *
    * @param id from persons data
    * @param before string for timebank dates
    * @param after string for timebank dates
-   * @returns Array of time entries for person 
+   * @returns Array of time entries for person
    */
   export const getTimeEntries = async (id: number, before: string, after: string): Promise<TimeEntry[]> => {
     try {

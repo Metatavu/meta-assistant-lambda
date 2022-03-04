@@ -30,7 +30,7 @@ namespace SlackApiUtilities {
     }
   };
 
-    /**
+  /**
    * Converts minutes into hours and minutes
    *
    * @param duration in minutes from timebank Data

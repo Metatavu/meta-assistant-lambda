@@ -1,11 +1,8 @@
 import { FormattedTimebankData } from "@functions/sendslack/schema";
 import { LogLevel, WebClient } from "@slack/web-api";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
-import dotenv from "dotenv";
 import { DateTime } from "luxon";
 import TimeUtilities from "../generic/time-utils";
-
-dotenv.config({ path: __dirname + "/../../../../../.env" });
 
 /**
  * Namespace for Slack API utilities

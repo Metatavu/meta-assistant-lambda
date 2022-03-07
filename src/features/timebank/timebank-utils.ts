@@ -1,5 +1,6 @@
-import { FormattedTimebankData, PersonDto, TimeEntry } from "@functions/sendslack/schema";
+import { FormattedTimebankData } from "@functions/sendslack/schema";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
+import { PersonDto, TimeEntry } from "src/generated/client/api";
 
 /**
  * Namespace for timebank utilities
@@ -20,8 +21,8 @@ namespace TimeBankUtilities {
     slackUsers: Member[]
   ): Promise<FormattedTimebankData[]> => (
     personData.map(person => {
-      const { id, first_name, last_name } = person;
-      const combinedName = `${first_name} ${last_name}`;
+      const { id, firstName, lastName } = person;
+      const combinedName = `${firstName} ${lastName}`;
 
       const personsTimeEntries = timeData.filter(entry => entry.person === person.id);
       const slackUser = slackUsers.find(slackUser => slackUser.real_name === combinedName);
@@ -32,7 +33,7 @@ namespace TimeBankUtilities {
         slackId: slackUser?.id,
         expected: personsTimeEntries[0].expected,
         logged: personsTimeEntries[0].logged,
-        date: personsTimeEntries[0].date
+        date: personsTimeEntries[0].date.toISOString()
       };
     })
   );

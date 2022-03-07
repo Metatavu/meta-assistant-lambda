@@ -56,15 +56,16 @@ namespace SlackApiUtilities {
       const timeBankData = formattedTimebankData.filter(data => data.slackId === slackUser?.id);
 
       if (timeBankData?.length === 1) {
-        try {
-          client.chat.postMessage({
-            channel: slackUser.id,
-            text: constructSingleDayMessage(timeBankData[0])
-          });
-        }
-        catch (error) {
-          console.error(`Error while posting slack messages to user ${slackUser.real_name}`);
-        }
+        console.log(constructSingleDayMessage(timeBankData[0]));
+        // try {
+        //   client.chat.postMessage({
+        //     channel: slackUser.id,
+        //     text: constructSingleDayMessage(timeBankData[0])
+        //   });
+        // }
+        // catch (error) {
+        //   console.error(`Error while posting slack messages to user ${slackUser.real_name}`);
+        // }
       }
     });
   };

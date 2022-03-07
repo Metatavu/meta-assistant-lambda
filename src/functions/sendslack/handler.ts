@@ -3,10 +3,11 @@ import { formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 
 import { DateTime } from "luxon";
-import schema, { TimeEntry } from "./schema";
+import schema from "./schema";
 import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
 import TimeBankUtilities from "src/features/timebank/timebank-utils";
 import SlackApiUtilities from "src/features/slackapi/slackapi-utils";
+import { TimeEntry } from "src/generated/client/api";
 
 /**
  * Lambda function for sending slack message

@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import { PersonDto, TimebankApi, TimeEntry } from "src/generated/client/api";
 
 /**
@@ -14,7 +13,7 @@ namespace TimeBankApiProvider {
   export const getTimebankUsers = async (): Promise<PersonDto[]> => {
     try {
       // Move url to env
-      const client = new TimebankApi("https://time-bank-api.metatavu.io");
+      const client = new TimebankApi(process.env.timebank_base_url);
       const { body } = await client.timebankControllerGetPersons();
 
       return body.filter(person => person.defaultRole !== null);
@@ -34,7 +33,7 @@ namespace TimeBankApiProvider {
    */
   export const getTimeEntries = async (id: number, before: string, after: string): Promise<TimeEntry[]> => {
     try {
-      const client = new TimebankApi("https://time-bank-api.metatavu.io");
+      const client = new TimebankApi(process.env.timebank_base_url);
 
       const { body } = await client.timebankControllerGetEntries(id.toString(), before, after);
       return body;

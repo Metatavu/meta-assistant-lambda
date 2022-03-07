@@ -1,4 +1,6 @@
-import type { AWS } from '@serverless/typescript';
+import type { AWS } from "@serverless/typescript";
+import * as dotenv from "dotenv"
+dotenv.config({ path: __dirname + "/.env" });
 
 import sendSlack from '@functions/sendslack';
 
@@ -16,6 +18,8 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      metatavu_bot_token: process.env.metatavu_bot_token,
+      timebank_base_url: process.env.timebank_base_url
     },
   },
   // import the function via paths

@@ -4,9 +4,9 @@
 export default {
   type: "object",
   properties: {
-    name: { type: "string" },
+    name: { type: 'string' }
   },
-  required: ["name"],
+  required: ['name']
 } as const;
 
 /**
@@ -36,7 +36,7 @@ export type PersonDto = {
   created_at: string;
   updated_at: string;
   start_date: string;
-};
+}
 
 /**
  * TimeEntry type
@@ -50,26 +50,16 @@ export type TimeEntry = {
   expected: number;
   total: number;
   date: string;
-};
+}
 
 /**
  * FormattedTimebankData interface
  */
-export interface FormattedTimebankData {
+ export interface FormattedTimebankData {
   id: number;
   name: string;
   expected: number;
   logged: number;
   date: string;
-  slackId?: string;
-}
-
-/**
- * WeeklyFormattedTimebankData interface
- */
-export interface WeeklyFormattedTimebankData {
-  totals?: FormattedTimebankData;
-  multiplePersonTimeEntries?: FormattedTimebankData[];
-  id: number;
   weekly?: boolean;
 }

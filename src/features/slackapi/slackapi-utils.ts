@@ -1,4 +1,4 @@
-import { FormattedTimebankData } from "@functions/sendslack/schema";
+import { FormattedTimebankData, WeeklyFormattedTimebankData } from "@functions/sendslack/schema";
 import { LogLevel, WebClient } from "@slack/web-api";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import dotenv from "dotenv";
@@ -43,7 +43,42 @@ namespace SlackApiUtilities {
 
     return `Hi ${name}, yesterday (${displayDate}) you worked ${TimeUtilities.timeConversion(logged)} with an expected time of ${TimeUtilities.timeConversion(expected)}. Have a great rest of the day!`;
   };
+  
+  /**
+   * Create weekly message based on specific users timebank data
+   *
+   * @param filteredTimebankData list of relevant timebank data
+   * @returns string message if id match
+   */
+   const constructWeeklyMessage = (filteredTimebankData: WeeklyFormattedTimebankData) => {
+    const { name, logged, expected, date } = filteredTimebankData.totals;
 
+    return `Hi ${name}, last week (${DateTime.fromISO(date).minus({days: 7}).toFormat('dd-MM-yyyy')} - ${DateTime.fromISO(date).toFormat("dd-MM-yyyy")}) you worked ${TimeUtilities.timeConversion(logged)} with an expected time of ${TimeUtilities.timeConversion(expected)}. Have great week!`;
+  };
+ 
+  /**
+   * Create weekly summary message based on specific users timebank data
+   *
+   * @param filteredTimebankData list of relevant timebank data
+   * @returns string message if id match
+   */
+   const constructWeeklySummaryMessage = (filteredTimebankData: WeeklyFormattedTimebankData) => {
+    const { name, date } = filteredTimebankData.totals;
+
+    const startMessage = `Hi ${name}, here are your times for last week (${DateTime.fromISO(date).minus({days: 7}).toFormat('dd-MM-yyyy')} - ${DateTime.fromISO(date).toFormat("dd-MM-yyyy")}). Have great week!\n`;
+    
+    let listMessage = "";
+
+    filteredTimebankData.multiplePersonTimeEntries.forEach(day => {
+      console.log("multipersontimes", day);
+      const displayDate = DateTime.fromISO(day.date).toFormat("dd-MM-yyyy");
+      const { logged, expected } = day;
+
+      listMessage += `On (${displayDate}) you worked ${TimeUtilities.timeConversion(logged)} with an expected time of ${TimeUtilities.timeConversion(expected)}.\n`
+    })
+
+    return startMessage + listMessage;
+  };
 
   /**
    * Post a slack message to users
@@ -51,19 +86,33 @@ namespace SlackApiUtilities {
    * @param slackUsers list of slack users
    * @param formattedTimebankData list of formatted timebank data
    */
-  export const postMessage = (slackUsers: Member[], formattedTimebankData: FormattedTimebankData[]) => {
-    slackUsers.forEach(slackUser => {
-      const timeBankData = formattedTimebankData.filter(data => data.slackId === slackUser?.id);
+  export const postMessage = (formattedTimebankData: FormattedTimebankData[] | WeeklyFormattedTimebankData[]) => {
 
-      if (timeBankData?.length === 1) {
+    formattedTimebankData.forEach(user => {
+      if (user.weekly) {
         try {
-          client.chat.postMessage({
-            channel: slackUser.id,
-            text: constructSingleDayMessage(timeBankData[0])
-          });
+         
+          console.log(constructWeeklyMessage(user));
+          console.log(constructWeeklySummaryMessage(user));
+            // client.chat.postMessage({
+            // channel: slackUser.id,
+            // text: constructSingleDayMessage(timeBankData[0])
+          // });
+          }
+        catch (error) {
+            console.error(`Error while posting weekly slack messages to user ${user.totals.name}`);
+        }
+      }
+      else {
+        try {
+          console.log(constructSingleDayMessage(user));
+            // client.chat.postMessage({
+            // channel: slackUser.id,
+            // text: constructSingleDayMessage(timeBankData[0])
+          // });
         }
         catch (error) {
-          console.error(`Error while posting slack messages to user ${slackUser.real_name}`);
+            console.error(`Error while posting slack messages to user ${user.name}`);
         }
       }
     });

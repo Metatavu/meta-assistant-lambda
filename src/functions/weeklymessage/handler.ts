@@ -1,33 +1,42 @@
 import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
-
 import { DateTime } from "luxon";
-import schema, { TimeEntry } from "./schema";
+import SlackApiUtilities from "src/features/slackapi/slackapi-utils";
 import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
 import TimeBankUtilities from "src/features/timebank/timebank-utils";
-import SlackApiUtilities from "src/features/slackapi/slackapi-utils";
+
+import schema, { TimeEntry } from "./schema";
 
 /**
- * Lambda function for sending slack message
+ * main function
  *
- * @param event API Gateway proxy event
+ * @param event
  * @returns JSON response
  */
-const sendSlack: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
+const sendWeeklySlack: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
+
   try {
+
     const timebankUsers = await TimeBankApiProvider.getTimebankUsers();
     const slackUsers = await SlackApiUtilities.getSlackUsers();
 
     const timeEntries: TimeEntry[] = [];
-    const yesterday = DateTime.now().minus({ days: 1 }).toISODate();
+
+    const lastWeek = DateTime.now().minus({ days: 7 }).toISODate();
+    const today = DateTime.now().toISODate();
 
     for (const person of timebankUsers) {
-      timeEntries.push(...await TimeBankApiProvider.getTimeEntries(person.id, yesterday, yesterday ));
+      timeEntries.push(...await TimeBankApiProvider.getTimeEntries(person.id, today, lastWeek ));
     }
 
     const formattedTimebankData = await TimeBankUtilities.formatTimebankData(timebankUsers, timeEntries, slackUsers);
+
+    // console.log("formattedTimebankData", formattedTimebankData[0]);
+
     SlackApiUtilities.postMessage(formattedTimebankData);
+
+    console.log("In the weekly function");
 
     return formatJSONResponse({
       message: `Everything went well ${event.body.name}...`,
@@ -41,4 +50,4 @@ const sendSlack: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
   }
 };
 
-export const main = middyfy(sendSlack);
+export const main = middyfy(sendWeeklySlack);

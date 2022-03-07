@@ -2,6 +2,8 @@ import type { AWS } from '@serverless/typescript';
 
 import sendSlack from '@functions/sendslack';
 
+import sendWeeklySlack from '@functions/weeklymessage';
+
 const serverlessConfiguration: AWS = {
   service: 'slacktester',
   frameworkVersion: '3',
@@ -19,7 +21,7 @@ const serverlessConfiguration: AWS = {
     },
   },
   // import the function via paths
-  functions: { sendSlack },
+  functions: { sendSlack, sendWeeklySlack },
   package: { individually: true },
   custom: {
     esbuild: {

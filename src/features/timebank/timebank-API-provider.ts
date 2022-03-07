@@ -12,7 +12,6 @@ namespace TimeBankApiProvider {
    */
   export const getTimebankUsers = async (): Promise<PersonDto[]> => {
     try {
-      // Move url to env
       const client = new TimebankApi(process.env.timebank_base_url);
       const { body } = await client.timebankControllerGetPersons();
 

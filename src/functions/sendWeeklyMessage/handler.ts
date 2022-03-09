@@ -1,12 +1,12 @@
 import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 import { formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
-import { DateTime } from "luxon";
+import TimeUtilities from "src/features/generic/time-utils";
 import SlackApiUtilities from "src/features/slackapi/slackapi-utils";
 import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
 import TimeBankUtilities from "src/features/timebank/timebank-utils";
 
-import schema, { TimeEntry } from "./schema";
+import schema, { WeeklyCombinedData } from "../schema";
 
 /**
  * main function
@@ -14,29 +14,23 @@ import schema, { TimeEntry } from "./schema";
  * @param event
  * @returns JSON response
  */
-const sendWeeklySlack: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
+const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
 
   try {
-
     const timebankUsers = await TimeBankApiProvider.getTimebankUsers();
     const slackUsers = await SlackApiUtilities.getSlackUsers();
 
-    const timeEntries: TimeEntry[] = [];
+    const timeEntries: WeeklyCombinedData[] = [];
 
-    const lastWeek = DateTime.now().minus({ days: 7 }).toISODate();
-    const today = DateTime.now().toISODate();
+    const dates = TimeUtilities.lastWeekDateProvider();
 
     for (const person of timebankUsers) {
-      timeEntries.push(...await TimeBankApiProvider.getTimeEntries(person.id, today, lastWeek ));
+      timeEntries.push(...await TimeBankApiProvider.getTotalTimeEntries("WEEK", person, dates.numberedYear, dates.numberedWeek));
     }
 
-    const formattedTimebankData = await TimeBankUtilities.formatTimebankData(timebankUsers, timeEntries, slackUsers);
+    const weeklyCombinedData = await TimeBankUtilities.combineWeeklyData(timeEntries, slackUsers);
 
-    // console.log("formattedTimebankData", formattedTimebankData[0]);
-
-    SlackApiUtilities.postMessage(formattedTimebankData);
-
-    console.log("In the weekly function");
+    SlackApiUtilities.postWeeklyMessage(weeklyCombinedData, dates.weekStartString, dates.weekEndString);
 
     return formatJSONResponse({
       message: `Everything went well ${event.body.name}...`,
@@ -50,4 +44,4 @@ const sendWeeklySlack: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async
   }
 };
 
-export const main = middyfy(sendWeeklySlack);
+export const main = middyfy(sendWeeklyMessage);

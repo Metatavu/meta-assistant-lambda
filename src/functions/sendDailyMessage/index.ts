@@ -1,4 +1,4 @@
-import schema from "./schema";
+import schema from "../schema";
 import { handlerPath } from "@libs/handler-resolver";
 
 export default {
@@ -7,7 +7,7 @@ export default {
     {
       http: {
         method: "post",
-        path: "sendWeeklySlack",
+        path: "sendSlack",
         request: {
           schemas: {
             "application/json": schema,

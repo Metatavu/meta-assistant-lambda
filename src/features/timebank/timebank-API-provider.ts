@@ -1,5 +1,5 @@
-import fetch from "node-fetch";
-import { PersonDto, TimeEntry } from "@functions/sendslack/schema";
+import { WeeklyCombinedData } from "@functions/schema";
+import { PersonDto, TimebankApi, TimeEntry } from "src/generated/client/api";
 
 /**
  * Namespace for timebank API provider
@@ -13,10 +13,10 @@ namespace TimeBankApiProvider {
    */
   export const getTimebankUsers = async (): Promise<PersonDto[]> => {
     try {
-      const response = await fetch("https://time-bank-api.metatavu.io/timebank/persons");
-      const data = await response.json();
+      const client = new TimebankApi(process.env.timebank_base_url);
+      const { body } = await client.timebankControllerGetPersons();
 
-      return data.filter(person => person.default_role !== null);
+      return body.filter(person => person.defaultRole !== null);
     } catch (error) {
       console.error("Error while loading persons");
       Promise.reject(error);
@@ -33,14 +33,39 @@ namespace TimeBankApiProvider {
    */
   export const getTimeEntries = async (id: number, before: string, after: string): Promise<TimeEntry[]> => {
     try {
-      const response = await fetch(`https://time-bank-api.metatavu.io/timebank/entries/${id}?before=${before}&after=${after}`);
-      return await response.json();
+      const client = new TimebankApi(process.env.timebank_base_url);
+
+      const { body } = await client.timebankControllerGetEntries(id.toString(), before, after);
+      return body;
     } catch (error) {
       console.error("Error while loading time entries");
       Promise.reject(error);
     }
   };
 
+  /**
+   *
+   * @param duration of time data to sum
+   * @param person person data from timebank
+   * @param year of data to request
+   * @param week of data to request
+   * @returns total time data with user name
+   */
+  export const getTotalTimeEntries = async(duration: 'ALL_TIME' | 'YEAR' | 'MONTH' | 'WEEK', person: PersonDto, year: number, week: number): Promise<WeeklyCombinedData[]> => {
+    try{
+      const client = new TimebankApi(process.env.timebank_base_url);
+
+      const { body } = await client.timebankControllerGetTotal(person.id.toString(), duration);
+      const selectedWeek = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week)[0];
+      const { firstName, lastName } = person;
+      const combinedName = `${firstName} ${lastName}`;
+
+      return [{ selectedWeek, name: combinedName }];
+    } catch (error) {
+      console.error("Error while loading total time entries");
+      Promise.reject(error);
+    }
+  }
 };
 
 export default TimeBankApiProvider;

@@ -13,3 +13,5 @@ jspm_packages
 
 # notes
 *.txt
+
+generated/

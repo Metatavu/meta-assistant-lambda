@@ -1,5 +1,6 @@
-import { FormattedTimebankData, WeeklyFormattedTimebankData, PersonDto, TimeEntry } from "@functions/sendslack/schema";
+import { DailyCombinedData, WeeklyCombinedData } from "@functions/schema";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
+import { PersonDto, TimeEntry } from "src/generated/client/api";
 
 /**
  * Namespace for timebank utilities
@@ -7,21 +8,21 @@ import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 namespace TimeBankUtilities {
 
   /**
-   * Formats timebank data to slack data format
+   * Combines daily timebank data with slack data
    *
    * @param personData list of persons
    * @param timeData list of time entries
    * @param slackUsers list of slack users
-   * @returns list of formatted slack data
+   * @returns list of combined daily slack data
    */
-  export const formatTimebankData = async (
+  export const combineDailyData = (
     personData: PersonDto[],
     timeData: TimeEntry[],
     slackUsers: Member[]
-  ): Promise<FormattedTimebankData[] | WeeklyFormattedTimebankData[]> => (
+  ): DailyCombinedData[] => (
     personData.map(person => {
-      const { id, first_name, last_name } = person;
-      const combinedName = `${first_name} ${last_name}`;
+      const { id, firstName, lastName } = person;
+      const combinedName = `${firstName} ${lastName}`;
 
       const personsTimeEntries = timeData.filter(entry => entry.person === person.id);
       const slackUser = slackUsers.find(slackUser => slackUser.real_name === combinedName);
@@ -34,58 +35,32 @@ namespace TimeBankUtilities {
           slackId: slackUser?.id,
           expected: personsTimeEntries[0].expected,
           logged: personsTimeEntries[0].logged,
-          date: personsTimeEntries[0].date
+          project: personsTimeEntries[0].projectTime,
+          internal: personsTimeEntries[0].internalTime,
+          difference: personsTimeEntries[0].total,
+          date: personsTimeEntries[0].date.toISOString()
         };
       }
-      const totals: FormattedTimebankData = calculateWeeklyTotals(personsTimeEntries, combinedName, id, slackUser);
-
-      // return totals;
-
-      let multiplePersonTimeEntries: FormattedTimebankData[] = [];
-
-      for (let i = 0; i < length; i++) {
-        multiplePersonTimeEntries.push({
-          id: id,
-          name: combinedName,
-          slackId: slackUser?.id,
-          expected: personsTimeEntries[i].expected,
-          logged: personsTimeEntries[i].logged,
-          date: personsTimeEntries[i].date,
-        });
-      }
-      
-      const weekly: boolean = true;
-
-      console.log({
-        totals,
-        multiplePersonTimeEntries,
-        id,
-        weekly
-      })
-
-      return { totals, multiplePersonTimeEntries, id, weekly }
     })
   );
 
   /**
-   * Sum timebank data for previous 7 days
-   * 
-   * @param formattedTimebankData
-   * @returns 
+   * Combines weekly timebank data with slack data
+   *
+   * @param timeData list of time entries
+   * @param slackUsers list of slack users
+   * @returns list of combined totals time data with slack user id
    */
-  export const calculateWeeklyTotals = (personsTimeEntries: TimeEntry[], combinedName: string, id: number, slackUser: Member ) => {
-    
-      let logged = 0;
-      let expected = 0;
-      let date = "";
+  export const combineWeeklyData = (
+    timeData: WeeklyCombinedData[],
+    slackUsers: Member[]
+    ): WeeklyCombinedData[] => (
+      timeData.map(entry => {
+        const slackUser = slackUsers.find(slackUser => slackUser.real_name === entry.name);
 
-      personsTimeEntries.forEach(day => {
-        logged += day.logged;
-        expected += day.expected;
-        date = day.date;
-      });
-      return { name: combinedName, logged, expected, id, slackId: slackUser?.id, date }
-  };
+        return { ...entry, slackId: slackUser.id };
+    })
+  );
 };
 
 export default TimeBankUtilities;

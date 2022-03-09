@@ -1,2 +1,2 @@
-export { default as sendSlack } from './sendslack';
-export { default as sendWeeklySlack } from './weeklymessage';
+export { default as sendDailyMessage } from './sendDailyMessage';
+export { default as sendWeeklyMessage } from './sendWeeklyMessage';

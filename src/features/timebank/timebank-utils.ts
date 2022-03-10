@@ -28,7 +28,7 @@ namespace TimeBankUtilities {
       const slackUser = slackUsers.find(slackUser => slackUser.real_name === combinedName);
       const length = personsTimeEntries.length;
 
-      if(length === 1){
+      if (length === 1){
         return {
           id: id,
           name: combinedName,

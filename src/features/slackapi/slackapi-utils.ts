@@ -87,15 +87,13 @@ namespace SlackApiUtilities {
       const { slackId } = user;
 
         try {
-          console.log(constructDailyMessage(user));
-            // client.chat.postMessage({
-            // channel: slackId,
-            // text: constructDailyMessage(user)
-          // });
-        }
-        catch (error) {
-            console.error(`Error while posting slack messages to user ${user.name}`);
-        }
+        client.chat.postMessage({
+          channel: slackId,
+          text: constructDailyMessage(user)
+        });
+      } catch (error) {
+        console.error(`Error while posting slack messages to user ${user.name}`);
+      }
     });
   };
 

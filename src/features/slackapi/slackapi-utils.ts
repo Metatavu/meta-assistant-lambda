@@ -36,6 +36,7 @@ namespace SlackApiUtilities {
    */
   const constructDailyMessage = (user: DailyCombinedData) => {
     const { name, logged, expected, date, project, internal, difference } = user;
+
     const displayDate = DateTime.fromISO(date).toFormat("dd-MM-yyyy");
     const displayLogged = TimeUtilities.timeConversion(logged);
     const displayExpected = TimeUtilities.timeConversion(expected);

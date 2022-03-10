@@ -24,14 +24,12 @@ namespace TimeUtilities {
      * @returns various date formats/ numbers for start and end of previous week
      */
     export const lastWeekDateProvider = (): Dates => {
-      const weekStartDate = DateTime.now().startOf('week').minus({ weeks: 1 });
-      const weekEndDate = DateTime.now().startOf('week').minus({ days: 1 });
-      const numberedYear = weekEndDate.year;
-      const numberedWeek = weekStartDate.weekNumber;
-      const weekStartString = weekStartDate.toISODate();
-      const weekEndString = weekEndDate.toISODate();
+      const startOfWeek = DateTime.now().startOf("week");
 
-      return { numberedYear, numberedWeek,  weekStartString, weekEndString };
+      const weekStartDate = startOfWeek.minus({ weeks: 1 });
+      const weekEndDate = startOfWeek.minus({ days: 1 });
+
+      return { weekEndDate, weekStartDate };
     }
 };
 

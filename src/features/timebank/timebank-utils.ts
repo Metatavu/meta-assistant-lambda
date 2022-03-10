@@ -51,14 +51,11 @@ namespace TimeBankUtilities {
    * @param slackUsers list of slack users
    * @returns list of combined totals time data with slack user id
    */
-  export const combineWeeklyData = (
-    timeData: WeeklyCombinedData[],
-    slackUsers: Member[]
-    ): WeeklyCombinedData[] => (
-      timeData.map(entry => {
-        const slackUser = slackUsers.find(slackUser => slackUser.real_name === entry.name);
+  export const combineWeeklyData = (timeData: WeeklyCombinedData[], slackUsers: Member[]): WeeklyCombinedData[] => (
+    timeData.map(entry => {
+      const slackUser = slackUsers.find(slackUser => slackUser.real_name === entry.name);
 
-        return { ...entry, slackId: slackUser.id };
+      return slackUser ? { ...entry, slackId: slackUser.id } : entry;
     })
   );
 };

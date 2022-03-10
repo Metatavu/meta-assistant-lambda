@@ -44,4 +44,3 @@ export interface Dates {
   weekStartString: string;
   weekEndString: string;
 }
-

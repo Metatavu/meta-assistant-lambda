@@ -1,6 +1,6 @@
 import schema from "@functions/schema";
 import { formatJSONResponse, ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
-import { DateTime } from "luxon";
+import TimeUtilities from "src/features/generic/time-utils";
 import SlackApiUtilities from "src/features/slackapi/slackapi-utils";
 import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
 import { TimeEntry } from "src/generated/client/api";
@@ -20,14 +20,13 @@ const sendWeeklyBreakdownMessage: ValidatedEventAPIGatewayProxyEvent<typeof sche
     const timebankUsers = await TimeBankApiProvider.getTimebankUsers();
     const slackUsers = await SlackApiUtilities.getSlackUsers();
 
-  // lastWeek and today could be modified to return a breakdown message for required time period
-    const lastWeek = DateTime.now().minus({ days: 7 }).toISODate();
-    const today = DateTime.now().toISODate();
+    // selected week (currently for previous week) could be modified to return a breakdown message by day for required time period
+    const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
 
     const timeEntries: TimeEntry[] = [];
 
     for (const person of timebankUsers) {
-      timeEntries.push(...await TimeBankApiProvider.getTimeEntries(person.id, today, lastWeek));
+      timeEntries.push(...await TimeBankApiProvider.getTimeEntries(person.id, weekEndDate.toISODate(), weekStartDate.toISODate()));
     }
 
     const combinedWeeklyBreakdowndata = combineWeeklyBreakdownData(timebankUsers, timeEntries, slackUsers);

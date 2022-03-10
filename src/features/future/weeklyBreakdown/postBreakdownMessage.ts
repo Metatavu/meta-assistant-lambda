@@ -19,8 +19,7 @@ export const postDailyMessage = (weeklyBreakdownCombinedData: WeeklyBreakdownCom
         channel: slackId,
         text: constructWeeklyBreakdownMessage(user)
       });
-    }
-    catch (error) {
+    } catch (error) {
       console.error(`Error while posting slack messages to user ${user.totals.name}`);
     }
   });

@@ -12,7 +12,6 @@ import TimeUtilities from "src/features/generic/time-utils";
 export const constructWeeklyBreakdownMessage = (filteredTimebankData: WeeklyBreakdownCombinedData) => {
   const { name, date } = filteredTimebankData.totals;
 
-  // startDate and endDate could be modified to return a breakdown message for required time period
   const startDate = DateTime.fromISO(date).minus({days: 7}).toFormat('dd-MM-yyyy');
   const endDate = DateTime.fromISO(date).toFormat("dd-MM-yyyy");
 

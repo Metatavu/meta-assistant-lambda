@@ -5,7 +5,7 @@ import TimeUtilities from "src/features/generic/time-utils";
 import SlackApiUtilities from "src/features/slackapi/slackapi-utils";
 import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
 import TimeBankUtilities from "src/features/timebank/timebank-utils";
-import schema, { WeeklyCombinedData } from "../schema";
+import schema, { TimePeriod, WeeklyCombinedData } from "../schema";
 
 /**
  * Lambda for sending weekly messages
@@ -22,7 +22,7 @@ const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asy
     const timeEntries: WeeklyCombinedData[] = [];
 
     for (const person of timebankUsers) {
-      timeEntries.push(await TimeBankApiProvider.getTotalTimeEntries(Duration.WEEK, person, weekStartDate.year, weekEndDate.weekNumber));
+      timeEntries.push(await TimeBankApiProvider.getTotalTimeEntries(TimePeriod.WEEK, person, weekStartDate.year, weekEndDate.weekNumber));
     }
 
     const weeklyCombinedData = TimeBankUtilities.combineWeeklyData(timeEntries, slackUsers);

@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import { TimeEntryTotalDto } from "src/generated/client/api";
 
 /**
@@ -15,13 +16,12 @@ export default {
  * DailyCombinedData interface
  */
 export interface DailyCombinedData {
-  id: number;
   name: string;
   expected: number;
   logged: number;
-  project: number;
-  internal: number;
-  difference: number;
+  projectTime: number;
+  internalTime: number;
+  total: number;
   date: string;
   slackId?: string;
 }
@@ -36,11 +36,27 @@ export interface WeeklyCombinedData {
 }
 
 /**
+ * WeeklyFormattedTimebankData interface- for use in future weeklyBreakdwon functionality
+ */
+export interface WeeklyBreakdownCombinedData {
+  totals: DailyCombinedData;
+  multiplePersonTimeEntries: DailyCombinedData[];
+}
+
+/**
  * Dates interface
  */
 export interface Dates {
-  numberedYear: number;
-  numberedWeek: number;
-  weekStartString: string;
-  weekEndString: string;
+  weekStartDate: DateTime;
+  weekEndDate: DateTime;
+}
+
+/**
+ * Enum for TimePeriod
+ */
+export enum TimePeriod {
+  ALL_TIME = 'ALL_TIME',
+  YEAR ='YEAR',
+  MONTH = 'MONTH',
+  WEEK = 'WEEK',
 }

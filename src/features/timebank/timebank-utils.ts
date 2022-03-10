@@ -21,7 +21,7 @@ namespace TimeBankUtilities {
     slackUsers: Member[]
   ): DailyCombinedData[] => (
     personData.map(person => {
-      const { id, firstName, lastName } = person;
+      const { firstName, lastName } = person;
       const combinedName = `${firstName} ${lastName}`;
 
       const personsTimeEntries = timeData.filter(entry => entry.person === person.id);
@@ -30,14 +30,13 @@ namespace TimeBankUtilities {
 
       if (length === 1){
         return {
-          id: id,
           name: combinedName,
           slackId: slackUser?.id,
           expected: personsTimeEntries[0].expected,
           logged: personsTimeEntries[0].logged,
-          project: personsTimeEntries[0].projectTime,
-          internal: personsTimeEntries[0].internalTime,
-          difference: personsTimeEntries[0].total,
+          projectTime: personsTimeEntries[0].projectTime,
+          internalTime: personsTimeEntries[0].internalTime,
+          total: personsTimeEntries[0].total,
           date: personsTimeEntries[0].date.toISOString()
         };
       }

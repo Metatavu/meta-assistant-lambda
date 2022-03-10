@@ -9,7 +9,7 @@ import TimeUtilities from "../generic/time-utils";
  */
 namespace SlackApiUtilities {
 
-  const client = new WebClient(process.env.metatavu_bot_token, {
+  export const client = new WebClient(process.env.metatavu_bot_token, {
     logLevel: LogLevel.DEBUG,
   });
 
@@ -35,14 +35,17 @@ namespace SlackApiUtilities {
    * @returns string message if id match
    */
   const constructDailyMessage = (user: DailyCombinedData) => {
-    const { name, logged, expected, date, project, internal, difference } = user;
+    const { name, date } = user;
 
     const displayDate = DateTime.fromISO(date).toFormat("dd-MM-yyyy");
-    const displayLogged = TimeUtilities.timeConversion(logged);
-    const displayExpected = TimeUtilities.timeConversion(expected);
-    const displayDifference = TimeUtilities.timeConversion(difference);
-    const displayProject = TimeUtilities.timeConversion(project);
-    const displayInternal = TimeUtilities.timeConversion(internal);
+
+    const {
+      displayLogged,
+      displayExpected,
+      displayDifference,
+      displayInternal,
+      displayProject
+    } = TimeUtilities.handleTimeConversion(user);
 
     return `Hi ${name},
       yesterday (${displayDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
@@ -60,15 +63,18 @@ namespace SlackApiUtilities {
    * @returns message
    */
   const constructWeeklySummaryMessage = (user: WeeklyCombinedData, weekStart: string, weekEnd: string) => {
-    const { name } = user;
-    const { logged, expected, projectTime, internalTime, total, id: { week } } = user.selectedWeek;
+    const { name, selectedWeek: { id: { week }} } = user;
+
     const startDate = DateTime.fromISO(weekStart).toFormat('dd-MM-yyyy');
     const endDate = DateTime.fromISO(weekEnd).toFormat("dd-MM-yyyy");
-    const displayLogged = TimeUtilities.timeConversion(logged);
-    const displayExpected = TimeUtilities.timeConversion(expected);
-    const displayDifference = TimeUtilities.timeConversion(total);
-    const displayProject = TimeUtilities.timeConversion(projectTime);
-    const displayInternal = TimeUtilities.timeConversion(internalTime);
+
+    const {
+      displayLogged,
+      displayExpected,
+      displayDifference,
+      displayInternal,
+      displayProject
+    } = TimeUtilities.handleTimeConversion(user.selectedWeek);
 
     return `Hi ${name},
       Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
@@ -87,10 +93,10 @@ namespace SlackApiUtilities {
       const { slackId } = user;
 
         try {
-        client.chat.postMessage({
-          channel: slackId,
-          text: constructDailyMessage(user)
-        });
+          client.chat.postMessage({
+            channel: slackId,
+            text: constructDailyMessage(user)
+          });
       } catch (error) {
         console.error(`Error while posting slack messages to user ${user.name}`);
       }
@@ -108,16 +114,14 @@ namespace SlackApiUtilities {
     weeklyCombinedData.forEach(user => {
       const { slackId } = user;
 
-        try {
-          console.log(constructWeeklySummaryMessage(user, weekStart, weekEnd));
-            // client.chat.postMessage({
-            // channel: slackId,
-            // text: constructWeeklySummaryMessage(user)
-          // });
-          }
-        catch (error) {
-            console.error(`Error while posting weekly slack messages to user ${user.name}`);
-        }
+      try {
+        client.chat.postMessage({
+          channel: slackId,
+          text: constructWeeklySummaryMessage(user, weekStart, weekEnd)
+        });
+      } catch (error) {
+        console.error(`Error while posting weekly slack messages to user ${user.name}`);
+      }
     });
   };
 };

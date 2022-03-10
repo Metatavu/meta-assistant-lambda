@@ -8,7 +8,7 @@ import TimeBankUtilities from "src/features/timebank/timebank-utils";
 import schema, { WeeklyCombinedData } from "../schema";
 
 /**
- * main function
+ * Lambda for sending weekly messages
  *
  * @param event
  * @returns JSON response

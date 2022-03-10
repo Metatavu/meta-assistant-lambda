@@ -10,26 +10,24 @@ import schema, { WeeklyCombinedData } from "../schema";
 /**
  * Lambda for sending weekly messages
  *
- * @param event
+ * @param event API Gateway proxy event
  * @returns JSON response
  */
 const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
-
   try {
     const timebankUsers = await TimeBankApiProvider.getTimebankUsers();
     const slackUsers = await SlackApiUtilities.getSlackUsers();
 
+    const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
     const timeEntries: WeeklyCombinedData[] = [];
 
-    const dates = TimeUtilities.lastWeekDateProvider();
-
     for (const person of timebankUsers) {
-      timeEntries.push(...await TimeBankApiProvider.getTotalTimeEntries("WEEK", person, dates.numberedYear, dates.numberedWeek));
+      timeEntries.push(await TimeBankApiProvider.getTotalTimeEntries(Duration.WEEK, person, weekStartDate.year, weekEndDate.weekNumber));
     }
 
-    const weeklyCombinedData = await TimeBankUtilities.combineWeeklyData(timeEntries, slackUsers);
+    const weeklyCombinedData = TimeBankUtilities.combineWeeklyData(timeEntries, slackUsers);
 
-    SlackApiUtilities.postWeeklyMessage(weeklyCombinedData, dates.weekStartString, dates.weekEndString);
+    SlackApiUtilities.postWeeklyMessage(weeklyCombinedData, weekStartDate.toISODate(), weekEndDate.toISODate());
 
     return formatJSONResponse({
       message: `Everything went well ${event.body.name}...`,
@@ -42,5 +40,6 @@ const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asy
     });
   }
 };
+
 
 export const main = middyfy(sendWeeklyMessage);

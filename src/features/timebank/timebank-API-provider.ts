@@ -51,16 +51,17 @@ namespace TimeBankApiProvider {
    * @param week of data to request
    * @returns total time data with user name
    */
-  export const getTotalTimeEntries = async(duration: 'ALL_TIME' | 'YEAR' | 'MONTH' | 'WEEK', person: PersonDto, year: number, week: number): Promise<WeeklyCombinedData[]> => {
-    try{
+  export const getTotalTimeEntries = async (duration: Duration, person: PersonDto, year: number, week: number): Promise<WeeklyCombinedData> => {
+    try {
       const client = new TimebankApi(process.env.timebank_base_url);
 
       const { body } = await client.timebankControllerGetTotal(person.id.toString(), duration);
       const selectedWeek = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week)[0];
+
       const { firstName, lastName } = person;
       const combinedName = `${firstName} ${lastName}`;
 
-      return [{ selectedWeek, name: combinedName }];
+      return { selectedWeek: selectedWeek, name: combinedName };
     } catch (error) {
       console.error("Error while loading total time entries");
       Promise.reject(error);

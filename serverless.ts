@@ -3,7 +3,6 @@ import * as dotenv from "dotenv"
 dotenv.config({ path: __dirname + "/.env" });
 
 import sendDailyMessage from "@functions/sendDailyMessage";
-
 import sendWeeklyMessage from "@functions/sendWeeklyMessage";
 
 const serverlessConfiguration: AWS = {

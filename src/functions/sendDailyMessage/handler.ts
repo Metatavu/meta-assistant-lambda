@@ -16,30 +16,30 @@ import { TimeEntry } from "src/generated/client/api";
  * @returns JSON response
  */
 const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
-  try {
-    const timebankUsers = await TimeBankApiProvider.getTimebankUsers();
-    const slackUsers = await SlackApiUtilities.getSlackUsers();
+    try {
+      const timebankUsers = await TimeBankApiProvider.getTimebankUsers();
+      const slackUsers = await SlackApiUtilities.getSlackUsers();
 
-    const timeEntries: TimeEntry[] = [];
-    const yesterday = DateTime.now().minus({ days: 1 }).toISODate();
+      const timeEntries: TimeEntry[] = [];
+      const yesterday = DateTime.now().minus({ days: 1 }).toISODate();
+  
+      for (const person of timebankUsers) {
+        timeEntries.push(...await TimeBankApiProvider.getTimeEntries(person.id, yesterday, yesterday));
+      }
 
-    for (const person of timebankUsers) {
-      timeEntries.push(...await TimeBankApiProvider.getTimeEntries(person.id, yesterday, yesterday));
-    };
+      const dailyCombinedData = TimeBankUtilities.combineDailyData(timebankUsers, timeEntries, slackUsers);
+      SlackApiUtilities.postDailyMessage(dailyCombinedData);
 
-    const dailyCombinedData = TimeBankUtilities.combineDailyData(timebankUsers, timeEntries, slackUsers);
-    SlackApiUtilities.postDailyMessage(dailyCombinedData);
-
-    return formatJSONResponse({
-      message: `Everything went well ${event.body.name}...`,
-      event,
-    });
-  } catch (error) {
-    return formatJSONResponse({
-      message: `Error while sending slack message: ${error}`,
-      event,
-    });
-  }
+      return formatJSONResponse({
+        message: `Everything went well ${event.body.name}...`,
+        event,
+      });
+    } catch (error) {
+      return formatJSONResponse({
+        message: `Error while sending slack message: ${error}`,
+        event,
+      });
+    }
 };
 
 export const main = middyfy(sendDailyMessage);

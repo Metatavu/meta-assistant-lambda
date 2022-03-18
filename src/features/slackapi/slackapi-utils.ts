@@ -42,15 +42,22 @@ namespace SlackApiUtilities {
     const {
       displayLogged,
       displayExpected,
-      displayDifference,
       displayInternal,
       displayProject
     } = TimeUtilities.handleTimeConversion(user);
 
-    return `Hi ${name},
+    const {
+      undertimeMessage,
+      overtimeMessage,
+      billableHoursWithPercentage,
+    } = TimeUtilities.calculateWorkedTimeAndBillableHours(user);
+    
+    return `     
+      Hi ${name},
       yesterday (${displayDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
-      Difference: ${displayDifference}.
+      ${user.total < 0 ? undertimeMessage : overtimeMessage}
       Project time: ${displayProject}, Internal time: ${displayInternal}.
+      Your percentage of billable hours today is: ${billableHoursWithPercentage}
       Have a great rest of the day!`;
   };
 
@@ -71,16 +78,25 @@ namespace SlackApiUtilities {
     const {
       displayLogged,
       displayExpected,
-      displayDifference,
       displayInternal,
-      displayProject
+      displayProject,
     } = TimeUtilities.handleTimeConversion(user.selectedWeek);
 
-    return `Hi ${name},
+    const {
+      undertimeMessage,
+      overtimeMessage,
+      billableHoursWithPercentage,
+      billableHours
+    } = TimeUtilities.calculateWorkedTimeAndBillableHours(user.selectedWeek);
+
+    return `
+      Hi ${name},
       Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
-      Difference: ${displayDifference}.
+      ${(user.selectedWeek.total < 0) ? undertimeMessage : overtimeMessage}
       Project time: ${displayProject}, Internal time: ${displayInternal}.
-      Have great week!`;
+      Your percentage of billable hours this week was: ${billableHoursWithPercentage}
+      You have ${+billableHours >= 75 ? 'worked the target 75% billable hours this week' : 'not worked the target 75% billable hours this week'}.
+      Have a great week!`; 
   };
 
   /**
@@ -91,12 +107,12 @@ namespace SlackApiUtilities {
   export const postDailyMessage = (dailyCombinedData: DailyCombinedData[]) => {
     dailyCombinedData.forEach(user => {
       const { slackId } = user;
-
         try {
-          client.chat.postMessage({
-            channel: slackId,
-            text: constructDailyMessage(user)
-          });
+          console.log(constructDailyMessage(user))
+          // client.chat.postMessage({
+          //   channel: slackId,
+          //   text: constructDailyMessage(user)
+          //});
       } catch (error) {
         console.error(`Error while posting slack messages to user ${user.name}`);
       }
@@ -115,15 +131,16 @@ namespace SlackApiUtilities {
       const { slackId } = user;
 
       try {
-        client.chat.postMessage({
-          channel: slackId,
-          text: constructWeeklySummaryMessage(user, weekStart, weekEnd)
-        });
+        console.log(constructWeeklySummaryMessage(user, weekStart, weekEnd))
+        // client.chat.postMessage({
+        //   channel: slackId,
+        //   text: constructWeeklySummaryMessage(user, weekStart, weekEnd)
+        // });
       } catch (error) {
         console.error(`Error while posting weekly slack messages to user ${user.name}`);
       }
     });
   };
-};
+}
 
 export default SlackApiUtilities;

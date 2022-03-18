@@ -14,31 +14,31 @@ import schema, { TimePeriod, WeeklyCombinedData } from "../schema";
  * @returns JSON response
  */
 const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
-  try {
-    const timebankUsers = await TimeBankApiProvider.getTimebankUsers();
-    const slackUsers = await SlackApiUtilities.getSlackUsers();
-
-    const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
-    const timeEntries: WeeklyCombinedData[] = [];
-
-    for (const person of timebankUsers) {
-      timeEntries.push(await TimeBankApiProvider.getTotalTimeEntries(TimePeriod.WEEK, person, weekStartDate.year, weekEndDate.weekNumber));
+    try {
+      const timebankUsers = await TimeBankApiProvider.getTimebankUsers();
+      const slackUsers = await SlackApiUtilities.getSlackUsers();
+  
+      const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
+      const timeEntries: WeeklyCombinedData[] = [];
+  
+      for (const person of timebankUsers) {
+        timeEntries.push(await TimeBankApiProvider.getTotalTimeEntries(TimePeriod.WEEK, person, weekStartDate.year, weekEndDate.weekNumber));
+      }
+  
+      const weeklyCombinedData = TimeBankUtilities.combineWeeklyData(timeEntries, slackUsers);
+  
+      SlackApiUtilities.postWeeklyMessage(weeklyCombinedData, weekStartDate.toISODate(), weekEndDate.toISODate());
+  
+      return formatJSONResponse({
+        message: `Everything went well ${event.body.name}...`,
+        event,
+      });
+    } catch (error) {
+      return formatJSONResponse({
+        message: `Error while sending slack message: ${error}`,
+        event,
+      });
     }
-
-    const weeklyCombinedData = TimeBankUtilities.combineWeeklyData(timeEntries, slackUsers);
-
-    SlackApiUtilities.postWeeklyMessage(weeklyCombinedData, weekStartDate.toISODate(), weekEndDate.toISODate());
-
-    return formatJSONResponse({
-      message: `Everything went well ${event.body.name}...`,
-      event,
-    });
-  } catch (error) {
-    return formatJSONResponse({
-      message: `Error while sending slack message: ${error}`,
-      event,
-    });
-  }
 };
 
 

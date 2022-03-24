@@ -1,4 +1,4 @@
-import { Dates } from "@functions/schema";
+import { DailyCombinedData, Dates } from "@functions/schema";
 import { DateTime, Duration } from "luxon";
 import { TimeEntryTotalDto } from "src/generated/client/api";
 
@@ -56,6 +56,31 @@ namespace TimeUtilities {
       displayInternal: displayInternal,
     }
   }
-};
+
+  export function calculateWorkedTimeAndBillableHours(user: TimeEntryTotalDto | DailyCombinedData){
+
+    // calculates billable hours and adds percentage sign
+    const billableHours = (user.projectTime/user.expected * 100).toFixed(1); 
+    const billableHoursWithPercentage = billableHours.concat("%");
+
+    //turns undertime hours positive and calculates hours and minutes
+    const undertimeHours = Math.floor(user.total * -1 / 60)
+    const undertimeMinutes = user.total * -1 % 60;
+
+    //calculates overtime hours and minutes
+    const overtimeHours = Math.floor(user.total / 60)
+    const overtimeMinutes = user.total % 60;
+
+    const undertimeMessage = "Undertime: " + undertimeHours.toString() + "h " + undertimeMinutes.toString() + " minutes";
+    const overtimeMessage = "Overtime: " + overtimeHours.toString() + "h " + overtimeMinutes.toString() + " minutes";
+
+    return {
+      undertimeMessage: undertimeMessage,
+      overtimeMessage: overtimeMessage,
+      billableHoursWithPercentage: billableHoursWithPercentage,
+      billableHours: billableHours
+    }
+  }
+}
 
 export default TimeUtilities;

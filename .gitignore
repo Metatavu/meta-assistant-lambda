@@ -15,3 +15,6 @@ jspm_packages
 *.txt
 
 generated/
+
+.dccache
+.eslintrc.json

@@ -68,6 +68,6 @@ namespace TimeBankApiProvider {
       Promise.reject(error);
     }
   }
-};
+}
 
 export default TimeBankApiProvider;

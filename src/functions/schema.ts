@@ -36,7 +36,7 @@ export interface WeeklyCombinedData {
 }
 
 /**
- * WeeklyFormattedTimebankData interface- for use in future weeklyBreakdwon functionality
+ * WeeklyFormattedTimebankData interface- for use in future weeklyBreakdown functionality
  */
 export interface WeeklyBreakdownCombinedData {
   totals: DailyCombinedData;
@@ -59,4 +59,50 @@ export enum TimePeriod {
   YEAR ='YEAR',
   MONTH = 'MONTH',
   WEEK = 'WEEK',
+}
+
+/**
+ * Allocations interface
+ */
+export interface Allocations{
+  id: number;
+  non_project_time: number;
+  person: number;
+  start_date: Date;
+  end_date: Date;
+  monday: number
+  tuesday: number
+  wednesday: number;
+  thursday: number;
+  friday: number;
+  saturday: number;
+  sunday: number;
+  created_by: number;
+  updated_by: number;
+  created_at: Date;
+  updated_at: Date
+}
+
+/**
+ * non project time interface
+ */
+export interface NonProjectTime {
+  id: number;
+  name:string;
+  is_internal_time:boolean;
+  created_by:number;
+  updated_by:number;
+  created_at:string;
+  updated_at:string;
+}
+
+/**
+ * all persons allocations interface
+ */
+export interface AllPersonsAllocations {
+  allocationId: number;
+  allocationPerson: number;
+  allocationNonProjectTime: number;
+  allocationStartDate: Date;
+  allocationEndDate: Date;
 }

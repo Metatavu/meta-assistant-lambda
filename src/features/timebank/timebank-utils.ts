@@ -57,6 +57,6 @@ namespace TimeBankUtilities {
       return slackUser ? { ...entry, slackId: slackUser.id } : entry;
     })
   );
-};
+}
 
 export default TimeBankUtilities;

@@ -52,13 +52,13 @@ namespace SlackApiUtilities {
     } = TimeUtilities.calculateWorkedTimeAndBillableHours(user);
 
     return `
-  Hi! ${name},
-
-  Yesterday (${displayDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
-  ${underOverMessage}
-  Project time: ${displayProject}, Internal time: ${displayInternal}.
-  Your percentage of billable hours today is: ${billableHoursWithPercentage}
-  Have a great rest of the day!`;
+Hi! ${name},\n
+Yesterday (${displayDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
+${underOverMessage}
+Project time: ${displayProject}, Internal time: ${displayInternal}.
+Your percentage of billable hours today is: ${billableHoursWithPercentage}
+Have a great rest of the day!
+    `;
   };
 
   /**
@@ -89,14 +89,14 @@ namespace SlackApiUtilities {
     } = TimeUtilities.calculateWorkedTimeAndBillableHours(user.selectedWeek);
 
     return `
-  Hi ${name},
-
-  Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
-  ${underOverMessage}
-  Project time: ${displayProject}, Internal time: ${displayInternal}.
-  Your percentage of billable hours this week was: ${billableHoursWithPercentage}
-  You have ${+billableHours >= 75 ? 'worked the target 75% billable hours this week' : 'not worked the target 75% billable hours this week'}.
-  Have a great week!`; 
+Hi ${name},\n
+Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
+${underOverMessage}
+project time: ${displayProject}, Internal time: ${displayInternal}.
+Your percentage of billable hours this week was: ${billableHoursWithPercentage}
+You have ${+billableHours >= 75 ? 'worked the target 75% billable hours this week' : 'not worked the target 75% billable hours this week'}.
+Have a great week!
+    `;
   };
 
   /**
@@ -107,12 +107,16 @@ namespace SlackApiUtilities {
   export const postDailyMessage = (dailyCombinedData: DailyCombinedData[]) => {
     dailyCombinedData.forEach(user => {
       const { slackId } = user;
+      const testchannelMika = process.env.mika_slack_channel;
 
       try {
+        if(user.name === "Mika Forselius"){
+          console.log(constructDailyMessage(user))
         client.chat.postMessage({
-          channel: slackId,
+          channel: testchannelMika,
           text: constructDailyMessage(user)
         });
+      }
       } catch (error) {
         console.error(`Error while posting slack messages to user ${user.name}`);
       }
@@ -129,12 +133,16 @@ namespace SlackApiUtilities {
   export const postWeeklyMessage = (weeklyCombinedData: WeeklyCombinedData[], weekStart: string, weekEnd: string) => {
     weeklyCombinedData.forEach(user => {
       const { slackId } = user;
+      const testchannelMika = process.env.mika_slack_channel;
 
       try {
+        if(user.name === "Mika Forselius"){
+          console.log(constructWeeklySummaryMessage(user, weekStart, weekEnd))
         client.chat.postMessage({
-          channel: slackId,
+          channel: testchannelMika,
           text: constructWeeklySummaryMessage(user, weekStart, weekEnd)
         });
+      }
       } catch (error) {
         console.error(`Error while posting weekly slack messages to user ${user.name}`);
       }

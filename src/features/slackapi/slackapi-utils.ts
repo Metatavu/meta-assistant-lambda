@@ -107,16 +107,12 @@ Have a great week!
   export const postDailyMessage = (dailyCombinedData: DailyCombinedData[]) => {
     dailyCombinedData.forEach(user => {
       const { slackId } = user;
-      const testchannelMika = process.env.mika_slack_channel;
 
       try {
-        if(user.name === "Mika Forselius"){
-          console.log(constructDailyMessage(user))
         client.chat.postMessage({
-          channel: testchannelMika,
+          channel: slackId,
           text: constructDailyMessage(user)
         });
-      }
       } catch (error) {
         console.error(`Error while posting slack messages to user ${user.name}`);
       }
@@ -133,16 +129,12 @@ Have a great week!
   export const postWeeklyMessage = (weeklyCombinedData: WeeklyCombinedData[], weekStart: string, weekEnd: string) => {
     weeklyCombinedData.forEach(user => {
       const { slackId } = user;
-      const testchannelMika = process.env.mika_slack_channel;
 
       try {
-        if(user.name === "Mika Forselius"){
-          console.log(constructWeeklySummaryMessage(user, weekStart, weekEnd))
         client.chat.postMessage({
-          channel: testchannelMika,
+          channel: slackId,
           text: constructWeeklySummaryMessage(user, weekStart, weekEnd)
         });
-      }
       } catch (error) {
         console.error(`Error while posting weekly slack messages to user ${user.name}`);
       }

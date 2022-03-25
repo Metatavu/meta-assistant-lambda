@@ -1,4 +1,4 @@
-import {  DailyCombinedData, WeeklyCombinedData } from "@functions/schema";
+import { DailyCombinedData, WeeklyCombinedData } from "@functions/schema";
 import { LogLevel, WebClient } from "@slack/web-api";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DateTime } from "luxon";
@@ -47,18 +47,18 @@ namespace SlackApiUtilities {
     } = TimeUtilities.handleTimeConversion(user);
 
     const {
-      undertimeMessage,
-      overtimeMessage,
+      under_over_message,
       billableHoursWithPercentage,
     } = TimeUtilities.calculateWorkedTimeAndBillableHours(user);
 
-    return `     
-      Hi ${name},
-      yesterday (${displayDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
-      ${user.total < 0 ? undertimeMessage : overtimeMessage}
-      Project time: ${displayProject}, Internal time: ${displayInternal}.
-      Your percentage of billable hours today is: ${billableHoursWithPercentage}
-      Have a great rest of the day!`;
+    return `
+Hi! ${name},
+
+Yesterday (${displayDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
+${under_over_message}
+Project time: ${displayProject}, Internal time: ${displayInternal}.
+Your percentage of billable hours today is: ${billableHoursWithPercentage}
+Have a great rest of the day!`;
   };
 
   /**
@@ -79,24 +79,24 @@ namespace SlackApiUtilities {
       displayLogged,
       displayExpected,
       displayInternal,
-      displayProject,
+      displayProject
     } = TimeUtilities.handleTimeConversion(user.selectedWeek);
 
     const {
-      undertimeMessage,
-      overtimeMessage,
+      under_over_message,
       billableHoursWithPercentage,
       billableHours
     } = TimeUtilities.calculateWorkedTimeAndBillableHours(user.selectedWeek);
 
     return `
-      Hi ${name},
-      Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
-      ${(user.selectedWeek.total < 0) ? undertimeMessage : overtimeMessage}
-      Project time: ${displayProject}, Internal time: ${displayInternal}.
-      Your percentage of billable hours this week was: ${billableHoursWithPercentage}
-      You have ${+billableHours >= 75 ? 'worked the target 75% billable hours this week' : 'not worked the target 75% billable hours this week'}.
-      Have a great week!`; 
+Hi ${name},
+
+Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
+${under_over_message}
+Project time: ${displayProject}, Internal time: ${displayInternal}.
+Your percentage of billable hours this week was: ${billableHoursWithPercentage}
+You have ${+billableHours >= 75 ? 'worked the target 75% billable hours this week' : 'not worked the target 75% billable hours this week'}.
+Have a great week!`; 
   };
 
   /**
@@ -105,14 +105,14 @@ namespace SlackApiUtilities {
    * @param dailyCombinedData list of combined timebank and slack user data
    */
   export const postDailyMessage = (dailyCombinedData: DailyCombinedData[]) => {
-
     dailyCombinedData.forEach(user => {
       const { slackId } = user;
-        try {
+
+      try {
           client.chat.postMessage({
-            channel: slackId,
-            text: constructDailyMessage(user)
-          });
+          channel: slackId,
+          text: constructDailyMessage(user)
+        });
       } catch (error) {
         console.error(`Error while posting slack messages to user ${user.name}`);
       }
@@ -131,7 +131,7 @@ namespace SlackApiUtilities {
       const { slackId } = user;
 
       try {
-        client.chat.postMessage({
+          client.chat.postMessage({
           channel: slackId,
           text: constructWeeklySummaryMessage(user, weekStart, weekEnd)
         });

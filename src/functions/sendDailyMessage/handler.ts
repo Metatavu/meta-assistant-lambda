@@ -15,13 +15,12 @@ import { TimeEntry } from "src/generated/client/api";
  * @returns JSON response
  */
 const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
-
   try {
     const timebankUsers = await TimeBankApiProvider.getTimebankUsers();
     const slackUsers = await SlackApiUtilities.getSlackUsers();
 
     const timeEntries: TimeEntry[] = [];
-    let yesterday = DateTime.now().minus({ days: 1 }).toISODate();
+    const yesterday = DateTime.now().minus({ days: 1 }).toISODate();
 
     for (const person of timebankUsers) {
       timeEntries.push(...await TimeBankApiProvider.getTimeEntries(person.id, yesterday, yesterday));
@@ -37,9 +36,9 @@ const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asyn
     } catch (error) {
       return formatJSONResponse({
         message: `Error while sending slack message: ${error}`,
-        event,
+        event
       });
     }
-  }
+  };
 
 export const main = middyfy(sendDailyMessage);

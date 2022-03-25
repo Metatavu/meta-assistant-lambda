@@ -57,26 +57,32 @@ namespace TimeUtilities {
     }
   }
 
-  export function calculateWorkedTimeAndBillableHours(user: TimeEntryTotalDto | DailyCombinedData){
+  /**
+   * Changes project times to percents and makes over- and undertime messages
+   * 
+   * @param user data from timebank
+   * @returns project time percents and over- and undertime messages
+   */
+  export const calculateWorkedTimeAndBillableHours = (user: TimeEntryTotalDto | DailyCombinedData) => {
+    const { projectTime, expected,total } = user;
 
-    // calculates billable hours and adds percentage sign
-    const billableHours = (user.projectTime/user.expected * 100).toFixed(1); 
-    const billableHoursWithPercentage = billableHours.concat("%");
+    const billableHours = (projectTime/expected * 100).toFixed(1);
+    const billableHoursWithPercentage = `${billableHours}%`;
 
-    //turns undertime hours positive and calculates hours and minutes
-    const undertimeHours = Math.floor(user.total * -1 / 60)
-    const undertimeMinutes = user.total * -1 % 60;
+    const overtime = TimeUtilities.timeConversion(total)
+    const undertime = TimeUtilities.timeConversion(total * -1)
 
-    //calculates overtime hours and minutes
-    const overtimeHours = Math.floor(user.total / 60)
-    const overtimeMinutes = user.total % 60;
-
-    const undertimeMessage = "Undertime: " + undertimeHours.toString() + "h " + undertimeMinutes.toString() + " minutes";
-    const overtimeMessage = "Overtime: " + overtimeHours.toString() + "h " + overtimeMinutes.toString() + " minutes";
+    let under_over_message = "";
+    if(total < 0){
+      under_over_message = "Undertime: " + undertime;
+    }else if(total > 0){
+      under_over_message = "Overtime: " + overtime;
+    }else{
+      under_over_message = "No overtime, you worked the expected time."
+    }
 
     return {
-      undertimeMessage: undertimeMessage,
-      overtimeMessage: overtimeMessage,
+      under_over_message,
       billableHoursWithPercentage: billableHoursWithPercentage,
       billableHours: billableHours
     }

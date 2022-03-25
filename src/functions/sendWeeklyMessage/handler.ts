@@ -40,5 +40,4 @@ const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asy
   }
 };
 
-
 export const main = middyfy(sendWeeklyMessage);

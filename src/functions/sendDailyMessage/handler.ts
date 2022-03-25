@@ -33,12 +33,12 @@ const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asyn
       message: `Everything went well ${event.body.name}...`,
       event,
     });
-    } catch (error) {
-      return formatJSONResponse({
-        message: `Error while sending slack message: ${error}`,
-        event
-      });
-    }
-  };
+  } catch (error) {
+    return formatJSONResponse({
+      message: `Error while sending slack message: ${error}`,
+      event
+    });
+  }
+};
 
 export const main = middyfy(sendDailyMessage);

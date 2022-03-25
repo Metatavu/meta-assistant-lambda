@@ -47,18 +47,18 @@ namespace SlackApiUtilities {
     } = TimeUtilities.handleTimeConversion(user);
 
     const {
-      under_over_message,
+      underOverMessage,
       billableHoursWithPercentage,
     } = TimeUtilities.calculateWorkedTimeAndBillableHours(user);
 
     return `
-Hi! ${name},
+  Hi! ${name},
 
-Yesterday (${displayDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
-${under_over_message}
-Project time: ${displayProject}, Internal time: ${displayInternal}.
-Your percentage of billable hours today is: ${billableHoursWithPercentage}
-Have a great rest of the day!`;
+  Yesterday (${displayDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
+  ${underOverMessage}
+  Project time: ${displayProject}, Internal time: ${displayInternal}.
+  Your percentage of billable hours today is: ${billableHoursWithPercentage}
+  Have a great rest of the day!`;
   };
 
   /**
@@ -83,20 +83,20 @@ Have a great rest of the day!`;
     } = TimeUtilities.handleTimeConversion(user.selectedWeek);
 
     const {
-      under_over_message,
+      underOverMessage,
       billableHoursWithPercentage,
       billableHours
     } = TimeUtilities.calculateWorkedTimeAndBillableHours(user.selectedWeek);
 
     return `
-Hi ${name},
+  Hi ${name},
 
-Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
-${under_over_message}
-Project time: ${displayProject}, Internal time: ${displayInternal}.
-Your percentage of billable hours this week was: ${billableHoursWithPercentage}
-You have ${+billableHours >= 75 ? 'worked the target 75% billable hours this week' : 'not worked the target 75% billable hours this week'}.
-Have a great week!`; 
+  Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
+  ${underOverMessage}
+  Project time: ${displayProject}, Internal time: ${displayInternal}.
+  Your percentage of billable hours this week was: ${billableHoursWithPercentage}
+  You have ${+billableHours >= 75 ? 'worked the target 75% billable hours this week' : 'not worked the target 75% billable hours this week'}.
+  Have a great week!`; 
   };
 
   /**
@@ -109,7 +109,7 @@ Have a great week!`;
       const { slackId } = user;
 
       try {
-          client.chat.postMessage({
+        client.chat.postMessage({
           channel: slackId,
           text: constructDailyMessage(user)
         });
@@ -131,7 +131,7 @@ Have a great week!`;
       const { slackId } = user;
 
       try {
-          client.chat.postMessage({
+        client.chat.postMessage({
           channel: slackId,
           text: constructWeeklySummaryMessage(user, weekStart, weekEnd)
         });

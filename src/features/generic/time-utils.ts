@@ -72,21 +72,21 @@ namespace TimeUtilities {
     const overtime = TimeUtilities.timeConversion(total)
     const undertime = TimeUtilities.timeConversion(total * -1)
 
-    let under_over_message = "";
+    let underOverMessage = "No overtime, you worked the expected time.";
     if(total < 0){
-      under_over_message = "Undertime: " + undertime;
+      underOverMessage = `Undertime: ${undertime}`;
     }else if(total > 0){
-      under_over_message = "Overtime: " + overtime;
+      underOverMessage = `Overtime: ${overtime}`;
     }else{
-      under_over_message = "No overtime, you worked the expected time."
+      underOverMessage;
     }
 
     return {
-      under_over_message,
+      underOverMessage,
       billableHoursWithPercentage: billableHoursWithPercentage,
       billableHours: billableHours
     }
   }
-}
+};
 
 export default TimeUtilities;

@@ -53,7 +53,7 @@ namespace TimeUtilities {
       displayExpected: displayExpected,
       displayDifference: displayDifference,
       displayProject: displayProject,
-      displayInternal: displayInternal,
+      displayInternal: displayInternal
     }
   }
 
@@ -69,16 +69,16 @@ namespace TimeUtilities {
     const billableHours = (projectTime/expected * 100).toFixed(1);
     const billableHoursWithPercentage = `${billableHours}%`;
 
-    const overtime = TimeUtilities.timeConversion(total)
-    const undertime = TimeUtilities.timeConversion(total * -1)
+    const overtime = TimeUtilities.timeConversion(total);
+    const undertime = TimeUtilities.timeConversion(total * -1);
 
     let underOverMessage = "No overtime, you worked the expected time.";
-    if(total < 0){
+    if (total < 0) {
       underOverMessage = `Undertime: ${undertime}`;
-    }else if(total > 0){
+    }
+    
+    if (total > 0) {
       underOverMessage = `Overtime: ${overtime}`;
-    }else{
-      underOverMessage;
     }
 
     return {
@@ -86,7 +86,7 @@ namespace TimeUtilities {
       billableHoursWithPercentage: billableHoursWithPercentage,
       billableHours: billableHours
     }
-  }
-};
+  };
+}
 
 export default TimeUtilities;

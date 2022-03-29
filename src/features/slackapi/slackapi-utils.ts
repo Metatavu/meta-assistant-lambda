@@ -10,7 +10,7 @@ import TimeUtilities from "../generic/time-utils";
 namespace SlackApiUtilities {
 
   export const client = new WebClient(process.env.metatavu_bot_token, {
-    logLevel: LogLevel.DEBUG,
+    logLevel: LogLevel.DEBUG
   });
 
   /**
@@ -48,7 +48,7 @@ namespace SlackApiUtilities {
 
     const {
       underOverMessage,
-      billableHoursWithPercentage,
+      billableHoursWithPercentage
     } = TimeUtilities.calculateWorkedTimeAndBillableHours(user);
 
     return `
@@ -70,7 +70,7 @@ Have a great rest of the day!
    * @returns message
    */
   const constructWeeklySummaryMessage = (user: WeeklyCombinedData, weekStart: string, weekEnd: string) => {
-    const { name, selectedWeek: { id: { week }} } = user;
+    const { name, selectedWeek: { id: { week } } } = user;
 
     const startDate = DateTime.fromISO(weekStart).toFormat('dd-MM-yyyy');
     const endDate = DateTime.fromISO(weekEnd).toFormat("dd-MM-yyyy");
@@ -109,10 +109,11 @@ Have a great week!
       const { slackId } = user;
 
       try {
-        client.chat.postMessage({
-          channel: slackId,
-          text: constructDailyMessage(user)
-        });
+        console.log(constructDailyMessage(user));
+        // client.chat.postMessage({
+        //   channel: slackId,
+        //   text: constructDailyMessage(user)
+        // });
       } catch (error) {
         console.error(`Error while posting slack messages to user ${user.name}`);
       }
@@ -131,10 +132,11 @@ Have a great week!
       const { slackId } = user;
 
       try {
-        client.chat.postMessage({
-          channel: slackId,
-          text: constructWeeklySummaryMessage(user, weekStart, weekEnd)
-        });
+        console.log(constructWeeklySummaryMessage(user, weekStart, weekEnd));
+        // client.chat.postMessage({
+        //   channel: slackId,
+        //   text: constructWeeklySummaryMessage(user, weekStart, weekEnd)
+        // });
       } catch (error) {
         console.error(`Error while posting weekly slack messages to user ${user.name}`);
       }

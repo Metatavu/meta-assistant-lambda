@@ -72,7 +72,7 @@ Have a great rest of the day!
   const constructWeeklySummaryMessage = (user: WeeklyCombinedData, weekStart: string, weekEnd: string) => {
     const { name, selectedWeek: { id: { week } } } = user;
 
-    const startDate = DateTime.fromISO(weekStart).toFormat('dd-MM-yyyy');
+    const startDate = DateTime.fromISO(weekStart).toFormat("dd-MM-yyyy");
     const endDate = DateTime.fromISO(weekEnd).toFormat("dd-MM-yyyy");
 
     const {
@@ -94,7 +94,7 @@ Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${displayLogge
 ${underOverMessage}
 project time: ${displayProject}, Internal time: ${displayInternal}.
 Your percentage of billable hours this week was: ${billableHoursWithPercentage}
-You have ${+billableHours >= 75 ? 'worked the target 75% billable hours this week' : 'not worked the target 75% billable hours this week'}.
+You have ${+billableHours >= 75 ? "worked the target 75% billable hours this week" : "not worked the target 75% billable hours this week"}.
 Have a great week!
     `;
   };

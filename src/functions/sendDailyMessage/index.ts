@@ -10,10 +10,10 @@ export default {
         path: "sendSlack",
         request: {
           schemas: {
-            "application/json": schema,
-          },
-        },
-      },
-    },
-  ],
+            "application/json": schema
+          }
+        }
+      }
+    }
+  ]
 };

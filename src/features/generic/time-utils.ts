@@ -30,8 +30,8 @@ namespace TimeUtilities {
     const weekStartDate = startOfWeek.minus({ weeks: 1 });
     const weekEndDate = startOfWeek.minus({ days: 1 });
 
-    return { weekEndDate, weekStartDate };
-  }
+    return { weekEndDate: weekEndDate, weekStartDate: weekStartDate };
+  };
 
   /**
    * Handle formatting multiple time variables
@@ -54,8 +54,8 @@ namespace TimeUtilities {
       displayDifference: displayDifference,
       displayProject: displayProject,
       displayInternal: displayInternal
-    }
-  }
+    };
+  };
 
   /**
    * Changes project times to percents and makes over- and undertime messages
@@ -82,10 +82,10 @@ namespace TimeUtilities {
     }
 
     return {
-      underOverMessage,
+      underOverMessage: underOverMessage,
       billableHoursWithPercentage: billableHoursWithPercentage,
       billableHours: billableHours
-    }
+    };
   };
 }
 

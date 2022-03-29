@@ -10,10 +10,10 @@ export default {
         path: "sendWeeklySlack",
         request: {
           schemas: {
-            "application/json": schema,
-          },
-        },
-      },
-    },
-  ],
+            "application/json": schema
+          }
+        }
+      }
+    }
+  ]
 };

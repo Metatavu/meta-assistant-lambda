@@ -31,12 +31,12 @@ const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asyn
 
     return formatJSONResponse({
       message: `Everything went well ${event.body.name}...`,
-      event,
+      event: event
     });
   } catch (error) {
     return formatJSONResponse({
       message: `Error while sending slack message: ${error}`,
-      event
+      event: event
     });
   }
 };

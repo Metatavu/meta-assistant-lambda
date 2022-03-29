@@ -1,5 +1,4 @@
-import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
-import { formatJSONResponse } from "@libs/api-gateway";
+import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 
 import { DateTime } from "luxon";
@@ -25,19 +24,19 @@ const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asyn
 
     for (const person of timebankUsers) {
       timeEntries.push(...await TimeBankApiProvider.getTimeEntries(person.id, yesterday, yesterday));
-    };
+    }
 
     const dailyCombinedData = TimeBankUtilities.combineDailyData(timebankUsers, timeEntries, slackUsers);
     SlackApiUtilities.postDailyMessage(dailyCombinedData);
 
     return formatJSONResponse({
       message: `Everything went well ${event.body.name}...`,
-      event,
+      event: event
     });
   } catch (error) {
     return formatJSONResponse({
       message: `Error while sending slack message: ${error}`,
-      event,
+      event: event
     });
   }
 };

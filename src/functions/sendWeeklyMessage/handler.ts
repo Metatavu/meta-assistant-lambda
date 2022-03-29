@@ -1,5 +1,4 @@
-import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
-import { formatJSONResponse } from "@libs/api-gateway";
+import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import TimeUtilities from "src/features/generic/time-utils";
 import SlackApiUtilities from "src/features/slackapi/slackapi-utils";
@@ -31,15 +30,14 @@ const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asy
 
     return formatJSONResponse({
       message: `Everything went well ${event.body.name}...`,
-      event,
+      event: event
     });
   } catch (error) {
     return formatJSONResponse({
       message: `Error while sending slack message: ${error}`,
-      event,
+      event: event
     });
   }
 };
-
 
 export const main = middyfy(sendWeeklyMessage);

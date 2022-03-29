@@ -36,7 +36,7 @@ export interface WeeklyCombinedData {
 }
 
 /**
- * WeeklyFormattedTimebankData interface- for use in future weeklyBreakdwon functionality
+ * WeeklyFormattedTimebankData interface- for use in future weeklyBreakdown functionality
  */
 export interface WeeklyBreakdownCombinedData {
   totals: DailyCombinedData;

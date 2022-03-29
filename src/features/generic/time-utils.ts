@@ -1,4 +1,4 @@
-import { Dates } from "@functions/schema";
+import { DailyCombinedData, Dates } from "@functions/schema";
 import { DateTime, Duration } from "luxon";
 import { TimeEntryTotalDto } from "src/generated/client/api";
 
@@ -30,8 +30,8 @@ namespace TimeUtilities {
     const weekStartDate = startOfWeek.minus({ weeks: 1 });
     const weekEndDate = startOfWeek.minus({ days: 1 });
 
-    return { weekEndDate, weekStartDate };
-  }
+    return { weekEndDate: weekEndDate, weekStartDate: weekStartDate };
+  };
 
   /**
    * Handle formatting multiple time variables
@@ -53,9 +53,40 @@ namespace TimeUtilities {
       displayExpected: displayExpected,
       displayDifference: displayDifference,
       displayProject: displayProject,
-      displayInternal: displayInternal,
+      displayInternal: displayInternal
+    };
+  };
+
+  /**
+   * Changes project times to percents and makes over- and undertime messages
+   * 
+   * @param user data from timebank
+   * @returns project time percents and over- and undertime messages
+   */
+  export const calculateWorkedTimeAndBillableHours = (user: TimeEntryTotalDto | DailyCombinedData) => {
+    const { projectTime, expected,total } = user;
+
+    const billableHours = (projectTime/expected * 100).toFixed(1);
+    const billableHoursWithPercentage = `${billableHours}%`;
+
+    const overtime = TimeUtilities.timeConversion(total);
+    const undertime = TimeUtilities.timeConversion(total * -1);
+
+    let underOverMessage = "No overtime, you worked the expected time.";
+    if (total < 0) {
+      underOverMessage = `Undertime: ${undertime}`;
     }
-  }
-};
+    
+    if (total > 0) {
+      underOverMessage = `Overtime: ${overtime}`;
+    }
+
+    return {
+      underOverMessage: underOverMessage,
+      billableHoursWithPercentage: billableHoursWithPercentage,
+      billableHours: billableHours
+    };
+  };
+}
 
 export default TimeUtilities;

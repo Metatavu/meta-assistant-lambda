@@ -67,7 +67,7 @@ namespace TimeBankApiProvider {
       console.error("Error while loading total time entries");
       Promise.reject(error);
     }
-  }
+  };
 };
 
 export default TimeBankApiProvider;

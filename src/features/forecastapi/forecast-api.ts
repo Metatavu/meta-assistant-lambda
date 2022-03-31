@@ -20,7 +20,7 @@ namespace ForecastApiUtilities {
     try{
 
       yesterday = yesterday.replace(/[-]/g, '');
-      const result = await fetch(`${process.env.forecast_new_url}time_registrations?date_after=${yesterday}`, {headers})
+      const result = await fetch(`${process.env.forecast_v3_url}time_registrations?date_after=${yesterday}`, {headers})
       const timeRegistrations: timeRegistrations[] = await result.json();
       return timeRegistrations.filter(timeRegistrations => timeRegistrations.non_project_time !== null);
 

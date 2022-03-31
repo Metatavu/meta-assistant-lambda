@@ -12,7 +12,7 @@ namespace SlackApiUtilities {
   const today = DateTime.now().toISODate();
 
   export const client = new WebClient(process.env.metatavu_bot_token, {
-    logLevel: LogLevel.DEBUG,
+    logLevel: LogLevel.DEBUG
   });
 
   /**

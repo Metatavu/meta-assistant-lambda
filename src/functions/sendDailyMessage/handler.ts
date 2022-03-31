@@ -16,9 +16,6 @@ import ForecastApiUtilities from "src/features/forecastapi/forecast-api";
  * @returns JSON response
  */
 const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
-    const today = new Date().getDay()
-    if(today !== 6 || 0){
-
       try {
         let yesterday = DateTime.now().minus({ days: 1 }).toISODate();
 
@@ -48,7 +45,6 @@ const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asyn
           event: event
         });
       }
-    }
 };
 
 export const main = middyfy(sendDailyMessage);

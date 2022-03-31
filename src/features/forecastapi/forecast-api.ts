@@ -11,7 +11,7 @@ namespace ForecastApiUtilities {
     const headers = new Headers(header)
 
   /**
-   * get all allocation after yesterday
+   * get all allocations after yesterday
    * 
    * @param yesterday yesterday
    * @returns all allocations after yesterday

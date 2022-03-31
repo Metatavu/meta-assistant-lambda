@@ -32,6 +32,7 @@ namespace TimeBankUtilities {
         return {
           name: combinedName,
           slackId: slackUser?.id,
+          personId: person.id,
           expected: personsTimeEntries[0].expected,
           logged: personsTimeEntries[0].logged,
           projectTime: personsTimeEntries[0].projectTime,

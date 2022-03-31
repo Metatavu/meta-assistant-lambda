@@ -17,6 +17,7 @@ export default {
  */
 export interface DailyCombinedData {
   name: string;
+  personId: number;
   expected: number;
   logged: number;
   projectTime: number;
@@ -33,10 +34,11 @@ export interface WeeklyCombinedData {
   selectedWeek: TimeEntryTotalDto;
   name: string;
   slackId?: string;
+  personId: number;
 }
 
 /**
- * WeeklyFormattedTimebankData interface- for use in future weeklyBreakdwon functionality
+ * WeeklyFormattedTimebankData interface- for use in future weeklyBreakdown functionality
  */
 export interface WeeklyBreakdownCombinedData {
   totals: DailyCombinedData;
@@ -59,4 +61,18 @@ export enum TimePeriod {
   YEAR ='YEAR',
   MONTH = 'MONTH',
   WEEK = 'WEEK',
+}
+
+/* 
+* interface for timeregistrations
+*/
+
+export interface timeRegistrations {
+  id: number,
+  person: number,
+  project?: number,
+  non_project_time: number,
+  time_registered: number,
+  date: string,
+  approval_status: string,
 }

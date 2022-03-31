@@ -30,8 +30,8 @@ namespace TimeUtilities {
     const weekStartDate = startOfWeek.minus({ weeks: 1 });
     const weekEndDate = startOfWeek.minus({ days: 1 });
 
-    return { weekEndDate, weekStartDate };
-  }
+    return { weekEndDate: weekEndDate, weekStartDate: weekStartDate };
+  };
 
   /**
    * Handle formatting multiple time variables
@@ -53,35 +53,30 @@ namespace TimeUtilities {
       displayExpected: displayExpected,
       displayDifference: displayDifference,
       displayProject: displayProject,
-      displayInternal: displayInternal,
+      displayInternal: displayInternal
     }
-  }
+  };
 
   export function calculateWorkedTimeAndBillableHours(user: TimeEntryTotalDto | DailyCombinedData){
+    const { total, projectTime, expected} = user;
 
-    // calculates billable hours and adds percentage sign
-    const billableHours = (user.projectTime/user.expected * 100).toFixed(1); 
-    const billableHoursWithPercentage = billableHours.concat("%");
+    const billableHours = (projectTime/expected * 100).toFixed(1); 
 
-    //turns undertime hours positive and calculates hours and minutes
-    const undertimeHours = Math.floor(user.total * -1 / 60)
-    const undertimeMinutes = user.total * -1 % 60;
+    const undertime = TimeUtilities.timeConversion(total * -1);
+    const overtime = TimeUtilities.timeConversion(total);
 
-    //calculates overtime hours and minutes
-    const overtimeHours = Math.floor(user.total / 60)
-    const overtimeMinutes = user.total % 60;
-
-    const undertimeMessage = "Undertime: " + undertimeHours.toString() + "h " + undertimeMinutes.toString() + " minutes";
-    const overtimeMessage = "Overtime: " + overtimeHours.toString() + "h " + overtimeMinutes.toString() + " minutes";
-
+    let message ="You have worked the expected time";
+    if(total > 0){
+      message = "Overtime: " + overtime;
+    }else if(total < 0){
+      message = "Undertime: " + undertime;
+    }
+    
     return {
-      undertimeMessage: undertimeMessage,
-      overtimeMessage: overtimeMessage,
-      billableHoursWithPercentage: billableHoursWithPercentage,
+      message: message,
       billableHours: billableHours
     }
   }
-
 }
 
 export default TimeUtilities;

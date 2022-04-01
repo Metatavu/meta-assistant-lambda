@@ -7,9 +7,9 @@ import { TimeEntryTotalDto } from "src/generated/client/api";
 export default {
   type: "object",
   properties: {
-    name: { type: "string" },
+    name: { type: "string" }
   },
-  required: ["name"],
+  required: ["name"]
 } as const;
 
 /**
@@ -57,10 +57,10 @@ export interface Dates {
  * Enum for TimePeriod
  */
 export enum TimePeriod {
-  ALL_TIME = 'ALL_TIME',
-  YEAR ='YEAR',
-  MONTH = 'MONTH',
-  WEEK = 'WEEK',
+  ALL_TIME = "ALL_TIME",
+  YEAR ="YEAR",
+  MONTH = "MONTH",
+  WEEK = "WEEK"
 }
 
 /* 

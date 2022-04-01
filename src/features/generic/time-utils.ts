@@ -54,18 +54,22 @@ namespace TimeUtilities {
       displayDifference: displayDifference,
       displayProject: displayProject,
       displayInternal: displayInternal
-    }
+    };
   };
-
+  /**
+   * 
+   * @param user data from timebank
+   * @returns message based on the worked time and percentage of billable hours
+   */
   export function calculateWorkedTimeAndBillableHours(user: TimeEntryTotalDto | DailyCombinedData){
-    const { total, projectTime, expected} = user;
+    const { total, projectTime, expected } = user;
 
-    const billableHours = (projectTime/expected * 100).toFixed(1); 
+    const billableHours = (projectTime/expected * 100).toFixed(1);
 
     const undertime = TimeUtilities.timeConversion(total * -1);
     const overtime = TimeUtilities.timeConversion(total);
 
-    let message ="You have worked the expected time";
+    let message ="You worked the expected amount of time";
     if(total > 0){
       message = "Overtime: " + overtime;
     }else if(total < 0){
@@ -75,7 +79,7 @@ namespace TimeUtilities {
     return {
       message: message,
       billableHours: billableHours
-    }
+    };
   }
 }
 

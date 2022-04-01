@@ -58,7 +58,7 @@ Hi ${name},
 yesterday (${displayDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
 ${message}
 Project time: ${displayProject}, Internal time: ${displayInternal}.
-Your percentage of billable hours was: ${billableHours}%
+Your percentage of billable hours was: ${billableHours}% ${+billableHours >= 75 ? ":+1:" : ":rage:"}
 Have a great rest of the day!
     `;
   };
@@ -81,7 +81,7 @@ Have a great rest of the day!
       displayLogged,
       displayExpected,
       displayInternal,
-      displayProject,
+      displayProject
     } = TimeUtilities.handleTimeConversion(user.selectedWeek);
 
     const {
@@ -95,23 +95,27 @@ Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${displayLogge
 ${message}
 Project time: ${displayProject}, Internal time: ${displayInternal}.
 Your percentage of billable hours was: ${billableHours}%
-You ${+billableHours >= 75 ? "worked the target 75% billable hours last week" : "did not work the target 75% billable hours last week"}.
+You ${+billableHours >= 75 ? "worked the target 75% billable hours last week:+1:" : "did not work the target 75% billable hours last week:rage:"}.
 Have a great week!
-    `; 
+    `;
   };
 
   /**
    * Post a daily slack message to users
    *
    * @param dailyCombinedData list of combined timebank and slack user data
+   * @param timeRegistrations all time registrations after yesterday
    */
   export const postDailyMessage = (dailyCombinedData: DailyCombinedData[], timeRegistrations: timeRegistrations[]) => {
     dailyCombinedData.forEach(user => {
       const { slackId, personId } = user;
-      const personsRegistration = timeRegistrations.find(timeRegistration => timeRegistration.person === personId && timeRegistration.date === today && timeRegistration.time_registered === 435)
+      const personsRegistration = timeRegistrations.find(
+        timeRegistration => timeRegistration.person === personId
+        && timeRegistration.date === today
+        && timeRegistration.time_registered === 435);
 
       if(personsRegistration){
-        return
+        return;
       }else if(personsRegistration === undefined){
         try {
           client.chat.postMessage({
@@ -131,14 +135,18 @@ Have a great week!
    * @param weeklyCombinedData list of combined timebank and slack user data
    * @param weekStart when time data starts
    * @param weekEnd when time data ends
+   * @param timeRegistrations all time registrations after yesterday
    */
   export const postWeeklyMessage = (weeklyCombinedData: WeeklyCombinedData[], weekStart: string, weekEnd: string, timeRegistrations: timeRegistrations[]) => {
     weeklyCombinedData.forEach(user => {
       const { slackId, personId } = user;
-      const personsRegistration = timeRegistrations.find(timeRegistration => timeRegistration.person === personId && timeRegistration.date === today && timeRegistration.time_registered === 435)
+      const personsRegistration = timeRegistrations.find(
+        timeRegistration => timeRegistration.person === personId &&
+        timeRegistration.date === today &&
+        timeRegistration.time_registered === 435);
 
       if(personsRegistration){
-        return
+        return;
       }else if(personsRegistration === undefined){
         try {
           client.chat.postMessage({

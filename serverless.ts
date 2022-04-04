@@ -1,5 +1,5 @@
 import type { AWS } from "@serverless/typescript";
-import * as dotenv from "dotenv"
+import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
 
 import sendDailyMessage from "@functions/sendDailyMessage";
@@ -14,7 +14,7 @@ const serverlessConfiguration: AWS = {
     runtime: "nodejs14.x",
     apiGateway: {
       minimumCompressionSize: 1024,
-      shouldStartNameWithService: true,
+      shouldStartNameWithService: true
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
@@ -24,10 +24,10 @@ const serverlessConfiguration: AWS = {
       forecast_v3_url: process.env.forecast_v3_url,
       X_FORECAST_API_KEY: process.env.X_FORECAST_API_KEY,
       forecast_base_url: process.env.forecast_base_url
-    },
+    }
   },
   // import the function via paths
-  functions: { sendDailyMessage, sendWeeklyMessage },
+  functions: { sendDailyMessage: sendDailyMessage, sendWeeklyMessage: sendWeeklyMessage },
   package: { individually: true },
   custom: {
     esbuild: {
@@ -38,9 +38,9 @@ const serverlessConfiguration: AWS = {
       target: "node14",
       define: { "require.resolve": undefined },
       platform: "node",
-      concurrency: 10,
-    },
-  },
+      concurrency: 10
+    }
+  }
 };
 
 module.exports = serverlessConfiguration;

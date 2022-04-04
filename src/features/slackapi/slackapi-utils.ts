@@ -36,7 +36,7 @@ namespace SlackApiUtilities {
    * @param user timebank data
    * @returns string message if id match
    */
-  const constructDailyMessage = (user: DailyCombinedData) => {
+  const constructDailyMessage = (user: DailyCombinedData, dayOfWeek: number) => {
     const { name, date } = user;
 
     const displayDate = DateTime.fromISO(date).toFormat("dd-MM-yyyy");
@@ -52,10 +52,10 @@ namespace SlackApiUtilities {
       message,
       billableHours
     } = TimeUtilities.calculateWorkedTimeAndBillableHours(user);
-    
+
     return `     
 Hi ${name},
-yesterday (${displayDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
+${dayOfWeek === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
 ${message}
 Project time: ${displayProject}, Internal time: ${displayInternal}.
 Your percentage of billable hours was: ${billableHours}% ${+billableHours >= 75 ? ":+1:" : ":rage:"}
@@ -106,9 +106,9 @@ Have a great week!
    * @param dailyCombinedData list of combined timebank and slack user data
    * @param timeRegistrations all time registrations after yesterday
    */
-  export const postDailyMessage = (dailyCombinedData: DailyCombinedData[], timeRegistrations: timeRegistrations[]) => {
+  export const postDailyMessage = (dailyCombinedData: DailyCombinedData[], timeRegistrations: timeRegistrations[], dayOfWeek:number) => {
     dailyCombinedData.forEach(user => {
-      const { slackId, personId } = user;
+      const { slackId, personId, expected } = user;
       const personsRegistration = timeRegistrations.find(
         timeRegistration => timeRegistration.person === personId
         && timeRegistration.date === today
@@ -117,13 +117,15 @@ Have a great week!
       if(personsRegistration){
         return;
       }else if(personsRegistration === undefined){
-        try {
-          client.chat.postMessage({
-            channel: slackId,
-            text: constructDailyMessage(user)
-          });
-        } catch (error) {
-          console.error(`Error while posting slack messages to user ${user.name}`);
+        if(expected === 435){
+          try {
+            client.chat.postMessage({
+              channel: slackId,
+              text: constructDailyMessage(user, dayOfWeek)
+            });
+          } catch (error) {
+            console.error(`Error while posting slack messages to user ${user.name}`);
+          }
         }
       }
     });
@@ -141,9 +143,9 @@ Have a great week!
     weeklyCombinedData.forEach(user => {
       const { slackId, personId } = user;
       const personsRegistration = timeRegistrations.find(
-        timeRegistration => timeRegistration.person === personId &&
-        timeRegistration.date === today &&
-        timeRegistration.time_registered === 435);
+        timeRegistration => timeRegistration.person === personId
+        && timeRegistration.date === today
+        && timeRegistration.time_registered === 435);
 
       if(personsRegistration){
         return;

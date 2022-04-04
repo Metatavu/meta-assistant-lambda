@@ -33,7 +33,7 @@ const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asyn
     }
 
     const dailyCombinedData = TimeBankUtilities.combineDailyData(timebankUsers, timeEntries, slackUsers);
-    SlackApiUtilities.postDailyMessage(dailyCombinedData, timeRegistrations);
+    SlackApiUtilities.postDailyMessage(dailyCombinedData, timeRegistrations, dayOfWeek);
 
     return formatJSONResponse({
       message: `Everything went well ${event.body.name}...`,

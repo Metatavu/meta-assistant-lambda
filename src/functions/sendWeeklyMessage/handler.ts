@@ -1,6 +1,5 @@
 import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
-import { DateTime } from "luxon";
 import ForecastApiUtilities from "src/features/forecastapi/forecast-api";
 import TimeUtilities from "src/features/generic/time-utils";
 import SlackApiUtilities from "src/features/slackapi/slackapi-utils";
@@ -16,11 +15,12 @@ import schema, { TimePeriod, WeeklyCombinedData } from "../schema";
  */
 const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
   try {
-    let yesterday = DateTime.now().minus({ days: 1 }).toISODate();
+    const dayOfWeek = TimeUtilities.getDayOfWeek();
+    const { yesterday, dayBeforeYesterday } = dayOfWeek;
 
     const timebankUsers = await TimeBankApiProvider.getTimebankUsers();
     const slackUsers = await SlackApiUtilities.getSlackUsers();
-    const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(yesterday);
+    const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
 
     const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
     const timeEntries: WeeklyCombinedData[] = [];
@@ -31,7 +31,7 @@ const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asy
 
     const weeklyCombinedData = TimeBankUtilities.combineWeeklyData(timeEntries, slackUsers);
 
-    SlackApiUtilities.postWeeklyMessage(weeklyCombinedData, weekStartDate.toISODate(), weekEndDate.toISODate(), timeRegistrations);
+    SlackApiUtilities.postWeeklyMessage(weeklyCombinedData, weekStartDate.toISODate(), weekEndDate.toISODate(), timeRegistrations, yesterday);
 
     return formatJSONResponse({
       message: `Everything went well ${event.body.name}...`,

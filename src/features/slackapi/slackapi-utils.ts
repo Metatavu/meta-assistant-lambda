@@ -1,4 +1,4 @@
-import {  DailyCombinedData, WeeklyCombinedData, timeRegistrations } from "@functions/schema";
+import { DailyCombinedData, WeeklyCombinedData, TimeRegistrations } from "@functions/schema";
 import { LogLevel, WebClient } from "@slack/web-api";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DateTime } from "luxon";
@@ -8,8 +8,6 @@ import TimeUtilities from "../generic/time-utils";
  * Namespace for Slack API utilities
  */
 namespace SlackApiUtilities {
-
-  const today = DateTime.now().toISODate();
 
   export const client = new WebClient(process.env.metatavu_bot_token, {
     logLevel: LogLevel.DEBUG
@@ -34,6 +32,7 @@ namespace SlackApiUtilities {
    * Create message based on specific users timebank data
    *
    * @param user timebank data
+   * @param dayOfWeek gets day of week
    * @returns string message if id match
    */
   const constructDailyMessage = (user: DailyCombinedData, dayOfWeek: number) => {
@@ -50,7 +49,7 @@ namespace SlackApiUtilities {
 
     const {
       message,
-      billableHours
+      billableHoursPercentage
     } = TimeUtilities.calculateWorkedTimeAndBillableHours(user);
 
     return `     
@@ -58,7 +57,7 @@ Hi ${name},
 ${dayOfWeek === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
 ${message}
 Project time: ${displayProject}, Internal time: ${displayInternal}.
-Your percentage of billable hours was: ${billableHours}% ${+billableHours >= 75 ? ":+1:" : ":rage:"}
+Your percentage of billable hours was: ${billableHoursPercentage}% ${+billableHoursPercentage >= 75 ? ":+1:" : ":-1:"}
 Have a great rest of the day!
     `;
   };
@@ -86,7 +85,7 @@ Have a great rest of the day!
 
     const {
       message,
-      billableHours
+      billableHoursPercentage
     } = TimeUtilities.calculateWorkedTimeAndBillableHours(user.selectedWeek);
 
     return `
@@ -94,8 +93,8 @@ Hi ${name},
 Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
 ${message}
 Project time: ${displayProject}, Internal time: ${displayInternal}.
-Your percentage of billable hours was: ${billableHours}%
-You ${+billableHours >= 75 ? "worked the target 75% billable hours last week:+1:" : "did not work the target 75% billable hours last week:rage:"}.
+Your percentage of billable hours was: ${billableHoursPercentage}%
+You ${+billableHoursPercentage >= 75 ? "worked the target 75% billable hours last week:+1:" : "did not work the target 75% billable hours last week:-1:"}.
 Have a great week!
     `;
   };
@@ -105,19 +104,21 @@ Have a great week!
    *
    * @param dailyCombinedData list of combined timebank and slack user data
    * @param timeRegistrations all time registrations after yesterday
+   * @param dayOfWeek gets day of week
    */
-  export const postDailyMessage = (dailyCombinedData: DailyCombinedData[], timeRegistrations: timeRegistrations[], dayOfWeek:number) => {
+  export const postDailyMessage = (
+    dailyCombinedData: DailyCombinedData[],
+    timeRegistrations: TimeRegistrations[],
+    dayOfWeek: number,
+    yesterday: string) => {
     dailyCombinedData.forEach(user => {
       const { slackId, personId, expected } = user;
-      const personsRegistration = timeRegistrations.find(
-        timeRegistration => timeRegistration.person === personId
-        && timeRegistration.date === today
-        && timeRegistration.time_registered === 435);
 
-      if(personsRegistration){
-        return;
-      }else if(personsRegistration === undefined){
-        if(expected === 435){
+      const onVacation = TimeUtilities.checkIfUserIsAway(timeRegistrations, personId, expected);
+      const firstDayAfterVacation = TimeUtilities.checkIsItFirstDayAfterVacation(timeRegistrations, personId, yesterday);
+
+      if(onVacation === undefined){
+        if(firstDayAfterVacation === undefined){
           try {
             client.chat.postMessage({
               channel: slackId,
@@ -139,24 +140,26 @@ Have a great week!
    * @param weekEnd when time data ends
    * @param timeRegistrations all time registrations after yesterday
    */
-  export const postWeeklyMessage = (weeklyCombinedData: WeeklyCombinedData[], weekStart: string, weekEnd: string, timeRegistrations: timeRegistrations[]) => {
+  export const postWeeklyMessage = (weeklyCombinedData: WeeklyCombinedData[],
+    weekStart: string,
+    weekEnd: string,
+    timeRegistrations:TimeRegistrations[],
+    yesterday: string) => {
     weeklyCombinedData.forEach(user => {
       const { slackId, personId } = user;
-      const personsRegistration = timeRegistrations.find(
-        timeRegistration => timeRegistration.person === personId
-        && timeRegistration.date === today
-        && timeRegistration.time_registered === 435);
+      const onVacation = TimeUtilities.checkIfUserIsAway(timeRegistrations, personId, 435);
+      const firstDayAfterVacation = TimeUtilities.checkIsItFirstDayAfterVacation(timeRegistrations, personId, yesterday);
 
-      if(personsRegistration){
-        return;
-      }else if(personsRegistration === undefined){
-        try {
-          client.chat.postMessage({
-            channel: slackId,
-            text: constructWeeklySummaryMessage(user, weekStart, weekEnd)
-          });
-        } catch (error) {
-          console.error(`Error while posting slack messages to user ${user.name}`);
+      if (onVacation === undefined) {
+        if(firstDayAfterVacation === undefined){
+          try {
+            client.chat.postMessage({
+              channel: slackId,
+              text: constructWeeklySummaryMessage(user, weekStart, weekEnd)
+            });
+          } catch (error) {
+            console.error(`Error while posting slack messages to user ${user.name}`);
+          }
         }
       }
     });

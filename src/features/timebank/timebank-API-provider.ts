@@ -63,7 +63,9 @@ namespace TimeBankApiProvider {
       const combinedName = `${firstName} ${lastName}`;
 
       return {
-        selectedWeek: selectedWeek, name: combinedName, personId: person.id
+        selectedWeek: selectedWeek,
+        name: combinedName,
+        personId: person.id
       };
     } catch (error) {
       console.error("Error while loading total time entries");

@@ -63,11 +63,10 @@ export enum TimePeriod {
   WEEK = "WEEK"
 }
 
-/* 
-* interface for timeregistrations
+/**
+* Interface for time registrations
 */
-
-export interface timeRegistrations {
+export interface TimeRegistrations {
   id: number,
   person: number,
   project?: number,

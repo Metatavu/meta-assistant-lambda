@@ -1,4 +1,4 @@
-import { DailyCombinedData, Dates } from "@functions/schema";
+import { DailyCombinedData, Dates, TimeRegistrations } from "@functions/schema";
 import { DateTime, Duration } from "luxon";
 import { TimeEntryTotalDto } from "src/generated/client/api";
 
@@ -61,26 +61,86 @@ namespace TimeUtilities {
    * @param user data from timebank
    * @returns message based on the worked time and percentage of billable hours
    */
-  export function calculateWorkedTimeAndBillableHours(user: TimeEntryTotalDto | DailyCombinedData){
+  export const calculateWorkedTimeAndBillableHours = (user: TimeEntryTotalDto | DailyCombinedData) => {
     const { total, projectTime, expected } = user;
 
-    const billableHours = (projectTime/expected * 100).toFixed(1);
+    const billableHoursPercentage = (projectTime/expected * 100).toFixed(1);
 
     const undertime = TimeUtilities.timeConversion(total * -1);
     const overtime = TimeUtilities.timeConversion(total);
 
     let message ="You worked the expected amount of time";
-    if(total > 0){
-      message = "Overtime: " + overtime;
-    }else if(total < 0){
-      message = "Undertime: " + undertime;
+    if (total > 0){
+      message = `Overtime: ${overtime}`;
+    } else if (total < 0){
+      message = `Undertime: ${undertime}`;
     }
     
     return {
       message: message,
-      billableHours: billableHours
+      billableHoursPercentage: billableHoursPercentage
     };
-  }
+  };
+
+  /**
+   * Checks if user is on vacation
+   *
+   * @param timeRegistration users time registration
+   * @param expected expected time of user
+   * @returns true if user is on vacation, otherwise false
+   */
+  // export const checkIfUserIsOnVacation = (timeRegistration: TimeRegistrations, expected: number): Boolean => {
+  //   const { date, time_registered } = timeRegistration;
+  //   const today = DateTime.now().toISODate();
+
+  //   return date === today && time_registered === expected;
+  // };
+  /**
+   * 
+   * @param timeRegistrations 
+   * @param personId 
+   * @param expected 
+   * @returns 
+   */
+  export const checkIfUserIsAway = (timeRegistrations: TimeRegistrations[], personId: number, expected: number) => {
+    const today = DateTime.now().toISODate();
+
+    return timeRegistrations.find(
+      timeRegistration => timeRegistration.person === personId
+      && timeRegistration.date === today
+      && timeRegistration.time_registered === expected);
+  };
+
+  export const checkIsItFirstDayAfterVacation = (timeRegistrations: TimeRegistrations[], personId: number, yesterday: string) => {
+    return timeRegistrations.find(
+      timeRegistration => timeRegistration.person === personId
+      && timeRegistration.date === yesterday
+      && timeRegistration.time_registered === 435);
+  };
+
+  export const getDayOfWeek = () => {
+    let yesterday = DateTime.now().minus({ days: 1 }).toISODate();
+    let dayBeforeYesterday = DateTime.now().minus({ days: 2 }).toISODate();
+    const dayOfWeek = new Date().getDay();
+
+    if(dayOfWeek === 1){
+      yesterday = DateTime.now().minus({ days: 3 }).toISODate();
+      dayBeforeYesterday = DateTime.now().minus({ days: 4 }).toISODate();
+      const yesterdayAndDayOfWeek = {
+        yesterday: yesterday,
+        numberOfDay: dayOfWeek,
+        dayBeforeYesterday: dayBeforeYesterday
+      };
+      return yesterdayAndDayOfWeek;
+    }else{
+      const yesterdayAndDayOfWeek = {
+        yesterday: yesterday,
+        numberOfDay: dayOfWeek,
+        dayBeforeYesterday: dayBeforeYesterday
+      };
+      return yesterdayAndDayOfWeek;
+    }
+  };
 }
 
 export default TimeUtilities;

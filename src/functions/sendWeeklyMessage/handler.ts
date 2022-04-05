@@ -15,8 +15,7 @@ import schema, { TimePeriod, WeeklyCombinedData } from "../schema";
  */
 const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
   try {
-    const dayOfWeek = TimeUtilities.getDayOfWeek();
-    const { yesterday, dayBeforeYesterday } = dayOfWeek;
+    const { yesterday, dayBeforeYesterday }  = TimeUtilities.yesterdayAndDayBeforeYesterdayDateProvider();
 
     const timebankUsers = await TimeBankApiProvider.getTimebankUsers();
     const slackUsers = await SlackApiUtilities.getSlackUsers();

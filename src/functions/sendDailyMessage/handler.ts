@@ -17,8 +17,7 @@ import TimeUtilities from "src/features/generic/time-utils";
  */
 const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
   try {
-    const dayOfWeek = TimeUtilities.getDayOfWeek();
-    const { yesterday, numberOfDay, dayBeforeYesterday } = dayOfWeek;
+    const { yesterday, numberOfDay, dayBeforeYesterday } = TimeUtilities.yesterdayAndDayBeforeYesterdayDateProvider();
     const timebankUsers = await TimeBankApiProvider.getTimebankUsers();
     const slackUsers = await SlackApiUtilities.getSlackUsers();
     const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);

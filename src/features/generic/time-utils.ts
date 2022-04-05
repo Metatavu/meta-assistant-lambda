@@ -116,12 +116,12 @@ namespace TimeUtilities {
    * 
    * @returns yesterday, day before yesterday and number of today
    */
-  export const getDayOfWeek = () => {
+  export const yesterdayAndDayBeforeYesterdayDateProvider = () => {
     let yesterday = DateTime.now().minus({ days: 1 }).toISODate();
     let dayBeforeYesterday = DateTime.now().minus({ days: 2 }).toISODate();
     const dayOfWeek = new Date().getDay();
 
-    if(dayOfWeek === 1){
+    if (dayOfWeek === 1) {
       yesterday = DateTime.now().minus({ days: 3 }).toISODate();
       dayBeforeYesterday = DateTime.now().minus({ days: 4 }).toISODate();
       const yesterdayAndDayOfWeek = {
@@ -129,13 +129,15 @@ namespace TimeUtilities {
         numberOfDay: dayOfWeek,
         dayBeforeYesterday: dayBeforeYesterday
       };
+
       return yesterdayAndDayOfWeek;
-    }else{
+    } else {
       const yesterdayAndDayOfWeek = {
         yesterday: yesterday,
         numberOfDay: dayOfWeek,
         dayBeforeYesterday: dayBeforeYesterday
       };
+
       return yesterdayAndDayOfWeek;
     }
   };

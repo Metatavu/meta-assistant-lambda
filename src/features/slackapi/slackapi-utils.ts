@@ -117,8 +117,8 @@ Have a great week!
       const onVacation = TimeUtilities.checkIfUserIsAway(timeRegistrations, personId, expected);
       const firstDayAfterVacation = TimeUtilities.checkIsItFirstDayAfterVacation(timeRegistrations, personId, yesterday);
 
-      if(onVacation === undefined){
-        if(firstDayAfterVacation === undefined){
+      if (onVacation === undefined) {
+        if (firstDayAfterVacation === undefined) {
           try {
             client.chat.postMessage({
               channel: slackId,
@@ -147,11 +147,12 @@ Have a great week!
     yesterday: string) => {
     weeklyCombinedData.forEach(user => {
       const { slackId, personId } = user;
+
       const onVacation = TimeUtilities.checkIfUserIsAway(timeRegistrations, personId, 435);
       const firstDayAfterVacation = TimeUtilities.checkIsItFirstDayAfterVacation(timeRegistrations, personId, yesterday);
 
       if (onVacation === undefined) {
-        if(firstDayAfterVacation === undefined){
+        if (firstDayAfterVacation === undefined) {
           try {
             client.chat.postMessage({
               channel: slackId,

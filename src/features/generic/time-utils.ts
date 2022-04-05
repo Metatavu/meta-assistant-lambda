@@ -83,24 +83,11 @@ namespace TimeUtilities {
   };
 
   /**
-   * Checks if user is on vacation
-   *
-   * @param timeRegistration users time registration
-   * @param expected expected time of user
-   * @returns true if user is on vacation, otherwise false
-   */
-  // export const checkIfUserIsOnVacation = (timeRegistration: TimeRegistrations, expected: number): Boolean => {
-  //   const { date, time_registered } = timeRegistration;
-  //   const today = DateTime.now().toISODate();
-
-  //   return date === today && time_registered === expected;
-  // };
-  /**
    * 
    * @param timeRegistrations 
    * @param personId 
    * @param expected 
-   * @returns 
+   * @returns undefined if can't find time registration
    */
   export const checkIfUserIsAway = (timeRegistrations: TimeRegistrations[], personId: number, expected: number) => {
     const today = DateTime.now().toISODate();
@@ -111,6 +98,13 @@ namespace TimeUtilities {
       && timeRegistration.time_registered === expected);
   };
 
+  /**
+   * 
+   * @param timeRegistrations
+   * @param personId
+   * @param yesterday
+   * @returns undefined if can't find time registration
+   */
   export const checkIsItFirstDayAfterVacation = (timeRegistrations: TimeRegistrations[], personId: number, yesterday: string) => {
     return timeRegistrations.find(
       timeRegistration => timeRegistration.person === personId
@@ -118,6 +112,10 @@ namespace TimeUtilities {
       && timeRegistration.time_registered === 435);
   };
 
+  /**
+   * 
+   * @returns yesterday, day before yesterday and number of today
+   */
   export const getDayOfWeek = () => {
     let yesterday = DateTime.now().minus({ days: 1 }).toISODate();
     let dayBeforeYesterday = DateTime.now().minus({ days: 2 }).toISODate();

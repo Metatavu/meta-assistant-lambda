@@ -120,10 +120,11 @@ Have a great week!
       if(onVacation === undefined){
         if(firstDayAfterVacation === undefined){
           try {
-            client.chat.postMessage({
-              channel: slackId,
-              text: constructDailyMessage(user, dayOfWeek)
-            });
+            console.log(constructDailyMessage(user, dayOfWeek));
+            // client.chat.postMessage({
+            //   channel: slackId,
+            //   text: constructDailyMessage(user, dayOfWeek)
+            // });
           } catch (error) {
             console.error(`Error while posting slack messages to user ${user.name}`);
           }
@@ -153,10 +154,11 @@ Have a great week!
       if (onVacation === undefined) {
         if(firstDayAfterVacation === undefined){
           try {
-            client.chat.postMessage({
-              channel: slackId,
-              text: constructWeeklySummaryMessage(user, weekStart, weekEnd)
-            });
+            console.log(constructWeeklySummaryMessage(user, weekStart, weekEnd));
+            // client.chat.postMessage({
+            //   channel: slackId,
+            //   text: constructWeeklySummaryMessage(user, weekStart, weekEnd)
+            // });
           } catch (error) {
             console.error(`Error while posting slack messages to user ${user.name}`);
           }

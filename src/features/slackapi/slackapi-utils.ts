@@ -120,7 +120,6 @@ Have a great week!
       if(onVacation === undefined){
         if(firstDayAfterVacation === undefined){
           try {
-            console.log(constructDailyMessage(user, dayOfWeek));
             client.chat.postMessage({
               channel: slackId,
               text: constructDailyMessage(user, dayOfWeek)
@@ -154,7 +153,6 @@ Have a great week!
       if (onVacation === undefined) {
         if(firstDayAfterVacation === undefined){
           try {
-            console.log(constructWeeklySummaryMessage(user, weekStart, weekEnd));
             client.chat.postMessage({
               channel: slackId,
               text: constructWeeklySummaryMessage(user, weekStart, weekEnd)

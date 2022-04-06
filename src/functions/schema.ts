@@ -75,3 +75,12 @@ export interface TimeRegistrations {
   date: string,
   approval_status: string,
 }
+/**
+ * Interface for dates
+ */
+export interface YesterdayAndDayBeforeYesterdayDates {
+  today: string,
+  yesterday: string,
+  numberOfToday: number,
+  dayBeforeYesterday: string
+}

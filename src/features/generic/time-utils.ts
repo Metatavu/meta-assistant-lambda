@@ -1,4 +1,4 @@
-import { DailyCombinedData, Dates, TimeRegistrations } from "@functions/schema";
+import { DailyCombinedData, Dates, TimeRegistrations, YesterdayAndDayBeforeYesterdayDates } from "@functions/schema";
 import { DateTime, Duration } from "luxon";
 import { TimeEntryTotalDto } from "src/generated/client/api";
 
@@ -84,32 +84,21 @@ namespace TimeUtilities {
 
   /**
    * 
-   * @param timeRegistrations 
-   * @param personId 
-   * @param expected 
-   * @returns undefined if can't find time registration
+   * @param timeRegistrations All timeregistrations after the day before yesterday
+   * @param personId Users id
+   * @param expected Users expected amount of work
+   * @param date Today either yesterday depending on if function is checking is user on vacation or is it first day back at work
+   * @returns Undefined if can't find a time registration
    */
-  export const checkIfUserIsAway = (timeRegistrations: TimeRegistrations[], personId: number, expected: number) => {
-    const today = DateTime.now().toISODate();
-
+  export const checkIfUserIsAwayOrIsItFirstDayBack = (
+    timeRegistrations: TimeRegistrations[],
+    personId: number,
+    expected: number,
+    date: string) => {
     return timeRegistrations.find(
       timeRegistration => timeRegistration.person === personId
-      && timeRegistration.date === today
+      && timeRegistration.date === date
       && timeRegistration.time_registered === expected);
-  };
-
-  /**
-   * 
-   * @param timeRegistrations
-   * @param personId
-   * @param yesterday
-   * @returns undefined if can't find time registration
-   */
-  export const checkIsItFirstDayAfterVacation = (timeRegistrations: TimeRegistrations[], personId: number, yesterday: string) => {
-    return timeRegistrations.find(
-      timeRegistration => timeRegistration.person === personId
-      && timeRegistration.date === yesterday
-      && timeRegistration.time_registered === 435);
   };
 
   /**
@@ -117,24 +106,30 @@ namespace TimeUtilities {
    * @returns yesterday, day before yesterday and number of today
    */
   export const yesterdayAndDayBeforeYesterdayDateProvider = () => {
+    const today = DateTime.now().toISODate();
+
     let yesterday = DateTime.now().minus({ days: 1 }).toISODate();
     let dayBeforeYesterday = DateTime.now().minus({ days: 2 }).toISODate();
+    
     const dayOfWeek = new Date().getDay();
 
     if (dayOfWeek === 1) {
       yesterday = DateTime.now().minus({ days: 3 }).toISODate();
       dayBeforeYesterday = DateTime.now().minus({ days: 4 }).toISODate();
-      const yesterdayAndDayOfWeek = {
+
+      const yesterdayAndDayOfWeek: YesterdayAndDayBeforeYesterdayDates = {
+        today: today,
         yesterday: yesterday,
-        numberOfDay: dayOfWeek,
+        numberOfToday: dayOfWeek,
         dayBeforeYesterday: dayBeforeYesterday
       };
 
       return yesterdayAndDayOfWeek;
     } else {
-      const yesterdayAndDayOfWeek = {
+      const yesterdayAndDayOfWeek:YesterdayAndDayBeforeYesterdayDates = {
+        today: today,
         yesterday: yesterday,
-        numberOfDay: dayOfWeek,
+        numberOfToday: dayOfWeek,
         dayBeforeYesterday: dayBeforeYesterday
       };
 

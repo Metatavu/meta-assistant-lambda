@@ -15,7 +15,8 @@ import schema, { TimePeriod, WeeklyCombinedData } from "../schema";
  */
 const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
   try {
-    const { yesterday, dayBeforeYesterday }  = TimeUtilities.yesterdayAndDayBeforeYesterdayDateProvider();
+    const yesterdaysAndTodaysDates = TimeUtilities.yesterdayAndDayBeforeYesterdayDateProvider();
+    const { dayBeforeYesterday } = yesterdaysAndTodaysDates;
 
     const timebankUsers = await TimeBankApiProvider.getTimebankUsers();
     const slackUsers = await SlackApiUtilities.getSlackUsers();
@@ -30,7 +31,7 @@ const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asy
 
     const weeklyCombinedData = TimeBankUtilities.combineWeeklyData(timeEntries, slackUsers);
 
-    SlackApiUtilities.postWeeklyMessage(weeklyCombinedData, weekStartDate.toISODate(), weekEndDate.toISODate(), timeRegistrations, yesterday);
+    SlackApiUtilities.postWeeklyMessage(weeklyCombinedData, weekStartDate.toISODate(), weekEndDate.toISODate(), timeRegistrations, yesterdaysAndTodaysDates);
 
     return formatJSONResponse({
       message: `Everything went well ${event.body.name}...`,

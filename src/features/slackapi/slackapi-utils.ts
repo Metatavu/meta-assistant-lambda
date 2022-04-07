@@ -1,4 +1,4 @@
-import { DailyCombinedData, WeeklyCombinedData, TimeRegistrations, YesterdayAndDayBeforeYesterdayDates } from "@functions/schema";
+import { DailyCombinedData, WeeklyCombinedData, TimeRegistrations, PreviousWorkdayDates, NonProjectTime } from "@functions/schema";
 import { LogLevel, WebClient } from "@slack/web-api";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DateTime } from "luxon";
@@ -104,29 +104,29 @@ Have a great week!
    *
    * @param dailyCombinedData list of combined timebank and slack user data
    * @param timeRegistrations all time registrations after yesterday
-   * @param yesterdaysAndTodaysDates dates and and number of today
+   * @param previousWorkDays dates and the number of today
    */
   export const postDailyMessage = (
     dailyCombinedData: DailyCombinedData[],
     timeRegistrations: TimeRegistrations[],
-    yesterdaysAndTodaysDates: YesterdayAndDayBeforeYesterdayDates) => {
+    previousWorkDays: PreviousWorkdayDates,
+    NonProjectTimes: NonProjectTime[]) => {
+    const { numberOfToday, yesterday, today } = previousWorkDays;
+
     dailyCombinedData.forEach(user => {
       const { slackId, personId, expected } = user;
-      const { numberOfToday, yesterday, today } = yesterdaysAndTodaysDates;
 
-      const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today);
-      const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday);
+      const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, NonProjectTimes);
+      const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, NonProjectTimes);
 
-      if (isAway === undefined) {
-        if (firstDayBack === undefined) {
-          try {
-            client.chat.postMessage({
-              channel: slackId,
-              text: constructDailyMessage(user, numberOfToday)
-            });
-          } catch (error) {
-            console.error(`Error while posting slack messages to user ${user.name}`);
-          }
+      if (isAway === undefined && firstDayBack === undefined) {
+        try {
+          client.chat.postMessage({
+            channel: slackId,
+            text: constructDailyMessage(user, numberOfToday)
+          });
+        } catch (error) {
+          console.error(`Error while posting slack messages to user ${user.name}`);
         }
       }
     });
@@ -136,33 +136,31 @@ Have a great week!
    * Post a slack message to users
    *
    * @param weeklyCombinedData list of combined timebank and slack user data
-   * @param weekStart when time data starts
-   * @param weekEnd when time data ends
+   * @param NonProjectTimes all non project times
    * @param timeRegistrations all time registrations after yesterday
-   * @param yesterdaysAndTodaysDates dates
+   * @param previousWorkDays dates and the number of today
    */
   export const postWeeklyMessage = (weeklyCombinedData: WeeklyCombinedData[],
-    weekStart: string,
-    weekEnd: string,
     timeRegistrations:TimeRegistrations[],
-    yesterdaysAndTodaysDates: YesterdayAndDayBeforeYesterdayDates) => {
+    previousWorkDays: PreviousWorkdayDates,
+    NonProjectTimes: NonProjectTime[]) => {
+    const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
+
     weeklyCombinedData.forEach(user => {
       const { slackId, personId } = user;
-      const { yesterday, today } = yesterdaysAndTodaysDates;
+      const { yesterday, today } = previousWorkDays;
 
-      const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, 435, today);
-      const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, 435, yesterday);
+      const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, 435, today, NonProjectTimes);
+      const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, 435, yesterday, NonProjectTimes);
 
-      if (isAway === undefined) {
-        if (firstDayBack === undefined) {
-          try {
-            client.chat.postMessage({
-              channel: slackId,
-              text: constructWeeklySummaryMessage(user, weekStart, weekEnd)
-            });
-          } catch (error) {
-            console.error(`Error while posting slack messages to user ${user.name}`);
-          }
+      if (isAway === undefined && firstDayBack === undefined) {
+        try {
+          client.chat.postMessage({
+            channel: slackId,
+            text: constructWeeklySummaryMessage(user, weekStartDate.toISODate(), weekEndDate.toISODate())
+          });
+        } catch (error) {
+          console.error(`Error while posting slack messages to user ${user.name}`);
         }
       }
     });

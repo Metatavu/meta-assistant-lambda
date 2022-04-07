@@ -1,4 +1,4 @@
-import { DailyCombinedData, Dates, TimeRegistrations, YesterdayAndDayBeforeYesterdayDates } from "@functions/schema";
+import { DailyCombinedData, Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime } from "@functions/schema";
 import { DateTime, Duration } from "luxon";
 import { TimeEntryTotalDto } from "src/generated/client/api";
 
@@ -56,10 +56,11 @@ namespace TimeUtilities {
       displayInternal: displayInternal
     };
   };
+
   /**
    * 
    * @param user data from timebank
-   * @returns message based on the worked time and percentage of billable hours
+   * @returns a message based on the worked time and the percentage of billable hours
    */
   export const calculateWorkedTimeAndBillableHours = (user: TimeEntryTotalDto | DailyCombinedData) => {
     const { total, projectTime, expected } = user;
@@ -69,10 +70,12 @@ namespace TimeUtilities {
     const undertime = TimeUtilities.timeConversion(total * -1);
     const overtime = TimeUtilities.timeConversion(total);
 
-    let message ="You worked the expected amount of time";
-    if (total > 0){
+    let message = "You worked the expected amount of time";
+    if (total > 0) {
       message = `Overtime: ${overtime}`;
-    } else if (total < 0){
+    }
+
+    if (total < 0) {
       message = `Undertime: ${undertime}`;
     }
     
@@ -94,47 +97,41 @@ namespace TimeUtilities {
     timeRegistrations: TimeRegistrations[],
     personId: number,
     expected: number,
-    date: string) => {
-    return timeRegistrations.find(
+    date: string,
+    NonProjectTimes: NonProjectTime[]) => {
+    const isAway = timeRegistrations.find(
       timeRegistration => timeRegistration.person === personId
       && timeRegistration.date === date
       && timeRegistration.time_registered === expected);
+
+    if(isAway){
+      return NonProjectTimes.find(NonProjectTime => NonProjectTime.id === isAway.non_project_time);
+    }
   };
 
   /**
-   * 
-   * @returns yesterday, day before yesterday and number of today
+   * Gets two previous workdays
+   *
+   * @returns two previous workdays
    */
-  export const yesterdayAndDayBeforeYesterdayDateProvider = () => {
-    const today = DateTime.now().toISODate();
-
-    let yesterday = DateTime.now().minus({ days: 1 }).toISODate();
-    let dayBeforeYesterday = DateTime.now().minus({ days: 2 }).toISODate();
-    
+  export const getPreviousTwoWorkdays = (): PreviousWorkdayDates => {
+    const today = DateTime.now();
     const dayOfWeek = new Date().getDay();
 
+    let previousWorkDay = today.minus({ days: 1 }).toISODate();
+    let dayBeforePreviousWorkDay = today.minus({ days: 2 }).toISODate();
+
     if (dayOfWeek === 1) {
-      yesterday = DateTime.now().minus({ days: 3 }).toISODate();
-      dayBeforeYesterday = DateTime.now().minus({ days: 4 }).toISODate();
-
-      const yesterdayAndDayOfWeek: YesterdayAndDayBeforeYesterdayDates = {
-        today: today,
-        yesterday: yesterday,
-        numberOfToday: dayOfWeek,
-        dayBeforeYesterday: dayBeforeYesterday
-      };
-
-      return yesterdayAndDayOfWeek;
-    } else {
-      const yesterdayAndDayOfWeek:YesterdayAndDayBeforeYesterdayDates = {
-        today: today,
-        yesterday: yesterday,
-        numberOfToday: dayOfWeek,
-        dayBeforeYesterday: dayBeforeYesterday
-      };
-
-      return yesterdayAndDayOfWeek;
+      previousWorkDay = today.minus({ days: 3 }).toISODate();
+      dayBeforePreviousWorkDay = today.minus({ days: 4 }).toISODate();
     }
+
+    return {
+      today: today.toISODate(),
+      yesterday: previousWorkDay,
+      numberOfToday: dayOfWeek,
+      dayBeforeYesterday: dayBeforePreviousWorkDay
+    };
   };
 }
 

@@ -67,20 +67,29 @@ export enum TimePeriod {
 * Interface for time registrations
 */
 export interface TimeRegistrations {
-  id: number,
-  person: number,
-  project?: number,
-  non_project_time: number,
-  time_registered: number,
-  date: string,
-  approval_status: string,
+  id: number;
+  person: number;
+  project?: number;
+  non_project_time: number;
+  time_registered: number;
+  date: string;
+  approval_status: string;
 }
 /**
  * Interface for dates
  */
-export interface YesterdayAndDayBeforeYesterdayDates {
-  today: string,
-  yesterday: string,
-  numberOfToday: number,
-  dayBeforeYesterday: string
+export interface PreviousWorkdayDates {
+  today: string;
+  yesterday: string;
+  numberOfToday: number;
+  dayBeforeYesterday: string;
+}
+
+/**
+ * Interface for non project time
+ */
+export interface NonProjectTime {
+  id: number;
+  name: string;
+  is_internal_time: boolean;
 }

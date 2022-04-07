@@ -17,12 +17,13 @@ import TimeUtilities from "src/features/generic/time-utils";
  */
 const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
   try {
-    const yesterdaysAndTodaysDates = TimeUtilities.yesterdayAndDayBeforeYesterdayDateProvider();
-    const { yesterday, dayBeforeYesterday } = yesterdaysAndTodaysDates;
+    const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
+    const { yesterday, dayBeforeYesterday } = previousWorkDays;
 
     const timebankUsers = await TimeBankApiProvider.getTimebankUsers();
     const slackUsers = await SlackApiUtilities.getSlackUsers();
     const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
+    const NonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
 
     const timeEntries: TimeEntry[] = [];
 
@@ -31,7 +32,7 @@ const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asyn
     }
 
     const dailyCombinedData = TimeBankUtilities.combineDailyData(timebankUsers, timeEntries, slackUsers);
-    SlackApiUtilities.postDailyMessage(dailyCombinedData, timeRegistrations, yesterdaysAndTodaysDates);
+    SlackApiUtilities.postDailyMessage(dailyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
 
     return formatJSONResponse({
       message: `Everything went well ${event.body.name}...`,

@@ -15,12 +15,13 @@ import schema, { TimePeriod, WeeklyCombinedData } from "../schema";
  */
 const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
   try {
-    const yesterdaysAndTodaysDates = TimeUtilities.yesterdayAndDayBeforeYesterdayDateProvider();
-    const { dayBeforeYesterday } = yesterdaysAndTodaysDates;
+    const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
+    const { dayBeforeYesterday } = previousWorkDays;
 
     const timebankUsers = await TimeBankApiProvider.getTimebankUsers();
     const slackUsers = await SlackApiUtilities.getSlackUsers();
     const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
+    const NonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
 
     const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
     const timeEntries: WeeklyCombinedData[] = [];
@@ -31,7 +32,7 @@ const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asy
 
     const weeklyCombinedData = TimeBankUtilities.combineWeeklyData(timeEntries, slackUsers);
 
-    SlackApiUtilities.postWeeklyMessage(weeklyCombinedData, weekStartDate.toISODate(), weekEndDate.toISODate(), timeRegistrations, yesterdaysAndTodaysDates);
+    SlackApiUtilities.postWeeklyMessage(weeklyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
 
     return formatJSONResponse({
       message: `Everything went well ${event.body.name}...`,

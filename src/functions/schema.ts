@@ -7,9 +7,9 @@ import { TimeEntryTotalDto } from "src/generated/client/api";
 export default {
   type: "object",
   properties: {
-    name: { type: "string" },
+    name: { type: "string" }
   },
-  required: ["name"],
+  required: ["name"]
 } as const;
 
 /**
@@ -17,6 +17,7 @@ export default {
  */
 export interface DailyCombinedData {
   name: string;
+  personId: number;
   expected: number;
   logged: number;
   projectTime: number;
@@ -33,6 +34,8 @@ export interface WeeklyCombinedData {
   selectedWeek: TimeEntryTotalDto;
   name: string;
   slackId?: string;
+  personId: number;
+  expected: number;
 }
 
 /**
@@ -55,8 +58,39 @@ export interface Dates {
  * Enum for TimePeriod
  */
 export enum TimePeriod {
-  ALL_TIME = 'ALL_TIME',
-  YEAR ='YEAR',
-  MONTH = 'MONTH',
-  WEEK = 'WEEK',
+  ALL_TIME = "ALL_TIME",
+  YEAR ="YEAR",
+  MONTH = "MONTH",
+  WEEK = "WEEK"
+}
+
+/**
+* Interface for time registrations
+*/
+export interface TimeRegistrations {
+  id: number;
+  person: number;
+  project?: number;
+  non_project_time: number;
+  time_registered: number;
+  date: string;
+  approval_status: string;
+}
+/**
+ * Interface for dates
+ */
+export interface PreviousWorkdayDates {
+  today: string;
+  yesterday: string;
+  numberOfToday: number;
+  dayBeforeYesterday: string;
+}
+
+/**
+ * Interface for non project time
+ */
+export interface NonProjectTime {
+  id: number;
+  name: string;
+  is_internal_time: boolean;
 }

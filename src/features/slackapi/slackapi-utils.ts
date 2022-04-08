@@ -1,4 +1,4 @@
-import { DailyCombinedData, WeeklyCombinedData } from "@functions/schema";
+import { DailyCombinedData, WeeklyCombinedData, TimeRegistrations, PreviousWorkdayDates, NonProjectTime } from "@functions/schema";
 import { LogLevel, WebClient } from "@slack/web-api";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DateTime } from "luxon";
@@ -32,9 +32,10 @@ namespace SlackApiUtilities {
    * Create message based on specific users timebank data
    *
    * @param user timebank data
+   * @param numberOfToday Todays number
    * @returns string message if id match
    */
-  const constructDailyMessage = (user: DailyCombinedData) => {
+  const constructDailyMessage = (user: DailyCombinedData, numberOfToday: number) => {
     const { name, date } = user;
 
     const displayDate = DateTime.fromISO(date).toFormat("dd-MM-yyyy");
@@ -47,16 +48,16 @@ namespace SlackApiUtilities {
     } = TimeUtilities.handleTimeConversion(user);
 
     const {
-      underOverMessage,
-      billableHoursWithPercentage
+      message,
+      billableHoursPercentage
     } = TimeUtilities.calculateWorkedTimeAndBillableHours(user);
 
-    return `
-Hi! ${name},\n
-Yesterday (${displayDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
-${underOverMessage}
+    return `     
+Hi ${name},
+${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
+${message}
 Project time: ${displayProject}, Internal time: ${displayInternal}.
-Your percentage of billable hours today is: ${billableHoursWithPercentage}
+Your percentage of billable hours was: ${billableHoursPercentage}% ${+billableHoursPercentage >= 75 ? ":+1:" : ":-1:"}
 Have a great rest of the day!
     `;
   };
@@ -83,18 +84,17 @@ Have a great rest of the day!
     } = TimeUtilities.handleTimeConversion(user.selectedWeek);
 
     const {
-      underOverMessage,
-      billableHoursWithPercentage,
-      billableHours
+      message,
+      billableHoursPercentage
     } = TimeUtilities.calculateWorkedTimeAndBillableHours(user.selectedWeek);
 
     return `
-Hi ${name},\n
+Hi ${name},
 Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
-${underOverMessage}
-project time: ${displayProject}, Internal time: ${displayInternal}.
-Your percentage of billable hours this week was: ${billableHoursWithPercentage}
-You have ${+billableHours >= 75 ? "worked the target 75% billable hours this week" : "not worked the target 75% billable hours this week"}.
+${message}
+Project time: ${displayProject}, Internal time: ${displayInternal}.
+Your percentage of billable hours was: ${billableHoursPercentage}%
+You ${+billableHoursPercentage >= 75 ? "worked the target 75% billable hours last week:+1:" : "did not work the target 75% billable hours last week:-1:"}.
 Have a great week!
     `;
   };
@@ -103,18 +103,32 @@ Have a great week!
    * Post a daily slack message to users
    *
    * @param dailyCombinedData list of combined timebank and slack user data
+   * @param timeRegistrations all time registrations after yesterday
+   * @param previousWorkDays dates and the number of today
+   * @param nonProjectTimes all non project times
    */
-  export const postDailyMessage = (dailyCombinedData: DailyCombinedData[]) => {
-    dailyCombinedData.forEach(user => {
-      const { slackId } = user;
+  export const postDailyMessage = (
+    dailyCombinedData: DailyCombinedData[],
+    timeRegistrations: TimeRegistrations[],
+    previousWorkDays: PreviousWorkdayDates,
+    nonProjectTimes: NonProjectTime[]) => {
+    const { numberOfToday, yesterday, today } = previousWorkDays;
 
-      try {
-        client.chat.postMessage({
-          channel: slackId,
-          text: constructDailyMessage(user)
-        });
-      } catch (error) {
-        console.error(`Error while posting slack messages to user ${user.name}`);
+    dailyCombinedData.forEach(user => {
+      const { slackId, personId, expected } = user;
+
+      const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
+      const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
+
+      if (!isAway && !firstDayBack) {
+        try {
+          client.chat.postMessage({
+            channel: slackId,
+            text: constructDailyMessage(user, numberOfToday)
+          });
+        } catch (error) {
+          console.error(`Error while posting slack messages to user ${user.name}`);
+        }
       }
     });
   };
@@ -123,20 +137,33 @@ Have a great week!
    * Post a slack message to users
    *
    * @param weeklyCombinedData list of combined timebank and slack user data
-   * @param weekStart when time data starts
-   * @param weekEnd when time data ends
+   * @param nonProjectTimes all non project times
+   * @param timeRegistrations all time registrations after yesterday
+   * @param previousWorkDays dates and the number of today
    */
-  export const postWeeklyMessage = (weeklyCombinedData: WeeklyCombinedData[], weekStart: string, weekEnd: string) => {
-    weeklyCombinedData.forEach(user => {
-      const { slackId } = user;
+  export const postWeeklyMessage = (
+    weeklyCombinedData: WeeklyCombinedData[],
+    timeRegistrations:TimeRegistrations[],
+    previousWorkDays: PreviousWorkdayDates,
+    nonProjectTimes: NonProjectTime[]) => {
+    const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
+    const { yesterday, today } = previousWorkDays;
 
-      try {
-        client.chat.postMessage({
-          channel: slackId,
-          text: constructWeeklySummaryMessage(user, weekStart, weekEnd)
-        });
-      } catch (error) {
-        console.error(`Error while posting weekly slack messages to user ${user.name}`);
+    weeklyCombinedData.forEach(user => {
+      const { slackId, personId, expected } = user;
+
+      const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
+      const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
+
+      if (!isAway && !firstDayBack) {
+        try {
+          client.chat.postMessage({
+            channel: slackId,
+            text: constructWeeklySummaryMessage(user, weekStartDate.toISODate(), weekEndDate.toISODate())
+          });
+        } catch (error) {
+          console.error(`Error while posting slack messages to user ${user.name}`);
+        }
       }
     });
   };

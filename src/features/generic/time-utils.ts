@@ -1,4 +1,4 @@
-import { DailyCombinedData, Dates } from "@functions/schema";
+import { DailyCombinedData, Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime } from "@functions/schema";
 import { DateTime, Duration } from "luxon";
 import { TimeEntryTotalDto } from "src/generated/client/api";
 
@@ -58,33 +58,83 @@ namespace TimeUtilities {
   };
 
   /**
-   * Changes project times to percents and makes over- and undertime messages
    * 
    * @param user data from timebank
-   * @returns project time percents and over- and undertime messages
+   * @returns a message based on the worked time and the percentage of billable hours
    */
   export const calculateWorkedTimeAndBillableHours = (user: TimeEntryTotalDto | DailyCombinedData) => {
-    const { projectTime, expected,total } = user;
+    const { total, projectTime, expected } = user;
 
-    const billableHours = (projectTime/expected * 100).toFixed(1);
-    const billableHoursWithPercentage = `${billableHours}%`;
+    const billableHoursPercentage = (projectTime/expected * 100).toFixed(1);
 
-    const overtime = TimeUtilities.timeConversion(total);
     const undertime = TimeUtilities.timeConversion(total * -1);
+    const overtime = TimeUtilities.timeConversion(total);
 
-    let underOverMessage = "No overtime, you worked the expected time.";
+    let message = "You worked the expected amount of time";
+    if (total > 0) {
+      message = `Overtime: ${overtime}`;
+    }
+
     if (total < 0) {
-      underOverMessage = `Undertime: ${undertime}`;
+      message = `Undertime: ${undertime}`;
     }
     
-    if (total > 0) {
-      underOverMessage = `Overtime: ${overtime}`;
+    return {
+      message: message,
+      billableHoursPercentage: billableHoursPercentage
+    };
+  };
+
+  /**
+   * Checks if user is away or it is first day back
+   * 
+   * @param timeRegistrations All timeregistrations after the day before yesterday
+   * @param personId Users id
+   * @param expected Users expected amount of work
+   * @param date Today either yesterday depending on if function is checking is user on vacation or is it first day back at work
+   * @param nonProjectTimes List of non project times
+   * @returns Undefined if can't find a time registration
+   */
+  export const checkIfUserIsAwayOrIsItFirstDayBack = (
+    timeRegistrations: TimeRegistrations[],
+    personId: number,
+    expected: number,
+    date: string,
+    nonProjectTimes: NonProjectTime[]
+  ) => {
+    const personsTimeRegistration = timeRegistrations.find(timeRegistration =>
+      timeRegistration.person === personId
+      && timeRegistration.date === date
+      && timeRegistration.time_registered === expected
+    );
+
+    if (!personsTimeRegistration) return false;
+
+    return nonProjectTimes.map(nonProjectTime => nonProjectTime.id).includes(personsTimeRegistration.non_project_time);
+  };
+
+  /**
+   * Gets two previous workdays
+   *
+   * @returns two previous workdays
+   */
+  export const getPreviousTwoWorkdays = (): PreviousWorkdayDates => {
+    const today = DateTime.now();
+    const dayOfWeek = new Date().getDay();
+
+    let previousWorkDay = today.minus({ days: 1 }).toISODate();
+    let dayBeforePreviousWorkDay = today.minus({ days: 2 }).toISODate();
+
+    if (dayOfWeek === 1) {
+      previousWorkDay = today.minus({ days: 3 }).toISODate();
+      dayBeforePreviousWorkDay = today.minus({ days: 4 }).toISODate();
     }
 
     return {
-      underOverMessage: underOverMessage,
-      billableHoursWithPercentage: billableHoursWithPercentage,
-      billableHours: billableHours
+      today: today.toISODate(),
+      yesterday: previousWorkDay,
+      numberOfToday: dayOfWeek,
+      dayBeforeYesterday: dayBeforePreviousWorkDay
     };
   };
 }

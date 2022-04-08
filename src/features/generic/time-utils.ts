@@ -86,6 +86,7 @@ namespace TimeUtilities {
   };
 
   /**
+   * Checks if user is away or it is first day back
    * 
    * @param timeRegistrations All timeregistrations after the day before yesterday
    * @param personId Users id

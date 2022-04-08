@@ -65,7 +65,8 @@ namespace TimeBankApiProvider {
       return {
         selectedWeek: selectedWeek,
         name: combinedName,
-        personId: person.id
+        personId: person.id,
+        expected: person.monday
       };
     } catch (error) {
       console.error("Error while loading total time entries");

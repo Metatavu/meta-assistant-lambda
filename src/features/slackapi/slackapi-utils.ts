@@ -150,10 +150,10 @@ Have a great week!
     const { yesterday, today } = previousWorkDays;
 
     weeklyCombinedData.forEach(user => {
-      const { slackId, personId } = user;
+      const { slackId, personId, expected } = user;
 
-      const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, 435, today, nonProjectTimes);
-      const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, 435, yesterday, nonProjectTimes);
+      const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
+      const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
       if (!isAway && !firstDayBack) {
         try {

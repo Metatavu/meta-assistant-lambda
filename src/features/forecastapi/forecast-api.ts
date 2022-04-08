@@ -2,17 +2,18 @@ import { NonProjectTime, TimeRegistrations } from "@functions/schema";
 import fetch, { Headers } from "node-fetch";
 
 /**
- *  Namespace for forecast-api
+ * Namespace for forecast-api
  */
 namespace ForecastApiUtilities {
   const header ={
-    "X-FORECAST-API-KEY": `${process.env.X_FORECAST_API_KEY}`
+    "X-FORECAST-API-KEY": process.env.X_FORECAST_API_KEY
   };
 
   const headers = new Headers(header);
 
   /**
-   *Gets non project time types from forecast
+   * Gets non project time types from forecast
+   * 
    * @returns All non project times where is_internal_time is false
    */
   export const getNonProjectTime = async (): Promise<NonProjectTime[]> => {
@@ -20,7 +21,7 @@ namespace ForecastApiUtilities {
       const result = await fetch(`${process.env.forecast_base_url}non_project_time`, { headers: headers });
       const NonProjectTimes: NonProjectTime[] = await result.json();
       return NonProjectTimes.filter(NonProjectTime => NonProjectTime.is_internal_time !== true);
-    }catch(error) {
+    } catch(error) {
       console.error("Error while loading non project time");
       Promise.reject(error);
     }

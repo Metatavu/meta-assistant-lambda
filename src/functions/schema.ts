@@ -35,6 +35,7 @@ export interface WeeklyCombinedData {
   name: string;
   slackId?: string;
   personId: number;
+  expected: number;
 }
 
 /**

@@ -104,23 +104,23 @@ Have a great week!
    *
    * @param dailyCombinedData list of combined timebank and slack user data
    * @param timeRegistrations all time registrations after yesterday
-   * @param NonProjectTimes all non project times
    * @param previousWorkDays dates and the number of today
+   * @param nonProjectTimes all non project times
    */
   export const postDailyMessage = (
     dailyCombinedData: DailyCombinedData[],
     timeRegistrations: TimeRegistrations[],
     previousWorkDays: PreviousWorkdayDates,
-    NonProjectTimes: NonProjectTime[]) => {
+    nonProjectTimes: NonProjectTime[]) => {
     const { numberOfToday, yesterday, today } = previousWorkDays;
 
     dailyCombinedData.forEach(user => {
       const { slackId, personId, expected } = user;
 
-      const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, NonProjectTimes);
-      const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, NonProjectTimes);
+      const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
+      const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
-      if (isAway === undefined && firstDayBack === undefined) {
+      if (!isAway && !firstDayBack) {
         try {
           client.chat.postMessage({
             channel: slackId,
@@ -137,24 +137,25 @@ Have a great week!
    * Post a slack message to users
    *
    * @param weeklyCombinedData list of combined timebank and slack user data
-   * @param NonProjectTimes all non project times
+   * @param nonProjectTimes all non project times
    * @param timeRegistrations all time registrations after yesterday
    * @param previousWorkDays dates and the number of today
    */
-  export const postWeeklyMessage = (weeklyCombinedData: WeeklyCombinedData[],
+  export const postWeeklyMessage = (
+    weeklyCombinedData: WeeklyCombinedData[],
     timeRegistrations:TimeRegistrations[],
     previousWorkDays: PreviousWorkdayDates,
-    NonProjectTimes: NonProjectTime[]) => {
+    nonProjectTimes: NonProjectTime[]) => {
     const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
+    const { yesterday, today } = previousWorkDays;
 
     weeklyCombinedData.forEach(user => {
       const { slackId, personId } = user;
-      const { yesterday, today } = previousWorkDays;
 
-      const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, 435, today, NonProjectTimes);
-      const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, 435, yesterday, NonProjectTimes);
+      const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, 435, today, nonProjectTimes);
+      const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, 435, yesterday, nonProjectTimes);
 
-      if (isAway === undefined && firstDayBack === undefined) {
+      if (!isAway && !firstDayBack) {
         try {
           client.chat.postMessage({
             channel: slackId,

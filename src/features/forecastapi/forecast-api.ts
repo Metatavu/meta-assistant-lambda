@@ -12,7 +12,7 @@ namespace ForecastApiUtilities {
   const headers = new Headers(header);
 
   /**
-   * 
+   *Gets non project time types from forecast
    * @returns All non project times where is_internal_time is false
    */
   export const getNonProjectTime = async (): Promise<NonProjectTime[]> => {

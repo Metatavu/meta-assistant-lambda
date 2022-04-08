@@ -91,7 +91,7 @@ namespace TimeUtilities {
    * @param personId Users id
    * @param expected Users expected amount of work
    * @param date Today either yesterday depending on if function is checking is user on vacation or is it first day back at work
-   * @param NonProjectTimes All non project times
+   * @param nonProjectTimes List of non project times
    * @returns Undefined if can't find a time registration
    */
   export const checkIfUserIsAwayOrIsItFirstDayBack = (
@@ -99,15 +99,17 @@ namespace TimeUtilities {
     personId: number,
     expected: number,
     date: string,
-    NonProjectTimes: NonProjectTime[]) => {
-    const isAway = timeRegistrations.find(
-      timeRegistration => timeRegistration.person === personId
+    nonProjectTimes: NonProjectTime[]
+  ) => {
+    const personsTimeRegistration = timeRegistrations.find(timeRegistration =>
+      timeRegistration.person === personId
       && timeRegistration.date === date
-      && timeRegistration.time_registered === expected);
+      && timeRegistration.time_registered === expected
+    );
 
-    if(isAway){
-      return NonProjectTimes.find(NonProjectTime => NonProjectTime.id === isAway.non_project_time);
-    }
+    if (!personsTimeRegistration) return false;
+
+    return nonProjectTimes.map(nonProjectTime => nonProjectTime.id).includes(personsTimeRegistration.non_project_time);
   };
 
   /**

@@ -91,6 +91,7 @@ namespace TimeUtilities {
    * @param personId Users id
    * @param expected Users expected amount of work
    * @param date Today either yesterday depending on if function is checking is user on vacation or is it first day back at work
+   * @param NonProjectTimes All non project times
    * @returns Undefined if can't find a time registration
    */
   export const checkIfUserIsAwayOrIsItFirstDayBack = (

@@ -104,6 +104,7 @@ Have a great week!
    *
    * @param dailyCombinedData list of combined timebank and slack user data
    * @param timeRegistrations all time registrations after yesterday
+   * @param NonProjectTimes all non project times
    * @param previousWorkDays dates and the number of today
    */
   export const postDailyMessage = (

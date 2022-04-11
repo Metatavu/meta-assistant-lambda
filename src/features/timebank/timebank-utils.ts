@@ -25,7 +25,7 @@ namespace TimeBankUtilities {
       const combinedName = `${firstName} ${lastName}`;
 
       const personsTimeEntries = timeData.filter(entry => entry.person === person.id);
-      const slackUser = slackUsers.find(slackUser => slackUser.real_name === combinedName);
+      const slackUser = slackUsers.find(user => user.real_name === combinedName);
       const length = personsTimeEntries.length;
 
       if (length === 1){
@@ -53,7 +53,7 @@ namespace TimeBankUtilities {
    */
   export const combineWeeklyData = (timeData: WeeklyCombinedData[], slackUsers: Member[]): WeeklyCombinedData[] => (
     timeData.map(entry => {
-      const slackUser = slackUsers.find(slackUser => slackUser.real_name === entry.name);
+      const slackUser = slackUsers.find(user => user.real_name === entry.name);
 
       return slackUser ? { ...entry, slackId: slackUser.id } : entry;
     })

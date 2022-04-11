@@ -6,7 +6,7 @@ import sendDailyMessage from "@functions/sendDailyMessage";
 import sendWeeklyMessage from "@functions/sendWeeklyMessage";
 
 const serverlessConfiguration: AWS = {
-  service: "slacktester",
+  service: "meta-assistant-lambda",
   frameworkVersion: "3",
   plugins: ["serverless-esbuild"],
   provider: {
@@ -38,7 +38,7 @@ const serverlessConfiguration: AWS = {
       target: "node14",
       define: { "require.resolve": undefined },
       platform: "node",
-      concurrency: 10
+      concurrency: 1
     }
   }
 };

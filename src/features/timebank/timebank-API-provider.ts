@@ -57,7 +57,7 @@ namespace TimeBankApiProvider {
       const client = new TimebankApi(process.env.timebank_base_url);
 
       const { body } = await client.timebankControllerGetTotal(person.id.toString(), timePeriod);
-      const selectedWeek = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week)[0];
+      const selectedWeek = body.filter(time => time.id.year === year && time.id.week === week)[0];
 
       const { firstName, lastName } = person;
       const combinedName = `${firstName} ${lastName}`;

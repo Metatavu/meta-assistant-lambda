@@ -1,5 +1,5 @@
-import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from "@libs/api-gateway";
-import { middyfy } from "@libs/lambda";
+import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from "../../libs/api-gateway";
+import { middyfy } from "../../libs/lambda";
 
 import schema from "../schema";
 import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
@@ -15,7 +15,7 @@ import TimeUtilities from "src/features/generic/time-utils";
  * @param event API Gateway proxy event
  * @returns JSON response
  */
-const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
+export const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
   try {
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { yesterday, dayBeforeYesterday } = previousWorkDays;
@@ -32,10 +32,11 @@ const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asyn
     }
 
     const dailyCombinedData = TimeBankUtilities.combineDailyData(timebankUsers, timeEntries, slackUsers);
-    SlackApiUtilities.postDailyMessage(dailyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
+    const messagesSent = await SlackApiUtilities.postDailyMessage(dailyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
 
     return formatJSONResponse({
-      message: `Everything went well ${event.body.name}...`,
+      message: "Everything went well, see data for message breakdown...",
+      data: messagesSent,
       event: event
     });
   } catch (error) {

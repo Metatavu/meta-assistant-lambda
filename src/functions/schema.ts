@@ -94,3 +94,17 @@ export interface NonProjectTime {
   name: string;
   is_internal_time: boolean;
 }
+
+/**
+ * Interface for Message Data
+ */
+export interface MessageData {
+  message: string;
+  name: string;
+  displayDate: string;
+  displayLogged: string;
+  displayExpected: string;
+  displayProject: string;
+  displayInternal: string;
+  billableHoursPercentage: string;
+}

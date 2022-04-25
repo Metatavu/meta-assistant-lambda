@@ -5,6 +5,7 @@ import { PersonDto, TimebankApi, TimeEntry } from "src/generated/client/api";
  * Namespace for timebank API provider
  */
 namespace TimeBankApiProvider {
+  export const client = new TimebankApi(process.env.timebank_base_url);
 
   /**
    * Get list of timebank users from TimeBank API
@@ -13,13 +14,11 @@ namespace TimeBankApiProvider {
    */
   export const getTimebankUsers = async (): Promise<PersonDto[]> => {
     try {
-      const client = new TimebankApi(process.env.timebank_base_url);
       const { body } = await client.timebankControllerGetPersons();
-
       return body.filter(person => person.defaultRole !== null);
     } catch (error) {
-      console.error("Error while loading persons");
-      Promise.reject(error);
+      console.error("Error while loading persons from Timebank");
+      return Promise.reject(error);
     }
   };
 
@@ -33,13 +32,11 @@ namespace TimeBankApiProvider {
    */
   export const getTimeEntries = async (id: number, before: string, after: string): Promise<TimeEntry[]> => {
     try {
-      const client = new TimebankApi(process.env.timebank_base_url);
-
       const { body } = await client.timebankControllerGetEntries(id.toString(), before, after);
       return body;
     } catch (error) {
       console.error("Error while loading time entries");
-      Promise.reject(error);
+      return Promise.reject(error);
     }
   };
 
@@ -70,7 +67,7 @@ namespace TimeBankApiProvider {
       };
     } catch (error) {
       console.error("Error while loading total time entries");
-      Promise.reject(error);
+      return Promise.reject(error);
     }
   };
 }

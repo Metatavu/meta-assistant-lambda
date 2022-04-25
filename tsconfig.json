@@ -3,7 +3,8 @@
   "compilerOptions": {
     "lib": ["ESNext"],
     "moduleResolution": "node",
-    "noUnusedLocals": true,
+    "esModuleInterop": true,
+    "noUnusedLocals": false,
     "noUnusedParameters": true,
     "removeComments": true,
     "sourceMap": true,
@@ -14,6 +15,7 @@
   "include": ["src/**/*.ts", "serverless.ts"],
   "exclude": [
     "node_modules/**/*",
+    "./tests/",
     ".serverless/**/*",
     ".webpack/**/*",
     "_warmup/**/*",

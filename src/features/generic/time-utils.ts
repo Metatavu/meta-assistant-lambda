@@ -63,9 +63,12 @@ namespace TimeUtilities {
    * @returns a message based on the worked time and the percentage of billable hours
    */
   export const calculateWorkedTimeAndBillableHours = (user: TimeEntryTotalDto | DailyCombinedData) => {
-    const { total, projectTime, expected } = user;
+    const { total, projectTime, expected, logged } = user;
 
-    const billableHoursPercentage = (projectTime/expected * 100).toFixed(1);
+    let billableHoursPercentage = (projectTime/logged * 100).toFixed(0);
+    if(logged === 0){
+      billableHoursPercentage = "0";
+    }
 
     const undertime = TimeUtilities.timeConversion(total * -1);
     const overtime = TimeUtilities.timeConversion(total);
@@ -78,7 +81,7 @@ namespace TimeUtilities {
     if (total < 0) {
       message = `Undertime: ${undertime}`;
     }
-    
+      
     return {
       message: message,
       billableHoursPercentage: billableHoursPercentage
@@ -116,7 +119,7 @@ namespace TimeUtilities {
   /**
    * Gets two previous workdays
    *
-   * @returns two previous workdays
+   * @returns two previous workdays and today
    */
   export const getPreviousTwoWorkdays = (): PreviousWorkdayDates => {
     const today = DateTime.now();

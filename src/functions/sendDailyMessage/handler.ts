@@ -1,13 +1,13 @@
-import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from "@libs/api-gateway";
-import { middyfy } from "@libs/lambda";
+import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from "../../libs/api-gateway";
+import { middyfy } from "../../libs/lambda";
 
 import schema from "../schema";
-import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
-import TimeBankUtilities from "src/features/timebank/timebank-utils";
-import SlackApiUtilities from "src/features/slackapi/slackapi-utils";
-import { TimeEntry } from "src/generated/client/api";
-import ForecastApiUtilities from "src/features/forecastapi/forecast-api";
-import TimeUtilities from "src/features/generic/time-utils";
+import TimeBankApiProvider from "../../features/timebank/timebank-API-provider";
+import TimeBankUtilities from "../../features/timebank/timebank-utils";
+import SlackApiUtilities from "../../features/slackapi/slackapi-utils";
+import { TimeEntry } from "../../generated/client/api";
+import ForecastApiUtilities from "../../features/forecastapi/forecast-api";
+import TimeUtilities from "../../features/generic/time-utils";
 
 /**
  * Lambda function for sending slack message
@@ -15,7 +15,7 @@ import TimeUtilities from "src/features/generic/time-utils";
  * @param event API Gateway proxy event
  * @returns JSON response
  */
-const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
+export const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
   try {
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { yesterday, dayBeforeYesterday } = previousWorkDays;

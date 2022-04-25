@@ -23,8 +23,8 @@ namespace SlackApiUtilities {
       const result = await client.users.list();
       return result.members;
     } catch (error) {
-      console.error("Error while loading slack users list");
-      Promise.reject(error);
+      console.log(error);
+      return Promise.reject(error);
     }
   };
 
@@ -35,7 +35,7 @@ namespace SlackApiUtilities {
    * @param numberOfToday Todays number
    * @returns string message if id match
    */
-  const constructDailyMessage = (user: DailyCombinedData, numberOfToday: number) => {
+  export const constructDailyMessage = (user: DailyCombinedData, numberOfToday: number) => {
     const { name, date } = user;
 
     const displayDate = DateTime.fromISO(date).toFormat("dd-MM-yyyy");
@@ -52,7 +52,7 @@ namespace SlackApiUtilities {
       billableHoursPercentage
     } = TimeUtilities.calculateWorkedTimeAndBillableHours(user);
 
-    return `     
+    return `
 Hi ${name},
 ${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
 ${message}
@@ -94,7 +94,7 @@ Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${displayLogge
 ${message}
 Project time: ${displayProject}, Internal time: ${displayInternal}.
 Your percentage of billable hours was: ${billableHoursPercentage}%
-You ${+billableHoursPercentage >= 75 ? "worked the target 75% billable hours last week:+1:" : "did not work the target 75% billable hours last week:-1:"}.
+You ${+billableHoursPercentage >= 75 ? "worked the target 75% billable hours last week:+1:" : "did not work the target 75% billable hours last week:-1:"}
 Have a great week!
     `;
   };
@@ -120,7 +120,7 @@ Have a great week!
       const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
       const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
-      if (!isAway && !firstDayBack) {
+      if (!isAway && !firstDayBack && expected !== 0) {
         try {
           client.chat.postMessage({
             channel: slackId,

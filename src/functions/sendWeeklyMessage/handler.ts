@@ -1,10 +1,10 @@
-import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from "@libs/api-gateway";
-import { middyfy } from "@libs/lambda";
-import ForecastApiUtilities from "src/features/forecastapi/forecast-api";
-import TimeUtilities from "src/features/generic/time-utils";
-import SlackApiUtilities from "src/features/slackapi/slackapi-utils";
-import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
-import TimeBankUtilities from "src/features/timebank/timebank-utils";
+import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from "../../libs/api-gateway";
+import { middyfy } from "../../libs/lambda";
+import ForecastApiUtilities from "../../features/forecastapi/forecast-api";
+import TimeUtilities from "../../features/generic/time-utils";
+import SlackApiUtilities from "../../features/slackapi/slackapi-utils";
+import TimeBankApiProvider from "../../features/timebank/timebank-API-provider";
+import TimeBankUtilities from "../../features/timebank/timebank-utils";
 import schema, { TimePeriod, WeeklyCombinedData } from "../schema";
 
 /**

@@ -12,6 +12,8 @@ const serverlessConfiguration: AWS = {
   provider: {
     name: "aws",
     runtime: "nodejs14.x",
+    memorySize: 128,
+    timeout: 12,
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true
@@ -38,7 +40,7 @@ const serverlessConfiguration: AWS = {
       target: "node14",
       define: { "require.resolve": undefined },
       platform: "node",
-      concurrency: 1
+      concurrency: 10
     }
   }
 };

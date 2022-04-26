@@ -1,5 +1,5 @@
-import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from "@libs/api-gateway";
-import { middyfy } from "@libs/lambda";
+import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from "../../libs/api-gateway";
+import { middyfy } from "../../libs/lambda";
 import ForecastApiUtilities from "src/features/forecastapi/forecast-api";
 import TimeUtilities from "src/features/generic/time-utils";
 import SlackApiUtilities from "src/features/slackapi/slackapi-utils";
@@ -13,7 +13,7 @@ import schema, { TimePeriod, WeeklyCombinedData } from "../schema";
  * @param event API Gateway proxy event
  * @returns JSON response
  */
-const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
+export const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
   try {
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { dayBeforeYesterday } = previousWorkDays;
@@ -32,10 +32,11 @@ const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asy
 
     const weeklyCombinedData = TimeBankUtilities.combineWeeklyData(timeEntries, slackUsers);
 
-    SlackApiUtilities.postWeeklyMessage(weeklyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
+    const messagesSent = SlackApiUtilities.postWeeklyMessage(weeklyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
 
     return formatJSONResponse({
-      message: `Everything went well ${event.body.name}...`,
+      message: "Everything went well sending the weekly, see data for message breakdown...",
+      data: messagesSent,
       event: event
     });
   } catch (error) {

@@ -1,4 +1,5 @@
-import { PersonDto, TimeEntry } from "src/generated/client/api";
+import TimeUtilities from "src/features/generic/time-utils";
+import { PersonDto, TimeEntry, TimeEntryTotalDto } from "src/generated/client/api";
 
 export const timebankGetUsersMock: PersonDto[] = [{
   id: 123,
@@ -74,5 +75,35 @@ export const timeEntryMock2: TimeEntry[] = [
     expected: 500,
     total: 123,
     date: new Date
+  }
+];
+
+const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
+
+export const timeTotalsMock1: TimeEntryTotalDto[] = [
+  {
+    id: {
+      year: weekStartDate.year,
+      week: weekEndDate.weekNumber
+    },
+    total: 32,
+    logged: 2175,
+    expected: 2175,
+    internalTime: 2175,
+    projectTime: 50
+  }
+];
+
+export const timeTotalsMock2: TimeEntryTotalDto[] = [
+  {
+    id: {
+      year: weekStartDate.year,
+      week: weekEndDate.weekNumber
+    },
+    total: 500,
+    logged: 2175,
+    expected: 2175,
+    internalTime: 2175,
+    projectTime: 0
   }
 ];

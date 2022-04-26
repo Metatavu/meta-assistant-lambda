@@ -96,12 +96,28 @@ export interface NonProjectTime {
 }
 
 /**
- * Interface for Message Data
+ * Interface for Daily Message Data
  */
-export interface MessageData {
+export interface DailyMessageData {
   message: string;
   name: string;
   displayDate: string;
+  displayLogged: string;
+  displayExpected: string;
+  displayProject: string;
+  displayInternal: string;
+  billableHoursPercentage: string;
+}
+
+/**
+ * Interface for Weekly Message Data
+ */
+export interface WeeklyMessageData {
+  message: string;
+  name: string;
+  week: number,
+  startDate: string,
+  endDate: string,
   displayLogged: string;
   displayExpected: string;
   displayProject: string;

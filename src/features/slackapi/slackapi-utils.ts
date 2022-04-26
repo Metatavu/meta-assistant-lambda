@@ -1,4 +1,4 @@
-import { DailyCombinedData, WeeklyCombinedData, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, MessageData } from "@functions/schema";
+import { DailyCombinedData, WeeklyCombinedData, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DailyMessageData, WeeklyMessageData } from "@functions/schema";
 import { LogLevel, WebClient } from "@slack/web-api";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DateTime } from "luxon";
@@ -102,7 +102,7 @@ Have a great rest of the day!
       billableHoursPercentage
     } = TimeUtilities.calculateWorkedTimeAndBillableHours(user.selectedWeek);
 
-    return `
+    const customMessage = `
 Hi ${name},
 Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
 ${message}
@@ -111,6 +111,18 @@ Your percentage of billable hours was: ${billableHoursPercentage}%
 You ${+billableHoursPercentage >= 75 ? "worked the target 75% billable hours last week:+1:" : "did not work the target 75% billable hours last week:-1:"}.
 Have a great week!
     `;
+    return {
+      message: customMessage,
+      name: name,
+      week: week,
+      startDate: startDate,
+      endDate: endDate,
+      displayLogged: displayLogged,
+      displayExpected: displayExpected,
+      displayProject: displayProject,
+      displayInternal: displayInternal,
+      billableHoursPercentage: billableHoursPercentage
+    };
   };
 
   /**
@@ -125,10 +137,10 @@ Have a great week!
     dailyCombinedData: DailyCombinedData[],
     timeRegistrations: TimeRegistrations[],
     previousWorkDays: PreviousWorkdayDates,
-    nonProjectTimes: NonProjectTime[]): MessageData[] => {
+    nonProjectTimes: NonProjectTime[]): DailyMessageData[] => {
     const { numberOfToday, yesterday, today } = previousWorkDays;
 
-    let messagesRecord: MessageData[] = [];
+    let messagesRecord: DailyMessageData[] = [];
 
     dailyCombinedData.forEach(user => {
       const { slackId, personId, expected } = user;
@@ -138,7 +150,6 @@ Have a great week!
 
       let message = constructDailyMessage(user, numberOfToday);
 
-      // Update needed here
       if (!isAway && !firstDayBack && expected !== 0) {
         try {
           console.log(message.message, slackId);
@@ -171,9 +182,11 @@ Have a great week!
     weeklyCombinedData: WeeklyCombinedData[],
     timeRegistrations:TimeRegistrations[],
     previousWorkDays: PreviousWorkdayDates,
-    nonProjectTimes: NonProjectTime[]) => {
+    nonProjectTimes: NonProjectTime[]): WeeklyMessageData[] => {
     const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
     const { yesterday, today } = previousWorkDays;
+
+    let messagesRecord: WeeklyMessageData[] = [];
 
     weeklyCombinedData.forEach(user => {
       const { slackId, personId, expected } = user;
@@ -181,18 +194,26 @@ Have a great week!
       const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
       const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
+      const message = constructWeeklySummaryMessage(user, weekStartDate.toISODate(), weekEndDate.toISODate());
+
       if (!isAway && !firstDayBack) {
         try {
-          console.log(constructWeeklySummaryMessage(user, weekStartDate.toISODate(), weekEndDate.toISODate()), slackId);
+          console.log(message.message, slackId);
           // client.chat.postMessage({
           //   channel: slackId,
           //   text: constructWeeklySummaryMessage(user, weekStartDate.toISODate(), weekEndDate.toISODate())
           // });
+          messagesRecord.push(message);
         } catch (error) {
           console.error(`Error while posting slack messages to user ${user.name}`);
+          messagesRecord.push(message);
+          return error;
         }
+      } else {
+        messagesRecord.push(message);
       }
     });
+    return messagesRecord;
   };
 }
 

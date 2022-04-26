@@ -51,8 +51,6 @@ namespace TimeBankApiProvider {
    */
   export const getTotalTimeEntries = async (timePeriod: TimePeriod, person: PersonDto, year: number, week: number): Promise<WeeklyCombinedData> => {
     try {
-      const client = new TimebankApi(process.env.timebank_base_url);
-
       const { body } = await client.timebankControllerGetTotal(person.id.toString(), timePeriod);
       const selectedWeek = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week)[0];
 

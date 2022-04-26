@@ -2,7 +2,7 @@ import { IncomingMessage } from "http";
 import { Socket } from "net";
 import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
 import slackApiUtilities from "src/features/slackapi/slackapi-utils";
-import { timebankGetUsersMock, timeEntryMock1, timeEntryMock2 } from "../__mocks__/timebankMocks";
+import { timebankGetUsersMock, timeEntryMock1, timeEntryMock2, timeTotalsMock1, timeTotalsMock2 } from "../__mocks__/timebankMocks";
 import { slackUserData } from "../__mocks__/slackMocks";
 import fetch from "node-fetch";
 import { forecastMockNonProjectTime, forecastMockTimeRegistrations } from "../__mocks__/forecastMocks";
@@ -25,7 +25,7 @@ namespace TestHelpers {
   /**
     * Get Slack users mock data
     */
-  export const MockSlackUsers = () => {
+  export const mockSlackUsers = () => {
     jest.spyOn(slackUsersClient.users, "list").mockReturnValueOnce(Promise.resolve(slackUserData));
   };
 
@@ -50,6 +50,15 @@ namespace TestHelpers {
     jest.spyOn(timebankClient, "timebankControllerGetEntries")
       .mockReturnValueOnce(Promise.resolve({ response: message, body: timeEntryMock1 }))
       .mockReturnValueOnce(Promise.resolve({ response: message, body: timeEntryMock2 }));
+  };
+
+  /**
+   * Timebank total time entries mock
+   */
+  export const mockTotalTimeEntries = () => {
+    jest.spyOn(timebankClient, "timebankControllerGetTotal")
+      .mockReturnValueOnce(Promise.resolve({ response: message, body: timeTotalsMock1 }))
+      .mockReturnValueOnce(Promise.resolve({ response: message, body: timeTotalsMock2 }));
   };
 }
 

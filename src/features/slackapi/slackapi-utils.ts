@@ -138,6 +138,7 @@ Have a great week!
 
       let message = constructDailyMessage(user, numberOfToday);
 
+      // Update needed here
       if (!isAway && !firstDayBack) {
         try {
           console.log(message.message, slackId);

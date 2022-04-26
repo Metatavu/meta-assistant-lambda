@@ -17,7 +17,5 @@ jspm_packages
 generated/
 
 .dccache
-tests
-coverage
-babel.config.js
-jest.config.js
+
+/coverage

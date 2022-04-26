@@ -5,6 +5,7 @@ import { PersonDto, TimebankApi, TimeEntry } from "../../generated/client/api";
  * Namespace for timebank API provider
  */
 namespace TimeBankApiProvider {
+  export const client = new TimebankApi(process.env.timebank_base_url);
 
   export const client = new TimebankApi(process.env.timebank_base_url);
 
@@ -16,10 +17,9 @@ namespace TimeBankApiProvider {
   export const getTimebankUsers = async (): Promise<PersonDto[]> => {
     try {
       const { body } = await client.timebankControllerGetPersons();
-
       return body.filter(person => person.defaultRole !== null);
     } catch (error) {
-      console.error("Error while loading persons");
+      console.error("Error while loading persons from Timebank");
       return Promise.reject(error);
     }
   };
@@ -66,7 +66,7 @@ namespace TimeBankApiProvider {
         expected: person.monday
       };
     } catch (error) {
-      console.log(error);
+      console.error("Error while loading total time entries");
       return Promise.reject(error);
     }
   };

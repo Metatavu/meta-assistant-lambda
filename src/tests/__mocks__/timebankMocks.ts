@@ -52,6 +52,32 @@ export const timebankGetUsersMock: PersonDto[] = [{
   startDate: "test"
 }];
 
+export const timebankGetUsersErrorDataMock: PersonDto[] = [{
+  id: null,
+  firstName:null,
+  lastName: null,
+  email: "test",
+  userType: "test",
+  clientId: 123,
+  holidayCalendarId: 123,
+  monday: 123,
+  tuesday: 123,
+  wednesday: 123,
+  thursday: 123,
+  friday: 123,
+  saturday: 123,
+  sunday: 123,
+  active: true,
+  defaultRole: 123,
+  cost: 123,
+  language: "test",
+  createdBy: 123,
+  updatedBy: 123,
+  createdAt: new Date,
+  updatedAt: new Date,
+  startDate: "test"
+}];
+
 export const timeEntryMock1: TimeEntry[] = [
   {
     externalId: "tester",

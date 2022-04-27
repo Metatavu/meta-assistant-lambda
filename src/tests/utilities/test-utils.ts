@@ -23,6 +23,14 @@ namespace TestHelpers {
   };
 
   /**
+   * 
+   * @param mockData 
+   */
+  export const mockTimebankUsersCustom = (mockData: any) => {
+    jest.spyOn(timebankClient, "timebankControllerGetPersons").mockReturnValueOnce(Promise.resolve({ response: message, body: mockData }));
+  };
+
+  /**
     * Get Slack users mock data
     */
   export const mockSlackUsers = () => {

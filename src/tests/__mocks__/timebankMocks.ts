@@ -137,3 +137,5 @@ export const timeTotalsMock2: TimeEntryTotalDto[] = [
     projectTime: 0
   }
 ];
+
+export const timeTotalsErrorDataMock: TimeEntryTotalDto[] = [];

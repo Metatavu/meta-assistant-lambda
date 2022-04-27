@@ -114,6 +114,16 @@ export const timeEntryErrorDataMock: TimeEntry[] = [
     expected: 123,
     total: 1,
     date: new Date
+  },
+  {
+    externalId: undefined,
+    person: undefined,
+    internalTime: undefined,
+    projectTime: 100,
+    logged: 123,
+    expected: 123,
+    total: 1,
+    date: new Date
   }
 ];
 

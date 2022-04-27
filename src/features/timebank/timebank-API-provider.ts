@@ -57,20 +57,24 @@ namespace TimeBankApiProvider {
    */
   export const getTotalTimeEntries = async (timePeriod: TimePeriod, person: PersonDto, year: number, week: number): Promise<WeeklyCombinedData> => {
     try {
-      const { body } = await client.timebankControllerGetTotal(person.id.toString(), timePeriod);
-      const selectedWeek = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week)[0];
+      if(person.id){
+        const { body } = await client.timebankControllerGetTotal(person.id.toString(), timePeriod);
+      
+        const selectedWeek = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week)[0];
 
-      const { firstName, lastName } = person;
-      const combinedName = `${firstName} ${lastName}`;
+        const { firstName, lastName } = person;
+        const combinedName = `${firstName} ${lastName}`;
 
-      return {
-        selectedWeek: selectedWeek,
-        name: combinedName,
-        personId: person.id,
-        expected: person.monday
-      };
+        return {
+          selectedWeek: selectedWeek,
+          name: combinedName,
+          personId: person.id,
+          expected: person.monday
+        };
+      }
+      throw new Error("Error while loading total time entries");
     } catch (error) {
-      console.error("Error while loading total time entries");
+      console.error(error);
       return Promise.reject(error);
     }
   };

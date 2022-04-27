@@ -1,6 +1,7 @@
 import { sendDailyMessage } from "../functions/sendDailyMessage/handler";
 import TestHelpers from "./utilities/test-utils";
-import { timebankGetUsersEmptyDataMock, timeEntryErrorDataMock, timeTotalsErrorDataMock } from "./__mocks__/timebankMocks";
+import { forecastMockErrorResponse } from "./__mocks__/forecastMocks";
+import { timebankGetUsersEmptyDataMock, timeEntryEmptyDataMock,timeTotalsEmptyDataMock } from "./__mocks__/timebankMocks";
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -9,7 +10,7 @@ beforeEach(() => {
 jest.mock("node-fetch");
 
 describe("timebank api get users error response", () => {
-  it("should show corresponding error message", async () => {
+  it("should respond with corresponding error response", async () => {
     let event;
     let context;
     let callback;
@@ -31,13 +32,13 @@ describe("timebank api get users error response", () => {
 });
 
 describe("timebank api get time entries error response", () => {
-  it("should show corresponding error message", async () => {
+  it("should respond with corresponding error response", async () => {
     let event;
     let context;
     let callback;
     
     TestHelpers.mockTimebankUsers();
-    TestHelpers.mockTimebankTimeEntriesCustom(timeEntryErrorDataMock);
+    TestHelpers.mockTimebankTimeEntriesCustom(timeEntryEmptyDataMock);
     TestHelpers.mockSlackUsers();
     TestHelpers.mockForecastData();
     TestHelpers.mockTotalTimeEntries();
@@ -54,7 +55,7 @@ describe("timebank api get time entries error response", () => {
 });
 
 describe("timebank api get time entries error response", () => {
-  it("should show corresponding error message", async () => {
+  it("should respond with corresponding error response", async () => {
     let event;
     let context;
     let callback;
@@ -65,7 +66,7 @@ describe("timebank api get time entries error response", () => {
     TestHelpers.mockSlackUsers();
     TestHelpers.mockForecastData();
     TestHelpers.mockTimebankTimeEntries();
-    TestHelpers.mockTotalTimeEntriesCustom(timeTotalsErrorDataMock);
+    TestHelpers.mockTotalTimeEntriesCustom(timeTotalsEmptyDataMock);
     
     let messageData;
     
@@ -73,6 +74,29 @@ describe("timebank api get time entries error response", () => {
 
     messageData = JSON.parse(res.body);
 
+    expect(res).toBeDefined();
+    console.log(messageData.message);
+  });
+});
+
+describe("forecast api error response", () => {
+  it("should respond with corresponding error response", async () => {
+    let event;
+    let context;
+    let callback;
+    
+    TestHelpers.mockTimebankUsers();
+    TestHelpers.mockTimebankTimeEntries();
+    TestHelpers.mockSlackUsers();
+    TestHelpers.mockForecastDataCustom(forecastMockErrorResponse);
+    TestHelpers.mockTotalTimeEntries();
+        
+    let messageData;
+        
+    const res: any = await sendDailyMessage(event, context, callback);
+    console.log(res);
+    messageData = JSON.parse(res.body);
+    
     expect(res).toBeDefined();
     console.log(messageData.message);
   });

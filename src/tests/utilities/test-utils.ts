@@ -38,6 +38,14 @@ namespace TestHelpers {
   };
 
   /**
+   * Get Slack users mock data
+   * @param mockData custom data
+   */
+  export const mockSlackUsersCustom = (mockData: any) => {
+    jest.spyOn(slackUsersClient.users, "list").mockReturnValueOnce(Promise.resolve(mockData));
+  };
+
+  /**
    * Mock Forecast non project time & time registrations endpoints
    */
   export const mockForecastData = () => {
@@ -60,6 +68,7 @@ namespace TestHelpers {
     };
 
     jest.spyOn(mockedFetch, "fetch")
+      .mockReturnValue(new Response(JSON.stringify(mockData)))
       .mockReturnValue(new Response(JSON.stringify(mockData)));
   };
 

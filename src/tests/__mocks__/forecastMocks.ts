@@ -29,3 +29,8 @@ export const forecastMockTimeRegistrations = [
     approval_status: "sure"
   }
 ];
+
+export const forecastMockErrorResponse = [{
+  status: 401,
+  message: "Server failed to authenticate the request."
+}];

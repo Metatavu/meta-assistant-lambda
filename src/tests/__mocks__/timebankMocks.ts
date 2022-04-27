@@ -104,6 +104,19 @@ export const timeEntryMock2: TimeEntry[] = [
   }
 ];
 
+export const timeEntryErrorDataMock: TimeEntry[] = [
+  {
+    externalId: null,
+    person: null,
+    internalTime: null,
+    projectTime: 100,
+    logged: 123,
+    expected: 123,
+    total: 1,
+    date: new Date
+  }
+];
+
 const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
 
 export const timeTotalsMock1: TimeEntryTotalDto[] = [

@@ -23,8 +23,8 @@ namespace TestHelpers {
   };
 
   /**
-   * 
-   * @param mockData 
+   * Get timebank Users mock data
+   * @param mockData custom data
    */
   export const mockTimebankUsersCustom = (mockData: any) => {
     jest.spyOn(timebankClient, "timebankControllerGetPersons").mockReturnValueOnce(Promise.resolve({ response: message, body: mockData }));

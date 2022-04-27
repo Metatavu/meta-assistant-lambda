@@ -23,7 +23,7 @@ namespace TestHelpers {
   };
 
   /**
-   * Get timebank Users mock data
+   * Get timebank Users mock custom data
    * @param mockData custom data
    */
   export const mockTimebankUsersCustom = (mockData: any) => {
@@ -58,6 +58,16 @@ namespace TestHelpers {
     jest.spyOn(timebankClient, "timebankControllerGetEntries")
       .mockReturnValueOnce(Promise.resolve({ response: message, body: timeEntryMock1 }))
       .mockReturnValueOnce(Promise.resolve({ response: message, body: timeEntryMock2 }));
+  };
+
+  /**
+   * Timebank custom time entries mock
+   * @param mockData custom time entry data
+   */
+  export const mockTimebankTimeEntriesCustom = (mockData: any[] ) => {
+    jest.spyOn(timebankClient, "timebankControllerGetEntries")
+      .mockReturnValueOnce(Promise.resolve({ response: message, body: mockData[0] }))
+      .mockReturnValueOnce(Promise.resolve({ response: message, body: mockData[1] }));
   };
 
   /**

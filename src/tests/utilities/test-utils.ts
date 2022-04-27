@@ -24,7 +24,7 @@ namespace TestHelpers {
 
   /**
    * Get timebank Users mock custom data
-   * @param mockData custom data
+   * @param mockData custom timebank Users data
    */
   export const mockTimebankUsersCustom = (mockData: any) => {
     jest.spyOn(timebankClient, "timebankControllerGetPersons").mockReturnValueOnce(Promise.resolve({ response: message, body: mockData }));
@@ -51,16 +51,16 @@ namespace TestHelpers {
   };
 
   /**
-   * 
+   * Mock Forecast error response
+   * @param mockData custom forecast data
    */
-  export const mockForecastDataCustom = () => {
+  export const mockForecastDataCustom = (mockData: any) => {
     const mockedFetch = {
       fetch: fetch
     };
 
     jest.spyOn(mockedFetch, "fetch")
-      .mockReturnValue(new Response(JSON.stringify(forecastMockTimeRegistrations)))
-      .mockReturnValueOnce(new Response(JSON.stringify(forecastMockNonProjectTime)));
+      .mockReturnValue(new Response(JSON.stringify(mockData)));
   };
 
   /**

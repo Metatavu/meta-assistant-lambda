@@ -106,28 +106,7 @@ export const timeEntryMock2: TimeEntry[] = [
   }
 ];
 
-export const timeEntryErrorDataMock: TimeEntry[] = [
-  {
-    externalId: null,
-    person: null,
-    internalTime: null,
-    projectTime: 100,
-    logged: 123,
-    expected: 123,
-    total: 1,
-    date: new Date
-  },
-  {
-    externalId: undefined,
-    person: undefined,
-    internalTime: undefined,
-    projectTime: 100,
-    logged: 123,
-    expected: 123,
-    total: 1,
-    date: new Date
-  }
-];
+export const timeEntryErrorDataMock: TimeEntry[] = [];
 
 const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
 

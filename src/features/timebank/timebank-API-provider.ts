@@ -36,9 +36,12 @@ namespace TimeBankApiProvider {
   export const getTimeEntries = async (id: number, before: string, after: string): Promise<TimeEntry[]> => {
     try {
       const { body } = await client.timebankControllerGetEntries(id.toString(), before, after);
-      return body;
+      if(body){
+        return body;
+      }
+      throw new Error("Error while loading time entries from Timebank");
     } catch (error) {
-      console.error("Error while loading time entries");
+      console.error(error);
       return Promise.reject(error);
     }
   };

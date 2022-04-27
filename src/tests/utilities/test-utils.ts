@@ -51,6 +51,19 @@ namespace TestHelpers {
   };
 
   /**
+   * 
+   */
+  export const mockForecastDataCustom = () => {
+    const mockedFetch = {
+      fetch: fetch
+    };
+
+    jest.spyOn(mockedFetch, "fetch")
+      .mockReturnValue(new Response(JSON.stringify(forecastMockTimeRegistrations)))
+      .mockReturnValueOnce(new Response(JSON.stringify(forecastMockNonProjectTime)));
+  };
+
+  /**
    * Timebank time entries mock
    */
   export const mockTimebankTimeEntries = () => {

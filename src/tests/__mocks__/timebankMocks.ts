@@ -78,6 +78,8 @@ export const timebankGetUsersErrorDataMock: PersonDto[] = [{
   startDate: "test"
 }];
 
+export const timebankGetUsersEmptyDataMock: PersonDto[] = [];
+
 export const timeEntryMock1: TimeEntry[] = [
   {
     externalId: "tester",

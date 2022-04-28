@@ -49,6 +49,7 @@ describe("mock the weekly handler", () => {
     expect(messageData.data[1].name).toEqual(slackUserData.members[1].real_name);
     expect(messageData.data[2]).toBeUndefined();
     expect(statusCode).toEqual(200);
+    expect(messageData.data.length).toBe(2);
   });
 });
 

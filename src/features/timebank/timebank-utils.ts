@@ -31,6 +31,7 @@ namespace TimeBankUtilities {
       if (length === 1){
         return {
           name: combinedName,
+          firstName: firstName,
           slackId: slackUser?.id,
           personId: person.id,
           expected: personsTimeEntries[0].expected,

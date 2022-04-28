@@ -4,12 +4,14 @@ module.exports = {
   moduleNameMapper: {
     "src/(.*)": "<rootDir>/src/$1",
     "tests/(.*)": "<rootDir>/__tests__/$1",
+    
   },
   "coveragePathIgnorePatterns": [
     "src/generated/*",
     "src/tests/*"
-],
+]
 }
+
 import type {Config} from "@jest/types";
 // Sync object
 const config: Config.InitialOptions = {

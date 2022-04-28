@@ -59,11 +59,11 @@ namespace TimeBankApiProvider {
 
       const { firstName, lastName } = person;
       const combinedName = `${firstName} ${lastName}`;
-
       if (selectedWeek){
         return {
           selectedWeek: selectedWeek,
           name: combinedName,
+          firstName: person.firstName,
           personId: person.id,
           expected: person.monday
         };

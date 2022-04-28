@@ -50,7 +50,7 @@ namespace ForecastApiUtilities {
       }
       throw new Error("Error while loading time registrations", result);
     } catch(error) {
-      console.error( error);
+      console.error(error);
       return Promise.reject(error);
     }
   };

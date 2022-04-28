@@ -18,7 +18,7 @@ describe("mock the daily handler", () => {
 
     const res: any = await sendDailyMessage(event, context, callback);
     messageData = JSON.parse(res.body);
-
+    console.log(messageData);
     expect(messageData.data[0].name).toEqual("tester test");
     expect(messageData.data[1].name).toEqual("Ñöä! Çøæ");
   });

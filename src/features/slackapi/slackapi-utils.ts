@@ -152,11 +152,10 @@ Have a great week!
 
       if (!isAway && !firstDayBack && expected !== 0) {
         try {
-          console.log(message.message, slackId);
-          // client.chat.postMessage({
-          //   channel: slackId,
-          //   text: message.message
-          // });
+          client.chat.postMessage({
+            channel: slackId,
+            text: message.message
+          });
           messagesRecord.push(message);
         } catch (error) {
           console.error(`Error while posting slack messages to user ${user.name}`);
@@ -196,11 +195,10 @@ Have a great week!
 
       if (!isAway && !firstDayBack && expected !== 0) {
         try {
-          console.log(message.message, slackId);
-          // client.chat.postMessage({
-          //   channel: slackId,
-          //   text: constructWeeklySummaryMessage(user, weekStartDate.toISODate(), weekEndDate.toISODate())
-          // });
+          client.chat.postMessage({
+            channel: slackId,
+            text: message.message
+          });
           messagesRecord.push(message);
         } catch (error) {
           console.error(`Error while posting slack messages to user ${user.name}`);

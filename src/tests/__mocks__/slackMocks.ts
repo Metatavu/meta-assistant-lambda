@@ -8,3 +8,12 @@ export const slackUserData: UsersListResponse =
       { id: "4040", real_name: "Meta T" }
     ]
   };
+
+export const slackUserDataError = {
+  ok: false,
+  error: "invalid_cursor"
+};
+
+export const slackPostMessageMock = {
+  ok: true
+};

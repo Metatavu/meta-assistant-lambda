@@ -33,9 +33,12 @@ namespace TimeBankApiProvider {
   export const getTimeEntries = async (id: number, before: string, after: string): Promise<TimeEntry[]> => {
     try {
       const { body } = await client.timebankControllerGetEntries(id.toString(), before, after);
-      return body;
+      if(body){
+        return body;
+      }
+      throw new Error("Error while loading time entries");
     } catch (error) {
-      console.error("Error while loading time entries");
+      console.error(error);
       return Promise.reject(error);
     }
   };
@@ -56,16 +59,18 @@ namespace TimeBankApiProvider {
 
       const { firstName, lastName } = person;
       const combinedName = `${firstName} ${lastName}`;
-
-      return {
-        selectedWeek: selectedWeek,
-        name: combinedName,
-        firstName: person.firstName,
-        personId: person.id,
-        expected: person.monday
-      };
+      if (selectedWeek){
+        return {
+          selectedWeek: selectedWeek,
+          name: combinedName,
+          firstName: person.firstName,
+          personId: person.id,
+          expected: person.monday
+        };
+      }
+      throw new Error("Error while loading total time entries");
     } catch (error) {
-      console.error("Error while loading total time entries");
+      console.error(error);
       return Promise.reject(error);
     }
   };

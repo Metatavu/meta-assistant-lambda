@@ -9,3 +9,12 @@ export const slackUserData: UsersListResponse =
       { id: "124", real_name: "on vacation" }
     ]
   };
+
+export const slackUserDataError = {
+  ok: false,
+  error: "invalid_cursor"
+};
+
+export const slackPostMessageMock = {
+  ok: true
+};

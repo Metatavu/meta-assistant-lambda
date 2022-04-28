@@ -32,7 +32,7 @@ export const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema
 
     const weeklyCombinedData = TimeBankUtilities.combineWeeklyData(timeEntries, slackUsers);
 
-    const messagesSent = SlackApiUtilities.postWeeklyMessage(weeklyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
+    const messagesSent = await SlackApiUtilities.postWeeklyMessage(weeklyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
 
     return formatJSONResponse({
       message: "Everything went well sending the weekly, see data for message breakdown...",

@@ -132,16 +132,17 @@ Have a great week!
    * @param previousWorkDays dates and the number of today
    * @param nonProjectTimes all non project times
    */
-  export const postDailyMessage = (
+  export const postDailyMessage = async (
     dailyCombinedData: DailyCombinedData[],
     timeRegistrations: TimeRegistrations[],
     previousWorkDays: PreviousWorkdayDates,
-    nonProjectTimes: NonProjectTime[]): DailyMessageData[] => {
+    nonProjectTimes: NonProjectTime[]): Promise<DailyMessageData[]> => {
     const { numberOfToday, yesterday, today } = previousWorkDays;
 
     let messagesRecord: DailyMessageData[] = [];
 
-    dailyCombinedData.forEach(user => {
+    // As far as I can tell error handling issues due to forEach and async/await not playing nicely....
+    dailyCombinedData.forEach(async user => {
       const { slackId, personId, expected } = user;
 
       const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
@@ -151,14 +152,15 @@ Have a great week!
 
       if (!isAway && !firstDayBack && expected !== 0) {
         try {
-          client.chat.postMessage({
-            channel: slackId,
-            text: message.message
-          });
+          console.log(message.message, slackId);
+          // Error handling not working correctly here
+          // const res = await client.chat.postMessage({
+          //   channel: slackId,
+          //   text: message.message
+          // });
           messagesRecord.push(message);
         } catch (error) {
           console.error(`Error while posting slack messages to user ${user.name}`);
-          messagesRecord.push(message);
           return error;
         }
       }
@@ -174,17 +176,17 @@ Have a great week!
    * @param timeRegistrations all time registrations after yesterday
    * @param previousWorkDays dates and the number of today
    */
-  export const postWeeklyMessage = (
+  export const postWeeklyMessage = async (
     weeklyCombinedData: WeeklyCombinedData[],
     timeRegistrations:TimeRegistrations[],
     previousWorkDays: PreviousWorkdayDates,
-    nonProjectTimes: NonProjectTime[]): WeeklyMessageData[] => {
+    nonProjectTimes: NonProjectTime[]): Promise<WeeklyMessageData[]> => {
     const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
     const { yesterday, today } = previousWorkDays;
 
     let messagesRecord: WeeklyMessageData[] = [];
 
-    weeklyCombinedData.forEach(user => {
+    weeklyCombinedData.forEach(async user => {
       const { slackId, personId, expected } = user;
 
       const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
@@ -194,10 +196,12 @@ Have a great week!
 
       if (!isAway && !firstDayBack && expected !== 0) {
         try {
-          client.chat.postMessage({
-            channel: slackId,
-            text: message.message
-          });
+          console.log(message.message, slackId);
+          // // Error handling not working correctly here
+          // const res = await client.chat.postMessage({
+          //   channel: slackId,
+          //   text: message.message
+          // });
           messagesRecord.push(message);
         } catch (error) {
           console.error(`Error while posting slack messages to user ${user.name}`);

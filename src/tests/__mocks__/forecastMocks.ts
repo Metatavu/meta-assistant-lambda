@@ -96,7 +96,9 @@ export const forecastErrorMock = [
   {
     status: 401,
     message: "Server failed to authenticate the request."
-    
+  }
+];
+
 //Forecast error mock 2
 export const emptyNonProjecTimeArray: NonProjectTime[] = [
   {

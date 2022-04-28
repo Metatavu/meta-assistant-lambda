@@ -1,7 +1,7 @@
 import { sendWeeklyMessage } from "../functions/sendWeeklyMessage/handler";
 import { sendDailyMessage } from "../functions/sendDailyMessage/handler";
 import TestHelpers from "./utilities/test-utils";
-import { forecastErrorMock, forecastMockNonProjectTime, forecastMockTimeRegistrations } from "./__mocks__/forecastMocks";
+import { forecastErrorMock, forecastMockNonProjectTime, mockForecastTimeRegistrations } from "./__mocks__/forecastMocks";
 import { timebankGetUsersEmptyDataMock, timeEntryEmptyDataMock,timeTotalsEmptyDataMock } from "./__mocks__/timebankMocks";
 
 jest.mock("node-fetch");
@@ -55,7 +55,7 @@ describe("forecast api first endpoint error response", () => {
     TestHelpers.mockTimebankUsers();
     TestHelpers.mockTimebankTimeEntries();
     TestHelpers.mockSlackUsers();
-    TestHelpers.mockForecastDataCustom(forecastErrorMock, forecastMockTimeRegistrations);
+    TestHelpers.mockForecastDataCustom(forecastErrorMock, mockForecastTimeRegistrations);
         
     let messageData;
         

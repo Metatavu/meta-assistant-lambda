@@ -111,14 +111,6 @@ namespace TestHelpers {
   };
 
   /**
-   * Slack users Error mock
-   * @param mockData
-   */
-  export const mockSlackUsersCustom = (mockData: any) => {
-    jest.spyOn(slackUsersClient.users, "list").mockReturnValueOnce(Promise.resolve(mockData));
-  };
-
-  /**
    * Timebank total custom time entries mock
    * @param mockData custom total time entries data
    */

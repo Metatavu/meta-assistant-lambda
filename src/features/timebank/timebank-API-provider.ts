@@ -61,16 +61,17 @@ namespace TimeBankApiProvider {
       if (body.length){
         const selectedWeek = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week)[0];
 
-      const { firstName, lastName } = person;
-      const combinedName = `${firstName} ${lastName}`;
-      if (selectedWeek){
-        return {
-          selectedWeek: selectedWeek,
-          name: combinedName,
-          firstName: person.firstName,
-          personId: person.id,
-          expected: person.monday
-        };
+        const { firstName, lastName } = person;
+        const combinedName = `${firstName} ${lastName}`;
+        if (selectedWeek){
+          return {
+            selectedWeek: selectedWeek,
+            name: combinedName,
+            firstName: person.firstName,
+            personId: person.id,
+            expected: person.monday
+          };
+        }
       }
       throw new Error("Error while loading total time entries");
     } catch (error) {

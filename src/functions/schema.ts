@@ -17,6 +17,7 @@ export default {
  */
 export interface DailyCombinedData {
   name: string;
+  firstName: string;
   personId: number;
   expected: number;
   logged: number;
@@ -33,6 +34,7 @@ export interface DailyCombinedData {
 export interface WeeklyCombinedData {
   selectedWeek: TimeEntryTotalDto;
   name: string;
+  firstName: string;
   slackId?: string;
   personId: number;
   expected: number;
@@ -101,7 +103,7 @@ export interface NonProjectTime {
 export interface DailyMessageData {
   message: string;
   name: string;
-  displayDate: string;
+  displayDate?: string;
   displayLogged: string;
   displayExpected: string;
   displayProject: string;

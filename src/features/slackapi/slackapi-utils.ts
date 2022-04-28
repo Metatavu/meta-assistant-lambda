@@ -24,7 +24,6 @@ namespace SlackApiUtilities {
       if (result.members){
         return result.members;
       }
-      // If the API returns an error/ invalid data need this to move into the catch
       throw new Error(`Error while loading slack users list, ${result.error}`);
     } catch (error) {
       console.error(error);
@@ -40,9 +39,9 @@ namespace SlackApiUtilities {
    * @returns string message if id match
    */
   const constructDailyMessage = (user: DailyCombinedData, numberOfToday: number) => {
-    const { name, date } = user;
+    const { name, date, firstName } = user;
 
-    const displayDate = DateTime.fromISO(date).toFormat("dd-MM-yyyy");
+    const displayDate = DateTime.fromISO(date).toFormat("dd.MM.yyyy");
 
     const {
       displayLogged,
@@ -57,7 +56,7 @@ namespace SlackApiUtilities {
     } = TimeUtilities.calculateWorkedTimeAndBillableHours(user);
 
     const customMessage = `
-Hi ${name},
+Hi ${firstName},
 ${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
 ${message}
 Project time: ${displayProject}, Internal time: ${displayInternal}.
@@ -85,10 +84,10 @@ Have a great rest of the day!
    * @returns message
    */
   const constructWeeklySummaryMessage = (user: WeeklyCombinedData, weekStart: string, weekEnd: string) => {
-    const { name, selectedWeek: { id: { week } } } = user;
+    const { name, selectedWeek: { id: { week } }, firstName } = user;
 
-    const startDate = DateTime.fromISO(weekStart).toFormat("dd-MM-yyyy");
-    const endDate = DateTime.fromISO(weekEnd).toFormat("dd-MM-yyyy");
+    const startDate = DateTime.fromISO(weekStart).toFormat("dd.MM.yyyy");
+    const endDate = DateTime.fromISO(weekEnd).toFormat("dd.MM.yyyy");
 
     const {
       displayLogged,
@@ -103,7 +102,7 @@ Have a great rest of the day!
     } = TimeUtilities.calculateWorkedTimeAndBillableHours(user.selectedWeek);
 
     const customMessage = `
-Hi ${name},
+Hi ${firstName},
 Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
 ${message}
 Project time: ${displayProject}, Internal time: ${displayInternal}.
@@ -133,38 +132,37 @@ Have a great week!
    * @param previousWorkDays dates and the number of today
    * @param nonProjectTimes all non project times
    */
-  export const postDailyMessage = (
+  export const postDailyMessage = async (
     dailyCombinedData: DailyCombinedData[],
     timeRegistrations: TimeRegistrations[],
     previousWorkDays: PreviousWorkdayDates,
-    nonProjectTimes: NonProjectTime[]): DailyMessageData[] => {
+    nonProjectTimes: NonProjectTime[]): Promise<DailyMessageData[]> => {
     const { numberOfToday, yesterday, today } = previousWorkDays;
 
     let messagesRecord: DailyMessageData[] = [];
 
-    dailyCombinedData.forEach(user => {
+    // As far as I can tell error handling issues due to forEach and async/await not playing nicely....
+    dailyCombinedData.forEach(async user => {
       const { slackId, personId, expected } = user;
 
       const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
       const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
-      let message = constructDailyMessage(user, numberOfToday);
+      const message = constructDailyMessage(user, numberOfToday);
 
       if (!isAway && !firstDayBack && expected !== 0) {
         try {
           console.log(message.message, slackId);
-          // client.chat.postMessage({
+          // Error handling not working correctly here
+          // const res = await client.chat.postMessage({
           //   channel: slackId,
-          //   text: message
+          //   text: message.message
           // });
           messagesRecord.push(message);
         } catch (error) {
           console.error(`Error while posting slack messages to user ${user.name}`);
-          messagesRecord.push(message);
           return error;
         }
-      } else {
-        messagesRecord.push(message);
       }
     });
     return messagesRecord;
@@ -178,17 +176,17 @@ Have a great week!
    * @param timeRegistrations all time registrations after yesterday
    * @param previousWorkDays dates and the number of today
    */
-  export const postWeeklyMessage = (
+  export const postWeeklyMessage = async (
     weeklyCombinedData: WeeklyCombinedData[],
     timeRegistrations:TimeRegistrations[],
     previousWorkDays: PreviousWorkdayDates,
-    nonProjectTimes: NonProjectTime[]): WeeklyMessageData[] => {
+    nonProjectTimes: NonProjectTime[]): Promise<WeeklyMessageData[]> => {
     const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
     const { yesterday, today } = previousWorkDays;
 
     let messagesRecord: WeeklyMessageData[] = [];
 
-    weeklyCombinedData.forEach(user => {
+    weeklyCombinedData.forEach(async user => {
       const { slackId, personId, expected } = user;
 
       const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
@@ -196,12 +194,13 @@ Have a great week!
 
       const message = constructWeeklySummaryMessage(user, weekStartDate.toISODate(), weekEndDate.toISODate());
 
-      if (!isAway && !firstDayBack) {
+      if (!isAway && !firstDayBack && expected !== 0) {
         try {
           console.log(message.message, slackId);
-          // client.chat.postMessage({
+          // // Error handling not working correctly here
+          // const res = await client.chat.postMessage({
           //   channel: slackId,
-          //   text: constructWeeklySummaryMessage(user, weekStartDate.toISODate(), weekEndDate.toISODate())
+          //   text: message.message
           // });
           messagesRecord.push(message);
         } catch (error) {
@@ -209,8 +208,6 @@ Have a great week!
           messagesRecord.push(message);
           return error;
         }
-      } else {
-        messagesRecord.push(message);
       }
     });
     return messagesRecord;

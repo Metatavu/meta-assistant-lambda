@@ -24,7 +24,6 @@ namespace SlackApiUtilities {
       if (result.members){
         return result.members;
       }
-      // If the API returns an error/ invalid data need this to move into the catch
       throw new Error(`Error while loading slack users list, ${result.error}`);
     } catch (error) {
       console.error(error);

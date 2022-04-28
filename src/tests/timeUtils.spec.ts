@@ -5,7 +5,7 @@ import { DateTime } from "luxon";
 
 describe("time-utils functions testing", () => {
   const user1: DailyCombinedData = {
-    name: "Kkona",
+    name: "name",
     firstName: "k",
     personId: 300,
     expected: 100,
@@ -17,7 +17,7 @@ describe("time-utils functions testing", () => {
   };
   
   const user2: DailyCombinedData = {
-    name: "Kkona",
+    name: "name",
     firstName: "k",
     personId: 300,
     expected: 100,
@@ -29,7 +29,7 @@ describe("time-utils functions testing", () => {
   };
   
   const user3: DailyCombinedData = {
-    name: "Kkona",
+    name: "name",
     firstName: "k",
     personId: 300,
     expected: 100,
@@ -55,7 +55,7 @@ describe("time-utils functions testing", () => {
   const user5 = null;
 
   const user6: DailyCombinedData = {
-    name: "Kkona",
+    name: "name",
     firstName: "k",
     personId: 300,
     expected: 100,

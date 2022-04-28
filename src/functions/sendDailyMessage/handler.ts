@@ -36,7 +36,7 @@ export const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema>
 
     return formatJSONResponse({
       message: "Everything went well sending the daily, see data for message breakdown...",
-      data: messagesSent,
+      data: messagesSent.map(messagesSent => messagesSent.name),
       event: event
     });
   } catch (error) {

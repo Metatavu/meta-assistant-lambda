@@ -89,14 +89,14 @@ namespace TimeUtilities {
   };
 
   /**
-   * Checks if user is away or it is first day back
+   * Checks if user is away or is it first day back
    * 
    * @param timeRegistrations All timeregistrations after the day before yesterday
    * @param personId Users id
    * @param expected Users expected amount of work
    * @param date Today either yesterday depending on if function is checking is user on vacation or is it first day back at work
    * @param nonProjectTimes List of non project times
-   * @returns Undefined if can't find a time registration
+   * @returns false if can't find a time registration
    */
   export const checkIfUserIsAwayOrIsItFirstDayBack = (
     timeRegistrations: TimeRegistrations[],

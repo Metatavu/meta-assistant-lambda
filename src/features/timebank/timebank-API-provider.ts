@@ -60,6 +60,7 @@ namespace TimeBankApiProvider {
       return {
         selectedWeek: selectedWeek,
         name: combinedName,
+        firstName: person.firstName,
         personId: person.id,
         expected: person.monday
       };

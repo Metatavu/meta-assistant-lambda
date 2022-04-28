@@ -18,6 +18,4 @@ generated/
 
 .dccache
 
-demo.test.ts
-
 /coverage

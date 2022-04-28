@@ -1,4 +1,5 @@
 import { NonProjectTime, TimeRegistrations } from "@functions/schema";
+import { time } from "console";
 import fetch, { Headers } from "node-fetch";
 
 /**
@@ -20,7 +21,7 @@ namespace ForecastApiUtilities {
     try {
       const result = await fetch(`${process.env.forecast_base_url}non_project_time`, { headers: headers });
       const NonProjectTimes = await result.json();
-      if (NonProjectTimes.length){
+      if (NonProjectTimes[0].id){
         const filterRes: NonProjectTime[] = NonProjectTimes.filter(NonProjectTime => NonProjectTime.is_internal_time !== true);
         if (filterRes.length) {
           return filterRes;
@@ -43,10 +44,12 @@ namespace ForecastApiUtilities {
     try {
       const dayBeforeYesterdayUrl = dayBeforeYesterday.replace(/[-]/g, "");
       const result = await fetch(`${process.env.forecast_v3_url}time_registrations?date_after=${dayBeforeYesterdayUrl}`, { headers: headers });
-      const timeRegistrations: TimeRegistrations[] = await result.json();
-      const filteredTime = timeRegistrations.filter(timeRegistrations => timeRegistrations.non_project_time !== null);
-      if(filteredTime.length){
-        return filteredTime;
+      const timeRegistrations: any = await result.json();
+      if(timeRegistrations[0].id){
+        const filteredTime: TimeRegistrations[] = timeRegistrations.filter(timeRegistrations => timeRegistrations.non_project_time !== null);
+        if(filteredTime.length){
+          return filteredTime;
+        }
       }
       throw new Error("Error while loading time registrations", result);
     } catch(error) {

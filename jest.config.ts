@@ -6,10 +6,10 @@ module.exports = {
     "tests/(.*)": "<rootDir>/__tests__/$1",
     
   },
-  "coveragePathIgnorePatterns": [
+  coveragePathIgnorePatterns: [
     "src/generated/*",
     "src/tests/*"
-]
+  ],
 }
 
 import type {Config} from "@jest/types";

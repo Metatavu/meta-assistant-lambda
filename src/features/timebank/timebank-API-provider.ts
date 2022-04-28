@@ -15,9 +15,12 @@ namespace TimeBankApiProvider {
   export const getTimebankUsers = async (): Promise<PersonDto[]> => {
     try {
       const { body } = await client.timebankControllerGetPersons();
+      if(body.length === 0){
+        throw new Error("Error while loading persons from Timebank");
+      }
       return body.filter(person => person.defaultRole !== null);
     } catch (error) {
-      console.error("Error while loading persons from Timebank");
+      console.error(error);
       return Promise.reject(error);
     }
   };
@@ -36,7 +39,7 @@ namespace TimeBankApiProvider {
       if(body){
         return body;
       }
-      throw new Error("Error while loading time entries");
+      throw new Error("Error while loading time entries from Timebank");
     } catch (error) {
       console.error(error);
       return Promise.reject(error);
@@ -55,7 +58,8 @@ namespace TimeBankApiProvider {
   export const getTotalTimeEntries = async (timePeriod: TimePeriod, person: PersonDto, year: number, week: number): Promise<WeeklyCombinedData> => {
     try {
       const { body } = await client.timebankControllerGetTotal(person.id.toString(), timePeriod);
-      const selectedWeek = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week)[0];
+      if (body.length){
+        const selectedWeek = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week)[0];
 
       const { firstName, lastName } = person;
       const combinedName = `${firstName} ${lastName}`;

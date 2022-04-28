@@ -28,8 +28,8 @@ export const timebankGetUsersMock: PersonDto[] = [{
 },
 {
   id: 4040,
-  firstName:"Meta",
-  lastName: "T",
+  firstName:"Ñöä!",
+  lastName: "Çøæ",
   email: "me@here",
   userType: "test",
   clientId: 123,
@@ -156,6 +156,8 @@ export const timebankGetUsersMock2: PersonDto[] = [
   }
 ];
 
+export const timebankGetUsersEmptyDataMock: PersonDto[] = [];
+
 export const timeEntryMock1: TimeEntry[] = [
   {
     externalId: "tester",
@@ -171,7 +173,7 @@ export const timeEntryMock1: TimeEntry[] = [
 
 export const timeEntryMock2: TimeEntry[] = [
   {
-    externalId: "MetaT",
+    externalId: "Ñöä!",
     person: 4040,
     internalTime: 600,
     projectTime: 500,
@@ -181,6 +183,8 @@ export const timeEntryMock2: TimeEntry[] = [
     date: new Date
   }
 ];
+
+export const timeEntryEmptyDataMock: TimeEntry[] = [];
 
 export const timeEntryMock3: TimeEntry[] = [
   {
@@ -304,3 +308,5 @@ export const timeTotalsMock3: TimeEntryTotalDto[] = [
     projectTime: 0
   }
 ];
+
+export const timeTotalsEmptyDataMock: TimeEntryTotalDto[] = [];

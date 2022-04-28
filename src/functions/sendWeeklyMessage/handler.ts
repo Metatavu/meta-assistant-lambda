@@ -36,7 +36,7 @@ export const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema
 
     return formatJSONResponse({
       message: "Everything went well sending the weekly, see data for message breakdown...",
-      data: messagesSent.map(messagesSent => messagesSent.name),
+      data: messagesSent,
       event: event
     });
   } catch (error) {

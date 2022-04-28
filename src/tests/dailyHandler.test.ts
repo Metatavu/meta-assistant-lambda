@@ -45,6 +45,24 @@ describe("mock the daily handler", () => {
       expect(messageData.data[1].name).toEqual(slackUserData.members[1].real_name);
       expect(messageData.data[2]).toBeUndefined();
       expect(statusCode).toEqual(200);
+    });
+  });
+
+  describe("Daily vacation time test", () => {
+    it("Should not return user who is on vacation", async () => {
+      let event;
+      let context;
+      let callback;
+
+      TestHelpers.mockTimebankUsers();
+      TestHelpers.mockSlackUsers();
+      TestHelpers.mockForecastData();
+      TestHelpers.mockTimebankTimeEntries();
+      TestHelpers.mockSlackPostMessage();
+
+      const res: any = await sendDailyMessage(event, context, callback);
+      const messageData = JSON.parse(res.body);
+
       expect(messageData.data.length).toBe(2);
     });
   });

@@ -28,8 +28,8 @@ export const timebankGetUsersMock: PersonDto[] = [{
 },
 {
   id: 4040,
-  firstName:"Meta",
-  lastName: "T",
+  firstName:"Ñöä!",
+  lastName: "Çøæ",
   email: "me@here",
   userType: "test",
   clientId: 123,
@@ -69,7 +69,7 @@ export const timeEntryMock1: TimeEntry[] = [
 
 export const timeEntryMock2: TimeEntry[] = [
   {
-    externalId: "MetaT",
+    externalId: "Ñöä!",
     person: 4040,
     internalTime: 600,
     projectTime: 500,

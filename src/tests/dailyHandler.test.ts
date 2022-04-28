@@ -20,6 +20,6 @@ describe("mock the daily handler", () => {
     messageData = JSON.parse(res.body);
 
     expect(messageData.data[0].name).toEqual("tester test");
-    expect(messageData.data[1].name).toEqual("Meta T");
+    expect(messageData.data[1].name).toEqual("Ñöä! Çøæ");
   });
 });

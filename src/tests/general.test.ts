@@ -1,3 +1,6 @@
+import { IncomingMessage } from "http";
+import { Socket } from "net";
+import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
 import { sendDailyMessage } from "../functions/sendDailyMessage/handler";
 import TestHelpers from "./utilities/test-utils";
 import { forecastMockErrorResponse } from "./__mocks__/forecastMocks";
@@ -59,9 +62,9 @@ describe("timebank api get time entries error response", () => {
     let event;
     let context;
     let callback;
-
+    
     //Not working as expected: it doesn't go in to the total time entries catch
-    //Sending empty users is not working. Sending empty time entries also not working.
+    //Sending empty users is not working. Sending empty time entries also not working as expected.
     TestHelpers.mockTimebankUsers();
     TestHelpers.mockSlackUsers();
     TestHelpers.mockForecastData();
@@ -100,4 +103,8 @@ describe("forecast api error response", () => {
     expect(res).toBeDefined();
     console.log(messageData.message);
   });
+});
+
+describe("API timeout test", () => {
+  
 });

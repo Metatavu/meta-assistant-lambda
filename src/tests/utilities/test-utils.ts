@@ -62,14 +62,14 @@ namespace TestHelpers {
    * Mock Forecast error response
    * @param mockData custom forecast data
    */
-  export const mockForecastDataCustom = (mockData: any) => {
+  export const mockForecastDataCustom = (mockData: any[]) => {
     const mockedFetch = {
       fetch: fetch
     };
 
     jest.spyOn(mockedFetch, "fetch")
-      .mockReturnValue(new Response(JSON.stringify(mockData)))
-      .mockReturnValue(new Response(JSON.stringify(mockData)));
+      .mockReturnValue(new Response(JSON.stringify(mockData[0])))
+      .mockReturnValue(new Response(JSON.stringify(mockData[1])));
   };
 
   /**

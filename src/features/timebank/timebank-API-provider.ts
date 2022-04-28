@@ -57,14 +57,13 @@ namespace TimeBankApiProvider {
    */
   export const getTotalTimeEntries = async (timePeriod: TimePeriod, person: PersonDto, year: number, week: number): Promise<WeeklyCombinedData> => {
     try {
-      if(person.id){
-        const { body } = await client.timebankControllerGetTotal(person.id.toString(), timePeriod);
-      
+      const { body } = await client.timebankControllerGetTotal(person.id.toString(), timePeriod);
+      if (body.length){
         const selectedWeek = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week)[0];
 
         const { firstName, lastName } = person;
         const combinedName = `${firstName} ${lastName}`;
-
+  
         return {
           selectedWeek: selectedWeek,
           name: combinedName,

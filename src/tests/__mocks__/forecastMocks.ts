@@ -30,7 +30,32 @@ export const forecastMockTimeRegistrations = [
   }
 ];
 
-export const forecastMockErrorResponse = {
-  status: 401,
-  message: "Server failed to authenticate the request."
-};
+export const forecastMockTimeRegistrationsFirstEndpointError = [
+  {
+    status: 401,
+    message: "Server failed to authenticate the request."
+  },
+  {
+    id: 4040,
+    person: 1244,
+    non_project_time: 600,
+    time_registered:600,
+    date: "22,22,22",
+    approval_status: "sure"
+  }
+];
+
+export const forecastMockTimeRegistrationsSecondEndpointError = [
+  {
+    id: 123,
+    person: 123,
+    non_project_time: 345,
+    time_registered:456,
+    date: "22,22,22",
+    approval_status: "sure"
+  },
+  {
+    status: 401,
+    message: "Server failed to authenticate the request."
+  }
+];

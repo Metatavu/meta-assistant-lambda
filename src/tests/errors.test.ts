@@ -3,8 +3,13 @@ import { sendDailyMessage } from "../functions/sendDailyMessage/handler";
 import TestHelpers from "./utilities/test-utils";
 import { forecastErrorMock, forecastMockNonProjectTime, mockForecastTimeRegistrations } from "./__mocks__/forecastMocks";
 import { timebankGetUsersEmptyDataMock, timeEntryEmptyDataMock,timeTotalsEmptyDataMock } from "./__mocks__/timebankMocks";
+import { slackUserDataError } from "./__mocks__/slackMocks";
 
 jest.mock("node-fetch");
+
+beforeAll(() => {
+  jest.clearAllMocks();
+});
 
 describe("timebank api get time entries error response", () => {
   it("should respond with corresponding error response", async () => {
@@ -26,7 +31,7 @@ describe("timebank api get time entries error response", () => {
   });
 });
 
-describe("forecast api second endpoint error response", () => {
+describe("forecast api time registrations error response", () => {
   it("should respond with corresponding error response", async () => {
     let event;
     let context;
@@ -46,7 +51,7 @@ describe("forecast api second endpoint error response", () => {
   });
 });
 
-describe("forecast api first endpoint error response", () => {
+describe("forecast api non project time error response", () => {
   it("should respond with corresponding error response", async () => {
     let event;
     let context;

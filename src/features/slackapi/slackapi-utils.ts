@@ -152,7 +152,6 @@ Have a great week!
 
       if (!isAway && !firstDayBack && expected !== 0) {
         try {
-          // Error handling not working correctly here
           console.log(message.message, slackId);
           client.chat.postMessage({
             channel: slackId,
@@ -196,6 +195,7 @@ Have a great week!
 
       if (!isAway && !firstDayBack && expected !== 0) {
         try {
+          console.log(message.message, slackId);
           client.chat.postMessage({
             channel: slackId,
             text: message.message

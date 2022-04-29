@@ -1,4 +1,5 @@
 import TimeUtilities from "src/features/generic/time-utils";
+import { DailyCombinedData } from "src/functions/schema";
 import { PersonDto, TimeEntry, TimeEntryTotalDto } from "src/generated/client/api";
 
 export const timebankGetUsersMock: PersonDto[] = [{
@@ -156,6 +157,58 @@ export const timebankGetUsersMock2: PersonDto[] = [
   }
 ];
 
+export const timebankUser1: PersonDto = {
+  id: 1,
+  firstName:"tester",
+  lastName: "test",
+  email: "test",
+  userType: "test",
+  clientId: 123,
+  holidayCalendarId: 123,
+  monday: 123,
+  tuesday: 123,
+  wednesday: 123,
+  thursday: 123,
+  friday: 123,
+  saturday: 123,
+  sunday: 123,
+  active: true,
+  defaultRole: 123,
+  cost: 123,
+  language: "test",
+  createdBy: 123,
+  updatedBy: 123,
+  createdAt: new Date,
+  updatedAt: new Date,
+  startDate: "test"
+};
+
+export const timebankUser2: PersonDto = {
+  id: 3,
+  firstName:"tester3",
+  lastName: "test",
+  email: "test3",
+  userType: "test",
+  clientId: 123,
+  holidayCalendarId: 123,
+  monday: 123,
+  tuesday: 123,
+  wednesday: 123,
+  thursday: 123,
+  friday: 123,
+  saturday: 123,
+  sunday: 123,
+  active: true,
+  defaultRole: 124,
+  cost: 123,
+  language: "test",
+  createdBy: 123,
+  updatedBy: 123,
+  createdAt: new Date,
+  updatedAt: new Date,
+  startDate: "test"
+};
+
 export const timebankGetUsersEmptyDataMock: PersonDto[] = [];
 
 export const timeEntryMock1: TimeEntry[] = [
@@ -267,6 +320,14 @@ export const timeEntryArrayMock: TimeEntry[] = [
 
 const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
 
+export const timeTotalsMock: TimeEntryTotalDto = {
+  total: 0,
+  logged: 60,
+  expected: 120,
+  internalTime: 60,
+  projectTime: 60
+};
+
 export const timeTotalsMock1: TimeEntryTotalDto[] = [
   {
     id: {
@@ -310,3 +371,53 @@ export const timeTotalsMock3: TimeEntryTotalDto[] = [
 ];
 
 export const timeTotalsEmptyDataMock: TimeEntryTotalDto[] = [];
+
+export const dailyCombinedDataMock1: DailyCombinedData = {
+  name: "user a",
+  firstName: "user",
+  personId: 1,
+  expected: 100,
+  logged: 100,
+  projectTime: 100,
+  internalTime: 0,
+  total: 0,
+  date: "2022-04-29"
+};
+
+export const dailyCombinedDataMock2: DailyCombinedData = {
+  name: "user b",
+  firstName: "user",
+  personId: 2,
+  expected: 150,
+  logged: 100,
+  projectTime: 0,
+  internalTime: 100,
+  total: -50,
+  date: "2022-04-29"
+};
+
+export const dailyCombinedDataMock3: DailyCombinedData = {
+  name: "user c",
+  firstName: "user",
+  personId: 3,
+  expected: 100,
+  logged: 100,
+  projectTime: 50,
+  internalTime: 50,
+  total: 0,
+  date: "2022-04-29"
+};
+
+export const dailyCombinedDataMock4: DailyCombinedData = {
+  name: "user d",
+  firstName: "user",
+  personId: 4,
+  expected: 100,
+  logged: 150,
+  projectTime: 100,
+  internalTime: 50,
+  total: 50,
+  date: "2022-04-29"
+};
+
+export const dailyCombinedDataMock5: DailyCombinedData = undefined;

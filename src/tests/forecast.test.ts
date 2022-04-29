@@ -46,8 +46,7 @@ describe("forecast api tests", () => {
     it("should return mock data", async () => {
       const dayBeforeYesterday = "2020-04-19";
 
-      const mockTimeRegistrations = mockForecastTimeRegistrations;
-      jest.spyOn(mockedFetch, "fetch").mockReturnValueOnce(new Response(JSON.stringify(mockTimeRegistrations)));
+      jest.spyOn(mockedFetch, "fetch").mockReturnValueOnce(new Response(JSON.stringify(mockForecastTimeRegistrations)));
 
       const results = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
       expect(results[0].person).toBe(1);
@@ -67,8 +66,7 @@ describe("forecast api tests", () => {
     it("should throw error if no time registrations", async () => {
       const dayBeforeYesterday = "2020-04-30";
 
-      const mockEmptyTimeRegistrationsArray = emptyTimeRegistrationsArray;
-      jest.spyOn(mockedFetch, "fetch").mockReturnValueOnce(new Response(JSON.stringify(mockEmptyTimeRegistrationsArray)));
+      jest.spyOn(mockedFetch, "fetch").mockReturnValueOnce(new Response(JSON.stringify(emptyTimeRegistrationsArray)));
       const e = new Error("Error while loading time registrations");
 
       try{
@@ -82,8 +80,7 @@ describe("forecast api tests", () => {
     it("should throw error if missing date", async () => {
       const dayBeforeYesterday = null;
 
-      const mockTimeRegistrations = mockForecastTimeRegistrations;
-      jest.spyOn(mockedFetch, "fetch").mockReturnValueOnce(new Response(JSON.stringify(mockTimeRegistrations)));
+      jest.spyOn(mockedFetch, "fetch").mockReturnValueOnce(new Response(JSON.stringify(mockForecastTimeRegistrations)));
 
       expect( async () => {
         await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);

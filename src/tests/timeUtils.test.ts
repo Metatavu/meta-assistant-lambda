@@ -1,109 +1,31 @@
 import TimeUtilities from "../features/generic/time-utils";
-import { DailyCombinedData, NonProjectTime, TimeRegistrations } from "@functions/schema";
 import { TimeEntryTotalDto } from "src/generated/client/api";
 import { DateTime } from "luxon";
+import { dailyCombinedDataMock1, dailyCombinedDataMock2, dailyCombinedDataMock3, dailyCombinedDataMock4, dailyCombinedDataMock5, timeTotalsMock } from "./__mocks__/timebankMocks";
 
 describe("time-utils functions testing", () => {
-  const user1: DailyCombinedData = {
-    name: "name",
-    firstName: "k",
-    personId: 300,
-    expected: 100,
-    logged: 120,
-    projectTime: 100,
-    internalTime: 20,
-    total: 20,
-    date: "2022-19-04"
-  };
-  
-  const user2: DailyCombinedData = {
-    name: "name",
-    firstName: "k",
-    personId: 300,
-    expected: 100,
-    logged: 80,
-    projectTime: 80,
-    internalTime: 0,
-    total: -20,
-    date: "2022-19-04"
-  };
-  
-  const user3: DailyCombinedData = {
-    name: "name",
-    firstName: "k",
-    personId: 300,
-    expected: 100,
-    logged: 100,
-    projectTime: 75,
-    internalTime: 25,
-    total: 0,
-    date: "2022-19-04"
-  };
-
-  const user4: DailyCombinedData = {
-    name: null,
-    firstName: "k",
-    personId: null,
-    expected: null,
-    logged: null,
-    projectTime: null,
-    internalTime: null,
-    total: null,
-    date: null
-  };
-
-  const user5 = null;
-
-  const user6: DailyCombinedData = {
-    name: "name",
-    firstName: "k",
-    personId: 300,
-    expected: 100,
-    logged: 0,
-    projectTime: 0,
-    internalTime: 0,
-    total: -100,
-    date: "2022-19-04"
-  };
-
   describe("calculateWorkedTimeAndBillableHours test", () => {
-    it("Should return percentage of billable hours and overtime message", () =>{
-      const result = TimeUtilities.calculateWorkedTimeAndBillableHours(user1);
+    const results1 = TimeUtilities.calculateWorkedTimeAndBillableHours(dailyCombinedDataMock1);
+    const results2 = TimeUtilities.calculateWorkedTimeAndBillableHours(dailyCombinedDataMock2);
+    const results3 = TimeUtilities.calculateWorkedTimeAndBillableHours(dailyCombinedDataMock3);
+    const results4 = TimeUtilities.calculateWorkedTimeAndBillableHours(dailyCombinedDataMock4);
 
-      expect(result.message).toBe("Overtime: 0h 20 minutes");
-      expect(result.billableHoursPercentage).toBe("83");
-    });
+    it("Should return correct worked time and percentage of billable hours", () => {
+      expect(results1.billableHoursPercentage).toBe("100");
+      expect(results1.message).toBe("You worked the expected amount of time");
 
-    it("Should return percentage of billable hours and undertime message", () =>{
-      const result = TimeUtilities.calculateWorkedTimeAndBillableHours(user2);
+      expect(results2.billableHoursPercentage).toBe("0");
+      expect(results2.message).toBe("Undertime: 0h 50 minutes");
 
-      expect(result.message).toBe("Undertime: 0h 20 minutes");
-      expect(result.billableHoursPercentage).toBe("100");
-    });
+      expect(results3.billableHoursPercentage).toBe("50");
+      expect(results3.message).toBe("You worked the expected amount of time");
 
-    it("Should return percentage of billable hours and message", () =>{
-      const result = TimeUtilities.calculateWorkedTimeAndBillableHours(user3);
-
-      expect(result.message).toBe("You worked the expected amount of time");
-      expect(result.billableHoursPercentage).toBe("75");
-    });
-
-    it("should return NaN and You worked the expected amount of time message", () => {
-      const result = TimeUtilities.calculateWorkedTimeAndBillableHours(user4);
-
-      expect(result.billableHoursPercentage).toBe("NaN");
-      expect(result.message).toBe("You worked the expected amount of time");
-    });
-
-    it("should return 0% billable hours and undertime message", () => {
-      const result = TimeUtilities.calculateWorkedTimeAndBillableHours(user6);
-
-      expect(result.billableHoursPercentage).toBe("0");
-      expect(result.message).toBe("Undertime: 1h 40 minutes");
+      expect(results4.billableHoursPercentage).toBe("67");
+      expect(results4.message).toBe("Overtime: 0h 50 minutes");
     });
 
     it("should throw an error if no user data", () => {
-      expect(() => TimeUtilities.calculateWorkedTimeAndBillableHours(user5)).toThrow();
+      expect(() => TimeUtilities.calculateWorkedTimeAndBillableHours(dailyCombinedDataMock5)).toThrow();
     });
   });
 
@@ -137,17 +59,13 @@ describe("time-utils functions testing", () => {
 
   describe("handleTimeConversion test", () => {
     it("should return converted times", () => {
-      const fakeUserData: TimeEntryTotalDto = {
-        total: 0,
-        logged: 435,
-        expected: 435,
-        internalTime: 100,
-        projectTime: 335
-      };
-  
+      const fakeUserData = timeTotalsMock;
+
       const result = TimeUtilities.handleTimeConversion(fakeUserData);
-      expect(result.displayExpected).toBe("7h 15 minutes");
-      expect(result.displayInternal).toBe("1h 40 minutes");
+      expect(result.displayExpected).toBe("2h 0 minutes");
+      expect(result.displayInternal).toBe("1h 0 minutes");
+      expect(result.displayLogged).toBe("1h 0 minutes");
+      expect(result.displayProject).toBe("1h 0 minutes");
       expect(result.displayDifference).toBe("0h 0 minutes");
     });
 

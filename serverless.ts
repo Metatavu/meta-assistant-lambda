@@ -6,12 +6,14 @@ import sendDailyMessage from "@functions/sendDailyMessage";
 import sendWeeklyMessage from "@functions/sendWeeklyMessage";
 
 const serverlessConfiguration: AWS = {
-  service: "slacktester",
+  service: "meta-assistant-lambda",
   frameworkVersion: "3",
   plugins: ["serverless-esbuild"],
   provider: {
     name: "aws",
     runtime: "nodejs14.x",
+    memorySize: 128,
+    timeout: 12,
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true

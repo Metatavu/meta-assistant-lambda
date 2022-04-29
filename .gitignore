@@ -17,5 +17,5 @@ jspm_packages
 generated/
 
 .dccache
-
+workflow.yml
 /coverage

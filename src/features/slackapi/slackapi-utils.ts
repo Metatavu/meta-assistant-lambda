@@ -132,17 +132,17 @@ Have a great week!
    * @param previousWorkDays dates and the number of today
    * @param nonProjectTimes all non project times
    */
-  export const postDailyMessage = async (
+  export const postDailyMessage = (
     dailyCombinedData: DailyCombinedData[],
     timeRegistrations: TimeRegistrations[],
     previousWorkDays: PreviousWorkdayDates,
-    nonProjectTimes: NonProjectTime[]): Promise<DailyMessageData[]> => {
+    nonProjectTimes: NonProjectTime[]): DailyMessageData[] => {
     const { numberOfToday, yesterday, today } = previousWorkDays;
 
     let messagesRecord: DailyMessageData[] = [];
 
     // As far as I can tell error handling issues due to forEach and async/await not playing nicely....
-    dailyCombinedData.forEach(async user => {
+    dailyCombinedData.forEach(user => {
       const { slackId, personId, expected } = user;
 
       const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
@@ -152,12 +152,12 @@ Have a great week!
 
       if (!isAway && !firstDayBack && expected !== 0) {
         try {
-          console.log(message.message, slackId);
           // Error handling not working correctly here
-          // const res = await client.chat.postMessage({
-          //   channel: slackId,
-          //   text: message.message
-          // });
+          console.log(message.message, slackId);
+          client.chat.postMessage({
+            channel: slackId,
+            text: message.message
+          });
           messagesRecord.push(message);
         } catch (error) {
           console.error(`Error while posting slack messages to user ${user.name}`);
@@ -198,10 +198,10 @@ Have a great week!
         try {
           console.log(message.message, slackId);
           // // Error handling not working correctly here
-          // const res = await client.chat.postMessage({
-          //   channel: slackId,
-          //   text: message.message
-          // });
+          client.chat.postMessage({
+            channel: slackId,
+            text: message.message
+          });
           messagesRecord.push(message);
         } catch (error) {
           console.error(`Error while posting slack messages to user ${user.name}`);

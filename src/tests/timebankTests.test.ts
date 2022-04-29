@@ -2,9 +2,8 @@ import { IncomingMessage } from "http";
 import { Socket } from "net";
 import TimeUtilities from "../features/generic/time-utils";
 import TimeBankApiProvider from "../features/timebank/timebank-API-provider";
-import { PersonDto, TimeEntryTotalDto, TimeEntryTotalId } from "../generated/client/api";
 import { TimePeriod } from "../functions/schema";
-import { timebankGetUsersMock2, timeEntryMock3, timeEntryMock4, timeEntryArrayMock } from "./__mocks__/timebankMocks";
+import { timebankGetUsersMock2, timeEntryMock3, timeEntryMock4, timeEntryArrayMock, timebankUser1, timebankUser2, timeTotalsMock1, timeTotalsMock2 } from "./__mocks__/timebankMocks";
 
 const message: IncomingMessage = new IncomingMessage(new Socket);
 let timebankClient = TimeBankApiProvider.client;
@@ -81,91 +80,15 @@ describe("timebank-api-provider tests", () => {
   });
 
   describe("getTotalTimeEntries test", () => {
-    let person1: PersonDto = {
-      id: 13,
-      firstName:"tester",
-      lastName: "test",
-      email: "test",
-      userType: "test",
-      clientId: 123,
-      holidayCalendarId: 123,
-      monday: 123,
-      tuesday: 123,
-      wednesday: 123,
-      thursday: 123,
-      friday: 123,
-      saturday: 123,
-      sunday: 123,
-      active: true,
-      defaultRole: 123,
-      cost: 123,
-      language: "test",
-      createdBy: 123,
-      updatedBy: 123,
-      createdAt: new Date,
-      updatedAt: new Date,
-      startDate: "test"
-    };
+    const fakePerson1 = timebankUser1;
+    const fakePerson2 = timebankUser2;
 
-    let person2: PersonDto = {
-      id: 14,
-      firstName:"k",
-      lastName: "kk",
-      email: "kk@",
-      userType: "test",
-      clientId: 123,
-      holidayCalendarId: 123,
-      monday: 200,
-      tuesday: 200,
-      wednesday: 200,
-      thursday: 200,
-      friday: 200,
-      saturday: 0,
-      sunday: 0,
-      active: true,
-      defaultRole: 123,
-      cost: 123,
-      language: "test",
-      createdBy: 123,
-      updatedBy: 123,
-      createdAt: new Date,
-      updatedAt: new Date,
-      startDate: "test"
-    };
-
-    const fakeTimeEntryTotalId: TimeEntryTotalId = {
-      year: 2022,
-      month: undefined,
-      week: 16
-    };
-
-    const fakeTimeEntryTotalDto1: TimeEntryTotalDto[] = [
-      {
-        id: fakeTimeEntryTotalId,
-        total: 0,
-        logged: 300,
-        expected: 300,
-        internalTime: 100,
-        projectTime: 200
-      }
-    ];
-
-    const fakeTimeEntryTotalDto2: TimeEntryTotalDto[] = [
-      {
-        id: fakeTimeEntryTotalId,
-        total: 0,
-        logged: 0,
-        expected: 300,
-        internalTime: 0,
-        projectTime: 0
-      }
-    ];
+    const fakeTimeEntryTotalDto1 = timeTotalsMock1;
+    const fakeTimeEntryTotalDto2 = timeTotalsMock2;
 
     const {  weekEndDate, weekStartDate } = TimeUtilities.lastWeekDateProvider();
 
     let fakeTimePeriod = TimePeriod.WEEK;
-    const fakePerson1 = person1;
-    const fakePerson2 = person2;
     const fakeYear = weekStartDate.year;
     const fakeWeek = weekEndDate.weekNumber;
 
@@ -177,24 +100,24 @@ describe("timebank-api-provider tests", () => {
       const result1 = await TimeBankApiProvider.getTotalTimeEntries(fakeTimePeriod, fakePerson1, fakeYear, fakeWeek);
       const result2 = await TimeBankApiProvider.getTotalTimeEntries(fakeTimePeriod, fakePerson2, fakeYear, fakeWeek);
 
-      expect(result1.personId).toBe(13);
+      expect(result1.personId).toBe(1);
       expect(result1.name).toBe("tester test");
-      expect(result1.selectedWeek.logged).toBe(300);
-      expect(result1.selectedWeek.expected).toBe(300);
-      expect(result1.selectedWeek.internalTime).toBe(100);
-      expect(result1.selectedWeek.projectTime).toBe(200);
+      expect(result1.selectedWeek.logged).toBe(2175);
+      expect(result1.selectedWeek.expected).toBe(2175);
+      expect(result1.selectedWeek.internalTime).toBe(2175);
+      expect(result1.selectedWeek.projectTime).toBe(50);
 
-      expect(result2.personId).toBe(14);
-      expect(result2.name).toBe("k kk");
-      expect(result2.selectedWeek.projectTime).toBe(0);
-      expect(result2.selectedWeek.expected).toBe(300);
-      expect(result2.selectedWeek.internalTime).toBe(0);
-      expect(result2.selectedWeek.logged).toBe(0);
-      expect(result1.selectedWeek.total).toBe(0);
+      expect(result2.personId).toBe(3);
+      expect(result2.name).toBe("tester3 test");
+      expect(result2.selectedWeek.projectTime).toBe(75);
+      expect(result2.selectedWeek.expected).toBe(100);
+      expect(result2.selectedWeek.internalTime).toBe(25);
+      expect(result2.selectedWeek.logged).toBe(100);
+      expect(result2.selectedWeek.total).toBe(0);
     });
 
     it("Should throw an error if no person id", () => {
-      person1.id = null;
+      fakePerson1.id = null;
       jest.spyOn(timebankClient, "timebankControllerGetTotal").mockReturnValueOnce(Promise.resolve({ response: message, body: fakeTimeEntryTotalDto1 }));
 
       expect(async () => {

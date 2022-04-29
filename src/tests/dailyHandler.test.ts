@@ -90,7 +90,7 @@ describe("mock the daily handler", () => {
   });
 
   describe("special character test", () => {
-    it("should reutnr expected data",async () => {
+    it("should return expected data",async () => {
       let event;
       let context;
       let callback;

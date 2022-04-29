@@ -65,9 +65,7 @@ describe("forecast api non project time error response", () => {
     let messageData;
         
     const res: any = await sendDailyMessage(event, context, callback);
-    console.log(res);
     messageData = JSON.parse(res.body);
-    
     expect(res).toBeDefined();
     expect(messageData.message).toMatch("Error while sending slack message: Error: Error while loading time registrations");
   });

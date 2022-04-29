@@ -18,3 +18,10 @@ export const slackUserDataError = {
 export const slackPostMessageMock = {
   ok: true
 };
+
+export const slackSpecialCharsMock: UsersListResponse ={
+  ok: true,
+  members: [
+    { id: "123", real_name: "Ñöä!£ Çøæé" }
+  ]
+};

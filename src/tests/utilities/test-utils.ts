@@ -3,7 +3,7 @@ import { Socket } from "net";
 import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
 import slackApiUtilities from "src/features/slackapi/slackapi-utils";
 import { timebankGetUsersMock, timeEntryMock1, timeEntryMock2, timeEntryMock3, timeTotalsMock1, timeTotalsMock2, timeTotalsMock3 } from "../__mocks__/timebankMocks";
-import { slackUserData, slackPostMessageMock } from "../__mocks__/slackMocks";
+import { slackUserData, slackPostMessageMock, slackPostMessageError } from "../__mocks__/slackMocks";
 import fetch from "node-fetch";
 import { forecastMockNonProjectTime, mockForecastTimeRegistrations } from "../__mocks__/forecastMocks";
 
@@ -108,6 +108,13 @@ namespace TestHelpers {
   */
   export const mockSlackPostMessage = () => {
     jest.spyOn(slackUsersClient.chat, "postMessage").mockImplementation(() => Promise.resolve(slackPostMessageMock));
+  };
+
+  /**
+  * Slack post message mock error
+  */
+  export const mockSlackPostMessageError = () => {
+    jest.spyOn(slackUsersClient.chat, "postMessage").mockImplementation(() => Promise.resolve(slackPostMessageError));
   };
 
   /**

@@ -18,3 +18,8 @@ export const slackUserDataError = {
 export const slackPostMessageMock = {
   ok: true
 };
+
+export const slackPostMessageError = {
+  ok: false,
+  error: "too_many_attachments"
+};

@@ -5,7 +5,7 @@
   "main": "serverless.ts",
   "scripts": {
     "test": "jest",
-    "test-coverage": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js --verbose",
+    "test-coverage": "jest --coverage && coveralls < coverage/lcov.info --verbose",
     "lint": "eslint ./src --ext .ts",
     "build-client": "openapi-generator-cli generate -i time-bank-api-spec/swagger.yaml -o ./src/generated/client -c generator-config.json -g typescript-node"
   },
@@ -13,7 +13,7 @@
     "node": ">=14.15.0"
   },
   "bin": {
-    "coveralls": "meta-assistant-lambda/bin/coveralls.js"
+    "coveralls": "./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
     "@middy/core": "^2.5.3",

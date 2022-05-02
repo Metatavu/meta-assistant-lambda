@@ -25,5 +25,8 @@ jobs:
       uses: coverallsapp/github-action@master
       env:
         NODE_COVERALLS_DEBUG: 1
+        COVERALLS_SERVICE_NAME: 'GitHub CI'
+        COVERALLS_GIT_BRANCH: develop
+        COVERALLS_REPO_TOKEN : ${{ secrets.REPO_TOKEN }}
       with:
         github-token: ${{ secrets.REPO_TOKEN }}

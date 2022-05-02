@@ -15,4 +15,6 @@ jspm_packages
 *.txt
 
 .dccache
-/coverage
+/coverage/lcov-report
+/coverage/clover.xml
+/coverage/coverage-final.json

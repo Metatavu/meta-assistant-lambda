@@ -1,5 +1,10 @@
-on: ["push", "pull_request"]
+on: 
+  push: 
+    branches: [ feature-14-coveralls ]
 
+on: 
+  pull_request: 
+    branches: [ feature-14-coveralls ]
 
 name: Test Coveralls
 
@@ -20,9 +25,11 @@ jobs:
     - name: npm install, make test-coverage
       run: |
         npm ci
-        npm run test-coverage
+        make test-coverage
 
     - name: Coveralls
       uses: coverallsapp/github-action@master
+      env:
+        NODE_COVERALLS_DEBUG: 1
       with:
         github-token: ${{ secrets.REPO_TOKEN }}

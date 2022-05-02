@@ -1,5 +1,4 @@
 import { NonProjectTime, TimeRegistrations } from "@functions/schema";
-import { time } from "console";
 import fetch, { Headers } from "node-fetch";
 
 /**

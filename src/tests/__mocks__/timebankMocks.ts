@@ -421,3 +421,40 @@ export const dailyCombinedDataMock4: DailyCombinedData = {
 };
 
 export const dailyCombinedDataMock5: DailyCombinedData = undefined;
+
+export const timebankSpecialCharsMock: PersonDto[] = [{
+  id: 123,
+  firstName:"Ñöä!£",
+  lastName: "Çøæé",
+  email: "test",
+  userType: "test",
+  clientId: 123,
+  holidayCalendarId: 123,
+  monday: 123,
+  tuesday: 123,
+  wednesday: 123,
+  thursday: 123,
+  friday: 123,
+  saturday: 123,
+  sunday: 123,
+  active: true,
+  defaultRole: 123,
+  cost: 123,
+  language: "test",
+  createdBy: 123,
+  updatedBy: 123,
+  createdAt: new Date,
+  updatedAt: new Date,
+  startDate: "test"
+}];
+
+export const timeEntrySpecialCharsMock: TimeEntry[] = [{
+  externalId: "Ñöä!£",
+  person: 123,
+  internalTime: 600,
+  projectTime: 500,
+  logged: 600,
+  expected: 500,
+  total: 123,
+  date: new Date
+}];

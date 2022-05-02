@@ -1,11 +1,17 @@
 {
   "name": "meta-assistant-lambda",
+  "keywords": [
+    "coveralls"
+  ],
   "version": "1.0.0",
   "description": "Serverless aws-nodejs-typescript template",
   "main": "serverless.ts",
+  "bin": {
+    "coveralls": "./bin/coveralls.js"
+  },
   "scripts": {
     "test": "jest",
-    "test-coverage": "jest --coverage && coveralls < coverage/lcov.info",
+    "test-coverage": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverag",
     "lint": "eslint ./src --ext .ts",
     "build-client": "openapi-generator-cli generate -i time-bank-api-spec/swagger.yaml -o ./src/generated/client -c generator-config.json -g typescript-node"
   },

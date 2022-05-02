@@ -1,0 +1,22 @@
+name: Coveralls integration
+
+on:
+  push:
+    branches: [ feature-14-coveralls-dev3 ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '14.15.0'
+    - run: npm ci
+    - run: npm run test-coverage
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}

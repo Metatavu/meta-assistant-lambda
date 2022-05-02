@@ -118,6 +118,7 @@ describe("mock the daily handler", () => {
       TestHelpers.mockSlackUsersCustom(slackSpecialCharsMock);
       TestHelpers.mockForecastData();
       TestHelpers.mockTimebankTimeEntriesCustom(timeEntrySpecialCharsMock);
+      TestHelpers.mockSlackPostMessage();
 
       const res: any = await sendDailyMessage(event, context, callback);
       const messageData = JSON.parse(res.body);

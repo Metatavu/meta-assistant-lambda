@@ -23,6 +23,6 @@ jobs:
         npm run test-coverage
 
     - name: Coveralls
-      uses: coverallsapp/github-action@feature-14-coveralls
+      uses: coverallsapp/github-action@develop
       with:
         github-token: ${{ secrets.REPO_TOKEN }}

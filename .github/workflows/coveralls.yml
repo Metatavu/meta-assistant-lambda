@@ -1,4 +1,4 @@
-name: Coveralls integration
+name: coveralls
 
 on:
   push:

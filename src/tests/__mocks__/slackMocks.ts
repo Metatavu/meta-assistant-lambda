@@ -25,3 +25,8 @@ export const slackSpecialCharsMock: UsersListResponse ={
     { id: "123", real_name: "Ñöä!£ Çøæé" }
   ]
 };
+
+export const slackPostMessageError = {
+  ok: false,
+  error: "too_many_attachments"
+};

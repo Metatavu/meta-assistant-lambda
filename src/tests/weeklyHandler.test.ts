@@ -18,7 +18,6 @@ describe("mock the weekly handler", () => {
 
     const res: any = await sendWeeklyMessage(event, context, callback);
     const messageData = JSON.parse(res.body);
-    console.log(messageData);
     const statusCode = JSON.parse(res.statusCode);
 
     expect(res).toBeDefined();

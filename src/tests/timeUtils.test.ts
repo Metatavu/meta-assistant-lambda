@@ -1,5 +1,4 @@
 import TimeUtilities from "../features/generic/time-utils";
-import { TimeEntryTotalDto } from "src/generated/client/api";
 import { DateTime } from "luxon";
 import { dailyCombinedDataMock1, dailyCombinedDataMock2, dailyCombinedDataMock3, dailyCombinedDataMock4, dailyCombinedDataMock5, timeTotalsMock } from "./__mocks__/timebankMocks";
 

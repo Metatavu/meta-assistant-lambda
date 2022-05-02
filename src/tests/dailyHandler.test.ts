@@ -1,7 +1,7 @@
 import { sendDailyMessage } from "../functions/sendDailyMessage/handler";
 import TestHelpers from "./utilities/test-utils";
-import { slackUserDataError, slackUserData, slackSpecialCharsMock } from "./__mocks__/slackMocks";
 import { timebankSpecialCharsMock, timeEntrySpecialCharsMock } from "./__mocks__/timebankMocks";
+import { slackUserDataError, slackUserData, slackPostMessageError, slackSpecialCharsMock } from "./__mocks__/slackMocks";
 
 jest.mock("node-fetch");
 
@@ -86,6 +86,25 @@ describe("mock the daily handler", () => {
       expect(res).toBeDefined();
       expect(messageData.message).toMatch("Error while sending slack message:");
       expect(messageData.message).toMatch(slackUserDataError.error);
+    });
+
+    it("should return expected error handling for slack Postmessage error", async () => {
+      let event;
+      let context;
+      let callback;
+
+      TestHelpers.mockTimebankUsers();
+      TestHelpers.mockSlackUsers();
+      TestHelpers.mockForecastData();
+      TestHelpers.mockTimebankTimeEntries();
+      TestHelpers.mockSlackPostMessageError();
+
+      const res: any = await sendDailyMessage(event, context, callback);
+      const messageData = JSON.parse(res.body);
+
+      expect(res).toBeDefined();
+      expect(messageData.message).toMatch("Error while sending slack message:");
+      expect(messageData.message).toMatch(slackPostMessageError.error);
     });
   });
 

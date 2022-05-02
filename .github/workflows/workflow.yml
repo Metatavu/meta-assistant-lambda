@@ -1,10 +1,4 @@
-on: 
-  push: 
-    branches: [ feature-14-coveralls ]
-
-on: 
-  pull_request: 
-    branches: [ feature-14-coveralls ]
+on: ["push", "pull_request"]
 
 name: Test Coveralls
 

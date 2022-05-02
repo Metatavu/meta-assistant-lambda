@@ -12,6 +12,9 @@
   "engines": {
     "node": ">=14.15.0"
   },
+  "bin": {
+    "coveralls": "meta-assistant-lambda/bin/coveralls.js"
+  },
   "dependencies": {
     "@middy/core": "^2.5.3",
     "@middy/http-json-body-parser": "^2.5.3",

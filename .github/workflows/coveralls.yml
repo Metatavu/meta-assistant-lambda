@@ -1,7 +1,7 @@
 name: test-coverage
 
 on:
-  [push]
+  [push, "pull_request"]
 
 jobs:
   build:
@@ -19,4 +19,5 @@ jobs:
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
+        repo-token: ${{ secrets.REPO_TOKEN }}
 

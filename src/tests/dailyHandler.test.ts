@@ -69,7 +69,7 @@ describe("mock the daily handler", () => {
   });
 
   describe("handler is mocked for error handling", () => {
-    it("should return expected error handling for slack API", async () => {
+    it("should return expected error handling for slack API get user endpoint", async () => {
       let event;
       let context;
       let callback;
@@ -88,7 +88,7 @@ describe("mock the daily handler", () => {
       expect(messageData.message).toMatch(slackUserDataError.error);
     });
 
-    it("should return expected error handling for slack Postmessage error", async () => {
+    it("should return expected error handling for slack API postmessage endpoint", async () => {
       let event;
       let context;
       let callback;

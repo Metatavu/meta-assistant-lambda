@@ -1,6 +1,6 @@
 import { sendWeeklyMessage } from "../functions/sendWeeklyMessage/handler";
 import TestHelpers from "./utilities/test-utils";
-import { slackUserDataError, slackUserData } from "./__mocks__/slackMocks";
+import { slackUserDataError, slackUserData, slackPostMessageError } from "./__mocks__/slackMocks";
 
 jest.mock("node-fetch");
 
@@ -70,8 +70,8 @@ describe("Weekly vacation time test", () => {
   });
 });
 
-describe("Weekly handler error handling from slack API error", () => {
-  it("should return expected error handling for slack API", async () => {
+describe("handler is mocked for error handling", () => {
+  it("should return expected error handling for slack API get user endpoint", async () => {
     let event;
     let context;
     let callback;
@@ -88,5 +88,24 @@ describe("Weekly handler error handling from slack API error", () => {
     expect(res).toBeDefined();
     expect(messageData.message).toMatch("Error while sending slack message:");
     expect(messageData.message).toMatch(slackUserDataError.error);
+  });
+
+  it("should return expected error handling for slack API postmessage endpoint", async () => {
+    let event;
+    let context;
+    let callback;
+
+    TestHelpers.mockTimebankUsers();
+    TestHelpers.mockSlackUsers();
+    TestHelpers.mockForecastData();
+    TestHelpers.mockTimebankTimeEntries();
+    TestHelpers.mockSlackPostMessageError();
+
+    const res: any = await sendWeeklyMessage(event, context, callback);
+    const messageData = JSON.parse(res.body);
+
+    expect(res).toBeDefined();
+    expect(messageData.message).toMatch("Error while sending slack message:");
+    expect(messageData.message).toMatch(slackPostMessageError.error);
   });
 });

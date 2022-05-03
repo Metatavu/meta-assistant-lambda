@@ -18,16 +18,14 @@ jobs:
 
     - name: npm install, make test-coverage
       run: |
-        npm ci
-        npm run test-coverage
-        npm run coveralls
-
+        npm i
+        npm run-script test-coverage
     - name: Coveralls
       uses: coverallsapp/github-action@master
       env:
         NODE_COVERALLS_DEBUG: 1
         COVERALLS_SERVICE_NAME: 'GitHub CI'
-        COVERALLS_GIT_BRANCH: develop
+        COVERALLS_GIT_BRANCH: feature-14-coveralls
         COVERALLS_REPO_TOKEN : ${{ secrets.REPO_TOKEN }}
       with:
         github-token: ${{ secrets.REPO_TOKEN }}

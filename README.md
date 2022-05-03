@@ -1,5 +1,5 @@
 # Serverless - AWS Node.js Typescript
-[![Coverage Status](https://coveralls.io/repos/github/Metatavu/meta-assistant-lambda/badge.svg?branch=feature-14-coveralls-tmp)](https://coveralls.io/github/Metatavu/meta-assistant-lambda?branch=feature-14-coveralls-tmp)
+[![Coverage Status](https://coveralls.io/repos/github/Metatavu/meta-assistant-lambda/badge.svg?branch=feature-14-coveralls-main)](https://coveralls.io/github/Metatavu/meta-assistant-lambda?branch=feature-14-coveralls-main)
 
 This project has been generated using the `aws-nodejs-typescript` template from the [Serverless framework](https://www.serverless.com/).
 

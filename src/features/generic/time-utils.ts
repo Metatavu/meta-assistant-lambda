@@ -121,14 +121,19 @@ namespace TimeUtilities {
    *
    * @returns two previous workdays
    */
-  export const getPreviousTwoWorkdays = (): PreviousWorkdayDates => {
-    const today = DateTime.now();
-    const dayOfWeek = new Date().getDay();
+  export const getPreviousTwoWorkdays = (testValueToday: DateTime = null, testValueDayOfWeek: number = null): PreviousWorkdayDates => {
+    let today = DateTime.now();
+    let dayOfWeek = new Date().getDay();
+
+    if (testValueToday != null) {
+      today = testValueToday;
+      dayOfWeek = testValueDayOfWeek;
+    }
 
     let previousWorkDay = today.minus({ days: 1 }).toISODate();
     let dayBeforePreviousWorkDay = today.minus({ days: 2 }).toISODate();
 
-    if (dayOfWeek === 1) {
+    if (dayOfWeek == 1) { // temporary solution until di
       previousWorkDay = today.minus({ days: 3 }).toISODate();
       dayBeforePreviousWorkDay = today.minus({ days: 4 }).toISODate();
     }

@@ -106,4 +106,24 @@ describe("time-utils functions testing", () => {
     expect(results.today).toEqual(fakeToday.toISODate());
     expect(results.yesterday).toEqual(fakePreviousWorkDay);
   });
+
+  describe("getPreviousTwoWorkDays test when week day is 1", () => {
+    const fakeToday = DateTime.now().set({ day: 2, month: 1, year: 2022 });
+    const fakeDayOfWeek = 1; // :p
+
+    let fakePreviousWorkDay = fakeToday.minus({ days: 1 }).toISODate();
+    let fakeDayBeforePreviousWorkDay = fakeToday.minus({ days: 2 }).toISODate();
+
+    if (fakeDayOfWeek === 1) {
+      fakePreviousWorkDay = fakeToday.minus({ days: 3 }).toISODate();
+      fakeDayBeforePreviousWorkDay = fakeToday.minus({ days: 4 }).toISODate();
+    }
+
+    const results = TimeUtilities.getPreviousTwoWorkdays(fakeToday, fakeDayOfWeek);
+
+    expect(results.dayBeforeYesterday).toEqual(fakeDayBeforePreviousWorkDay);
+    expect(results.numberOfToday).toEqual(fakeDayOfWeek);
+    expect(results.today).toEqual(fakeToday.toISODate());
+    expect(results.yesterday).toEqual(fakePreviousWorkDay);
+  });
 });

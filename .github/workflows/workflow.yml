@@ -1,6 +1,6 @@
-on: ["push", "pull_request"]
+name: coveralls
 
-name: Test Coveralls
+on: ["push", "pull_request"]
 
 env:
   COVERALLS_REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
@@ -12,23 +12,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
 
     - name: Use Node.js 14.x
-      uses: actions/setup-node@master
+      uses: actions/setup-node@v3
       with:
         node-version: 14.x
 
     - name: npm install, make test-coverage
       run: |
-        npm i
-        npm run-script test-coverage
+        npm ci
+        npm run test:coveralls
     - name: Coveralls
       uses: coverallsapp/github-action@master
-      env:
-        NODE_COVERALLS_DEBUG: 1
-        COVERALLS_SERVICE_NAME: 'GitHub CI'
-        COVERALLS_GIT_BRANCH: feature-14-coveralls
-        COVERALLS_REPO_TOKEN : ${{ secrets.REPO_TOKEN }}
       with:
-        github-token: ${{ secrets.REPO_TOKEN }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}

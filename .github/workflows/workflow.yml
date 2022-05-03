@@ -1,23 +1,27 @@
 name: coveralls
 
-on:
-  push:
-    branches: [ feature-14-coveralls-dev3 ]
+on: ["push", "pull_request"]
 
 jobs:
+
   build:
-
+    name: Build
     runs-on: ubuntu-latest
-
     steps:
+
     - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+
+    - name: Use Node.js 14.15.0
+      uses: actions/setup-node@v3
       with:
-        node-version: '14.15.0'
-    - run: npm ci
-    - run: npm run test-coverage
+        node-version: 14.15.0
+
+    - name: npm install, make test-coverage
+      run: |
+        npm ci
+        npm run test:coveralls
     - name: Coveralls
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        repo-token: ${{ secrets.REPO_TOKEN }}
+        repo_token: ${{ secrets.REPO_TOKEN }}

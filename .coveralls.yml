@@ -1,2 +1,2 @@
-env:
-  COVERALLS_REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+# env:
+#   COVERALLS_REPO_TOKEN: ${{ secrets.REPO_TOKEN }}

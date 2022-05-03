@@ -10,6 +10,7 @@ module.exports = {
     "src/generated/*",
     "src/tests/*"
   ],
+  collectCoverage: true,
 }
 
 import type {Config} from "@jest/types";

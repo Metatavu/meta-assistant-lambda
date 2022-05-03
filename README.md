@@ -1,5 +1,5 @@
 # Coveralls
-[![Coverage Status](https://coveralls.io/repos/github/Metatavu/meta-assistant-lambda/badge.svg?branch=develop)](https://coveralls.io/github/Metatavu/meta-assistant-lambda?branch=develop)
+[![Coverage Status](https://coveralls.io/repos/github/Metatavu/meta-assistant-lambda/badge.svg?branch=feature-14-coveralls)](https://coveralls.io/github/Metatavu/meta-assistant-lambda?branch=feature-14-coveralls)
 
 # Serverless - AWS Node.js Typescript
 

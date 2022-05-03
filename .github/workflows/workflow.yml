@@ -2,9 +2,6 @@ on: ["push", "pull_request"]
 
 name: Test Coveralls
 
-env:
-  COVERALLS_REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
-
 jobs:
 
   build:
@@ -28,4 +25,3 @@ jobs:
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        repo_token: COVERALLS_REPO_TOKEN

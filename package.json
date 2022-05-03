@@ -5,7 +5,7 @@
   "main": "serverless.ts",
   "scripts": {
     "test": "jest",
-    "coverage": "jest --coverage && coveralls < coverage/lcov.info --verbose",
+    "test:coveralls": "jest --coverage && coveralls < coverage/lcov.info --verbose",
     "lint": "eslint ./src --ext .ts",
     "build-client": "openapi-generator-cli generate -i time-bank-api-spec/swagger.yaml -o ./src/generated/client -c generator-config.json -g typescript-node"
   },

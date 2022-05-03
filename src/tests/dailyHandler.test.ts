@@ -5,13 +5,13 @@ import { slackUserDataError, slackUserData, slackPostMessageError, slackSpecialC
 
 jest.mock("node-fetch");
 
+let event;
+let context;
+let callback;
+
 describe("mock the daily handler", () => {
   describe("handler is mocked and run to send a message", () => {
     it("should return all expected message data", async () => {
-      let event;
-      let context;
-      let callback;
-
       TestHelpers.mockTimebankUsers();
       TestHelpers.mockSlackUsers();
       TestHelpers.mockForecastData();
@@ -51,10 +51,6 @@ describe("mock the daily handler", () => {
 
   describe("Daily vacation time test", () => {
     it("Should not return user who is on vacation", async () => {
-      let event;
-      let context;
-      let callback;
-
       TestHelpers.mockTimebankUsers();
       TestHelpers.mockSlackUsers();
       TestHelpers.mockForecastData();
@@ -70,10 +66,6 @@ describe("mock the daily handler", () => {
 
   describe("handler is mocked for error handling", () => {
     it("should return expected error handling for slack API get user endpoint", async () => {
-      let event;
-      let context;
-      let callback;
-
       TestHelpers.mockTimebankUsers();
       TestHelpers.mockSlackUsersCustom(slackUserDataError);
       TestHelpers.mockForecastData();
@@ -89,10 +81,6 @@ describe("mock the daily handler", () => {
     });
 
     it("should return expected error handling for slack API postmessage endpoint", async () => {
-      let event;
-      let context;
-      let callback;
-
       TestHelpers.mockTimebankUsers();
       TestHelpers.mockSlackUsers();
       TestHelpers.mockForecastData();
@@ -110,10 +98,6 @@ describe("mock the daily handler", () => {
 
   describe("special character test", () => {
     it("should return expected data",async () => {
-      let event;
-      let context;
-      let callback;
-
       TestHelpers.mockTimebankUsersCustom(timebankSpecialCharsMock);
       TestHelpers.mockSlackUsersCustom(slackSpecialCharsMock);
       TestHelpers.mockForecastData();

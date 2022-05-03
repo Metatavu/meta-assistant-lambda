@@ -131,8 +131,8 @@ Have a great week!
    * @param message
    * @returns
    */
-  const sendMessage = async (slackId: string, message: string): Promise<ChatPostMessageResponse> => (
-    await client.chat.postMessage({
+  const sendMessage = (slackId: string, message: string): Promise<ChatPostMessageResponse> => (
+    client.chat.postMessage({
       channel: slackId,
       text: message
     })

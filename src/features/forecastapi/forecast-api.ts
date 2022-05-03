@@ -1,5 +1,4 @@
 import { NonProjectTime, TimeRegistrations } from "@functions/schema";
-import { time } from "console";
 import fetch, { Headers } from "node-fetch";
 
 /**
@@ -20,14 +19,14 @@ namespace ForecastApiUtilities {
   export const getNonProjectTime = async (): Promise<NonProjectTime[]> => {
     try {
       const result = await fetch(`${process.env.forecast_base_url}non_project_time`, { headers: headers });
-      const NonProjectTimes = await result.json();
-      if (NonProjectTimes[0].id){
-        const filterRes: NonProjectTime[] = NonProjectTimes.filter(NonProjectTime => NonProjectTime.is_internal_time !== true);
+      const nonProjectTimes = await result.json();
+      if (nonProjectTimes[0].id){
+        const filterRes: NonProjectTime[] = nonProjectTimes.filter(nonPTime => nonPTime.is_internal_time !== true);
         if (filterRes.length) {
           return filterRes;
         }
       }
-      throw new Error(`Error while loading non project time, ${NonProjectTimes.message}`);
+      throw new Error(`Error while loading non project time, ${nonProjectTimes.message}`);
     } catch(error) {
       console.error(error);
       return Promise.reject(error);
@@ -46,7 +45,7 @@ namespace ForecastApiUtilities {
       const result = await fetch(`${process.env.forecast_v3_url}time_registrations?date_after=${dayBeforeYesterdayUrl}`, { headers: headers });
       const timeRegistrations: any = await result.json();
       if(timeRegistrations[0].id){
-        const filteredTime: TimeRegistrations[] = timeRegistrations.filter(timeRegistrations => timeRegistrations.non_project_time !== null);
+        const filteredTime: TimeRegistrations[] = timeRegistrations.filter(timeReg => timeReg.non_project_time !== null);
         if(filteredTime.length){
           return filteredTime;
         }

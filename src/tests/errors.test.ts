@@ -10,12 +10,12 @@ beforeAll(() => {
   jest.clearAllMocks();
 });
 
+let event;
+let context;
+let callback;
+
 describe("timebank api get time entries error response", () => {
   it("should respond with corresponding error response", async () => {
-    let event;
-    let context;
-    let callback;
-
     TestHelpers.mockTimebankUsers();
     TestHelpers.mockTimebankTimeEntriesCustom(timeEntryEmptyDataMock);
     TestHelpers.mockSlackUsers();
@@ -32,10 +32,6 @@ describe("timebank api get time entries error response", () => {
 
 describe("forecast api time registrations error response", () => {
   it("should respond with corresponding error response", async () => {
-    let event;
-    let context;
-    let callback;
-
     TestHelpers.mockTimebankUsers();
     TestHelpers.mockTimebankTimeEntries();
     TestHelpers.mockSlackUsers();
@@ -52,10 +48,6 @@ describe("forecast api time registrations error response", () => {
 
 describe("forecast api non project time error response", () => {
   it("should respond with corresponding error response", async () => {
-    let event;
-    let context;
-    let callback;
-
     TestHelpers.mockTimebankUsers();
     TestHelpers.mockTimebankTimeEntries();
     TestHelpers.mockSlackUsers();
@@ -73,10 +65,6 @@ describe("forecast api non project time error response", () => {
 
 describe("timebank api get total time entries error response", () => {
   it("should respond with corresponding error response", async () => {
-    let event;
-    let context;
-    let callback;
-
     TestHelpers.mockTimebankUsers();
     TestHelpers.mockSlackUsers();
     TestHelpers.mockForecastData();
@@ -93,10 +81,6 @@ describe("timebank api get total time entries error response", () => {
 
 describe("timebank api get users error response", () => {
   it("should respond with corresponding error response", async () => {
-    let event;
-    let context;
-    let callback;
-
     TestHelpers.mockTimebankUsersCustom(timebankGetUsersEmptyDataMock);
     TestHelpers.mockSlackUsers();
     TestHelpers.mockForecastData();

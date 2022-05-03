@@ -4,12 +4,12 @@ import { slackUserDataError, slackUserData, slackPostMessageError } from "./__mo
 
 jest.mock("node-fetch");
 
+let event;
+let context;
+let callback;
+
 describe("mock the weekly handler", () => {
   it("should return all expected message data", async () => {
-    let event;
-    let context;
-    let callback;
-
     TestHelpers.mockTimebankUsers();
     TestHelpers.mockSlackUsers();
     TestHelpers.mockForecastData();
@@ -53,10 +53,6 @@ describe("mock the weekly handler", () => {
 
 describe("Weekly vacation time test", () => {
   it("Should not return user who is on vacation", async () => {
-    let event;
-    let context;
-    let callback;
-
     TestHelpers.mockTimebankUsers();
     TestHelpers.mockSlackUsers();
     TestHelpers.mockForecastData();
@@ -72,10 +68,6 @@ describe("Weekly vacation time test", () => {
 
 describe("handler is mocked for error handling", () => {
   it("should return expected error handling for slack API get user endpoint", async () => {
-    let event;
-    let context;
-    let callback;
-
     TestHelpers.mockTimebankUsers();
     TestHelpers.mockSlackUsersCustom(slackUserDataError);
     TestHelpers.mockForecastData();
@@ -91,10 +83,6 @@ describe("handler is mocked for error handling", () => {
   });
 
   it("should return expected error handling for slack API postmessage endpoint", async () => {
-    let event;
-    let context;
-    let callback;
-
     TestHelpers.mockTimebankUsers();
     TestHelpers.mockSlackUsers();
     TestHelpers.mockForecastData();

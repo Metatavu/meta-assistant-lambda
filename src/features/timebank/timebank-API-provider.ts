@@ -18,6 +18,7 @@ namespace TimeBankApiProvider {
       if (!body.length) {
         throw new Error("Error while loading persons from Timebank");
       }
+
       return body.filter(person => person.defaultRole !== null);
     } catch (error) {
       console.error(error);

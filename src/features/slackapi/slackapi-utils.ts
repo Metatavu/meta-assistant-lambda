@@ -22,7 +22,7 @@ namespace SlackApiUtilities {
     try {
       const result = await client.users.list();
 
-      if (result.members.length) return result.members;
+      if (result.members) return result.members;
 
       throw new Error(`Error while loading slack users list, ${result.error}`);
     } catch (error) {
@@ -204,7 +204,7 @@ Have a great week!
 
       let messagesRecord: WeeklyMessageData[] = [];
 
-      const promises: Promise<ChatPostMessageResponse | undefined>[] = weeklyCombinedData.map(user => {
+      const promises: Promise<ChatPostMessageResponse>[] = weeklyCombinedData.map(user => {
         const { slackId, personId, expected } = user;
 
         const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
@@ -216,7 +216,7 @@ Have a great week!
           messagesRecord.push(message);
           return sendMessage(slackId, message.message);
         }
-      });
+      }).filter(p => p);
 
       const responses: ChatPostMessageResponse[] = await Promise.all(promises);
       const errors: ChatPostMessageResponse[] = responses.filter(response => response.error);

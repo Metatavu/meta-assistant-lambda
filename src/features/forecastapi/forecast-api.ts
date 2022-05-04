@@ -26,6 +26,7 @@ namespace ForecastApiUtilities {
           return filterRes;
         }
       }
+
       throw new Error(`Error while loading non project time, ${nonProjectTimes.message}`);
     } catch(error) {
       console.error(error);

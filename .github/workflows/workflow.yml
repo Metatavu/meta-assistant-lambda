@@ -23,7 +23,6 @@ jobs:
 
     - name: npm install, make test-coverage
       run: |
-        git submodule init
         npm ci
         npm run build-client
         npm run test:coveralls

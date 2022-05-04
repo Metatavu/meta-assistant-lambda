@@ -65,10 +65,7 @@ namespace TimeUtilities {
   export const calculateWorkedTimeAndBillableHours = (user: TimeEntryTotalDto | DailyCombinedData) => {
     const { total, projectTime, logged } = user;
 
-    let billableHoursPercentage = (projectTime/logged * 100).toFixed(0);
-    if(logged === 0){
-      billableHoursPercentage = "0";
-    }
+    const billableHoursPercentage = logged === 0 ? "0" : (projectTime/logged * 100).toFixed(0);
 
     const undertime = TimeUtilities.timeConversion(total * -1);
     const overtime = TimeUtilities.timeConversion(total);
@@ -119,13 +116,15 @@ namespace TimeUtilities {
   /**
    * Gets two previous workdays
    *
+   * @param testValueToday Value for today
+   * @param testValueDayOfWeek Day of the week
    * @returns two previous workdays
    */
-  export const getPreviousTwoWorkdays = (testValueToday: DateTime = null, testValueDayOfWeek: number = null): PreviousWorkdayDates => {
+  export const getPreviousTwoWorkdays = (testValueToday?: DateTime, testValueDayOfWeek?: number): PreviousWorkdayDates => {
     let today = DateTime.now();
     let dayOfWeek = new Date().getDay();
 
-    if (testValueToday != null) {
+    if (testValueToday && testValueDayOfWeek) {
       today = testValueToday;
       dayOfWeek = testValueDayOfWeek;
     }
@@ -133,7 +132,7 @@ namespace TimeUtilities {
     let previousWorkDay = today.minus({ days: 1 }).toISODate();
     let dayBeforePreviousWorkDay = today.minus({ days: 2 }).toISODate();
 
-    if (dayOfWeek == 1) { // temporary solution until di
+    if (dayOfWeek === 1) {
       previousWorkDay = today.minus({ days: 3 }).toISODate();
       dayBeforePreviousWorkDay = today.minus({ days: 4 }).toISODate();
     }

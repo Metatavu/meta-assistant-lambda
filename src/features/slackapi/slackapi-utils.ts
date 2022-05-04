@@ -21,9 +21,8 @@ namespace SlackApiUtilities {
   export const getSlackUsers = async (): Promise<Member[]> => {
     try {
       const result = await client.users.list();
-      if (result.members){
-        return result.members;
-      }
+      if (result.members) return result.members;
+
       throw new Error(`Error while loading slack users list, ${result.error}`);
     } catch (error) {
       console.error(error);

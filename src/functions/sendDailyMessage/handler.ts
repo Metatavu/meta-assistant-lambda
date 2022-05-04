@@ -1,4 +1,4 @@
-import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from "../../libs/api-gateway";
+import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse, DailyHandlerResponse } from "../../libs/api-gateway";
 import { middyfy } from "../../libs/lambda";
 
 import schema from "../schema";
@@ -10,12 +10,9 @@ import ForecastApiUtilities from "src/features/forecastapi/forecast-api";
 import TimeUtilities from "src/features/generic/time-utils";
 
 /**
- * Lambda function for sending slack message
- *
- * @param event API Gateway proxy event
- * @returns JSON response
+ * 
  */
-export const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
+export async function sendDailyMessageHandler(): Promise<DailyHandlerResponse> {
   try {
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { yesterday, dayBeforeYesterday } = previousWorkDays;
@@ -34,17 +31,29 @@ export const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema>
     const dailyCombinedData = TimeBankUtilities.combineDailyData(timebankUsers, timeEntries, slackUsers);
     const messagesSent = await SlackApiUtilities.postDailyMessage(dailyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
 
-    return formatJSONResponse({
+    return Promise.resolve({
       message: "Everything went well sending the daily, see data for message breakdown...",
-      data: messagesSent,
-      event: event
+      data: messagesSent
     });
   } catch (error) {
-    return formatJSONResponse({
-      message: `Error while sending slack message: ${error}`,
-      event: event
+    return Promise.resolve({
+      message: `Error while sending slack message: ${error}`
     });
   }
+}
+
+/**
+ * Lambda function for sending slack message
+ *
+ * @param event API Gateway proxy event
+ * @returns JSON response
+ */
+export const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
+  let res: DailyHandlerResponse = await sendDailyMessageHandler();
+
+  res.event = event;
+
+  return formatJSONResponse(res);
 };
 
 export const main = middyfy(sendDailyMessage);

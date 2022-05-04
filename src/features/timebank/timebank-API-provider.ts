@@ -21,7 +21,7 @@ namespace TimeBankApiProvider {
       return body.filter(person => person.defaultRole !== null);
     } catch (error) {
       console.error(error);
-      return Promise.reject(error);
+      Promise.reject(error);
     }
   };
 

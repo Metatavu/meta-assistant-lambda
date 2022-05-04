@@ -15,9 +15,11 @@ namespace TimeBankApiProvider {
   export const getTimebankUsers = async (): Promise<PersonDto[]> => {
     try {
       const { body } = await client.timebankControllerGetPersons();
-      if(body.length === 0){
+
+      if (!body.length) {
         throw new Error("Error while loading persons from Timebank");
       }
+
       return body.filter(person => person.defaultRole !== null);
     } catch (error) {
       console.error(error);
@@ -36,9 +38,9 @@ namespace TimeBankApiProvider {
   export const getTimeEntries = async (id: number, before: string, after: string): Promise<TimeEntry[]> => {
     try {
       const { body } = await client.timebankControllerGetEntries(id.toString(), before, after);
-      if(body){
-        return body;
-      }
+
+      if (body) return body;
+
       throw new Error("Error while loading time entries from Timebank");
     } catch (error) {
       console.error(error);
@@ -58,22 +60,23 @@ namespace TimeBankApiProvider {
   export const getTotalTimeEntries = async (timePeriod: TimePeriod, person: PersonDto, year: number, week: number): Promise<WeeklyCombinedData> => {
     try {
       const { body } = await client.timebankControllerGetTotal(person.id.toString(), timePeriod);
-      if (body.length){
-        const selectedWeek = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week)[0];
+      if (!body.length) throw new Error("Error while loading total time entries");
 
-        const { firstName, lastName } = person;
-        const combinedName = `${firstName} ${lastName}`;
-        if (selectedWeek){
-          return {
-            selectedWeek: selectedWeek,
-            name: combinedName,
-            firstName: person.firstName,
-            personId: person.id,
-            expected: person.monday
-          };
-        }
-      }
-      throw new Error("Error while loading total time entries");
+      const filteredWeeks = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week);
+      if (filteredWeeks.length !== 1) throw new Error("Found more than one time period for given year and week");
+
+
+      const selectedWeek = filteredWeeks[0];
+      const { firstName, lastName } = person;
+      const combinedName = `${firstName} ${lastName}`;
+
+      return {
+        selectedWeek: selectedWeek,
+        name: combinedName,
+        firstName: person.firstName,
+        personId: person.id,
+        expected: person.monday
+      };
     } catch (error) {
       console.error(error);
       return Promise.reject(error);

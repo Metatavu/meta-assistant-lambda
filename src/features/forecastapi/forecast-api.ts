@@ -20,7 +20,7 @@ namespace ForecastApiUtilities {
     try {
       const result = await fetch(`${process.env.forecast_base_url}non_project_time`, { headers: headers });
       const nonProjectTimes = await result.json();
-      if (nonProjectTimes[0].id){
+      if (nonProjectTimes[0].id) {
         const filterRes: NonProjectTime[] = nonProjectTimes.filter(nonPTime => !nonPTime.is_internal_time);
         if (filterRes.length) {
           return filterRes;

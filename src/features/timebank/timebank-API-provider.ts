@@ -15,7 +15,7 @@ namespace TimeBankApiProvider {
   export const getTimebankUsers = async (): Promise<PersonDto[]> => {
     try {
       const { body } = await client.timebankControllerGetPersons();
-      if(body.length === 0){
+      if (!body.length) {
         throw new Error("Error while loading persons from Timebank");
       }
       return body.filter(person => person.defaultRole !== null);

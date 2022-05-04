@@ -20,8 +20,8 @@ namespace ForecastApiUtilities {
     try {
       const result = await fetch(`${process.env.forecast_base_url}non_project_time`, { headers: headers });
       const nonProjectTimes = await result.json();
-      if (nonProjectTimes[0].id){
-        const filterRes: NonProjectTime[] = nonProjectTimes.filter(nonPTime => nonPTime.is_internal_time !== true);
+      if (nonProjectTimes[0].id) {
+        const filterRes: NonProjectTime[] = nonProjectTimes.filter(nonPTime => !nonPTime.is_internal_time);
         if (filterRes.length) {
           return filterRes;
         }
@@ -43,10 +43,10 @@ namespace ForecastApiUtilities {
     try {
       const dayBeforeYesterdayUrl = dayBeforeYesterday.replace(/[-]/g, "");
       const result = await fetch(`${process.env.forecast_v3_url}time_registrations?date_after=${dayBeforeYesterdayUrl}`, { headers: headers });
-      const timeRegistrations: any = await result.json();
-      if(timeRegistrations[0].id){
+      const timeRegistrations = await result.json();
+      if(timeRegistrations[0].id) {
         const filteredTime: TimeRegistrations[] = timeRegistrations.filter(timeReg => timeReg.non_project_time !== null);
-        if(filteredTime.length){
+        if(filteredTime.length) {
           return filteredTime;
         }
       }

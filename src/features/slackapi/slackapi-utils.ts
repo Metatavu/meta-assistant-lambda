@@ -195,14 +195,15 @@ Have a great week!
     weeklyCombinedData: WeeklyCombinedData[],
     timeRegistrations:TimeRegistrations[],
     previousWorkDays: PreviousWorkdayDates,
-    nonProjectTimes: NonProjectTime[]): Promise<WeeklyMessageData[]> => {
+    nonProjectTimes: NonProjectTime[]
+  ): Promise<WeeklyMessageData[]> => {
     try {
       const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
       const { yesterday, today } = previousWorkDays;
 
       let messagesRecord: WeeklyMessageData[] = [];
 
-      const promises = weeklyCombinedData.map(user => {
+      const promises: Promise<ChatPostMessageResponse | undefined>[] = weeklyCombinedData.map(user => {
         const { slackId, personId, expected } = user;
 
         const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
@@ -211,14 +212,13 @@ Have a great week!
         const message = constructWeeklySummaryMessage(user, weekStartDate.toISODate(), weekEndDate.toISODate());
 
         if (!isAway && !firstDayBack) {
-          console.log(message.message, slackId);
           messagesRecord.push(message);
           return sendMessage(slackId, message.message);
         }
       });
 
       const responses: ChatPostMessageResponse[] = await Promise.all(promises);
-      const errors = responses.filter(response => response?.error);
+      const errors: ChatPostMessageResponse[] = responses.filter(response => response?.error);
 
       if (errors.length) {
         throw new Error(`Error while posting slack messages, ${errors[0].error}`);

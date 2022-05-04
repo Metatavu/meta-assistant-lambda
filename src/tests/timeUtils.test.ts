@@ -109,7 +109,7 @@ describe("time-utils functions testing", () => {
 
   describe("getPreviousTwoWorkDays test when week day is 1", () => {
     const fakeToday = DateTime.now().set({ day: 2, month: 1, year: 2022 });
-    const fakeDayOfWeek = 1; // :p
+    const fakeDayOfWeek = 1;
 
     let fakePreviousWorkDay = fakeToday.minus({ days: 1 }).toISODate();
     let fakeDayBeforePreviousWorkDay = fakeToday.minus({ days: 2 }).toISODate();

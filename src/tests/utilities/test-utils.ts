@@ -7,6 +7,9 @@ import { slackUserData, slackPostMessageMock, slackPostMessageError } from "../_
 import fetch from "node-fetch";
 import { forecastMockNonProjectTime, mockForecastTimeRegistrations } from "../__mocks__/forecastMocks";
 
+/**
+ * Helper functions for testing suites.
+ */
 namespace TestHelpers {
   const timebankClient = TimeBankApiProvider.client;
   const message: IncomingMessage = new IncomingMessage(new Socket);
@@ -24,6 +27,7 @@ namespace TestHelpers {
 
   /**
    * Get timebank Users mock custom data
+   * 
    * @param mockData custom timebank Users data
    */
   export const mockTimebankUsersCustom = (mockData: any) => {
@@ -39,6 +43,7 @@ namespace TestHelpers {
 
   /**
    * Get Slack users mock data
+   * 
    * @param mockData custom data
    */
   export const mockSlackUsersCustom = (mockData: any) => {
@@ -60,6 +65,7 @@ namespace TestHelpers {
 
   /**
    * Mock Forecast error response
+   * 
    * @param firstMock custom forecast data for the first endpoint
    * @param secondMock custom forecast data for the second endpoint
    */
@@ -86,6 +92,7 @@ namespace TestHelpers {
 
   /**
    * Timebank custom time entries mock
+   * 
    * @param mockData custom time entry data
    */
   export const mockTimebankTimeEntriesCustom = (mockData: any[] ) => {
@@ -119,6 +126,7 @@ namespace TestHelpers {
 
   /**
    * Timebank total custom time entries mock
+   * 
    * @param mockData custom total time entries data
    */
   export const mockTotalTimeEntriesCustom = (mockData: any[]) => {

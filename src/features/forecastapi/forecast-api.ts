@@ -47,7 +47,7 @@ namespace ForecastApiUtilities {
       const timeRegistrations: any = await result.json();
       if(timeRegistrations[0].id){
         const filteredTime: TimeRegistrations[] = timeRegistrations.filter(timeReg => timeReg.non_project_time !== null);
-        if(filteredTime.length){
+        if (filteredTime.length) {
           return filteredTime;
         }
       }

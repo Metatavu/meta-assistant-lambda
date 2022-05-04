@@ -26,7 +26,7 @@ namespace SlackApiUtilities {
       throw new Error(`Error while loading slack users list, ${result.error}`);
     } catch (error) {
       console.error(error);
-      return Promise.reject(error);
+      Promise.reject(error);
     }
   };
 

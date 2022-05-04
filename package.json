@@ -7,8 +7,7 @@
     "test": "jest",
     "test:coveralls": "jest --coverage && coveralls < coverage/lcov.info --verbose",
     "lint": "eslint ./src --ext .ts",
-    "build-client": "openapi-generator-cli generate -i time-bank-api-spec/swagger.yaml -o ./src/generated/client -c generator-config.json -g typescript-node",
-    "build-client:coveralls": "openapi-generator-cli generate -i /home/runner/work/meta-assistant-lambda/meta-assistant-lambda/time-bank-api-spec/swagger.yaml -o ./src/generated/client -c generator-config.json -g typescript-node"
+    "build-client": "openapi-generator-cli generate -i time-bank-api-spec/swagger.yaml -o ./src/generated/client -c generator-config.json -g typescript-node"
   },
   "engines": {
     "node": ">=14.15.0"

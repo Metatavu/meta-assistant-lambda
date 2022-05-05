@@ -6,7 +6,6 @@ import { DailyHandlerResponse } from "../libs/api-gateway";
 
 jest.mock("node-fetch");
 
-
 describe("mock the daily handler", () => {
   describe("handler is mocked and run to send a message", () => {
     it("should return all expected message data", async () => {

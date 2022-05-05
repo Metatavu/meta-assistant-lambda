@@ -6,7 +6,7 @@ import { timebankGetUsersMock, timeEntryMock1, timeEntryMock2, timeEntryMock3, t
 import { slackUserData, slackPostMessageMock, slackPostMessageError } from "../__mocks__/slackMocks";
 import fetch from "node-fetch";
 import { forecastMockNonProjectTime, mockForecastTimeRegistrations } from "../__mocks__/forecastMocks";
-import { DailyMessageData } from "src/functions/schema";
+import { DailyMessageData, WeeklyMessageData } from "src/functions/schema";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 
 /**
@@ -61,7 +61,7 @@ namespace TestHelpers {
     };
 
     jest.spyOn(mockedFetch, "fetch")
-      .mockReturnValueOnce(new Response(JSON.stringify(mockForecastTimeRegistrations)))  
+      .mockReturnValueOnce(new Response(JSON.stringify(mockForecastTimeRegistrations)))
       .mockReturnValueOnce(new Response(JSON.stringify(forecastMockNonProjectTime)));
   };
 
@@ -159,6 +159,41 @@ namespace TestHelpers {
     expect(typeof message).toEqual(typeof "string");
     expect(name).toBeDefined();
     expect(displayDate).toBeDefined();
+    expect(billableHoursPercentage).toBeDefined();
+    expect(displayExpected).toBeDefined();
+    expect(displayInternal).toBeDefined();
+    expect(displayLogged).toBeDefined();
+    expect(displayProject).toBeDefined();
+    expect(slackNameMatches).toBeDefined();
+  };
+
+  /**
+   * 
+   * @param data user's data 
+   * @param slackUsers slack users 
+   */
+  export const validateWeeklyMessage = (data: WeeklyMessageData, slackUsers: Member[]) => {
+    const {
+      message,
+      name,
+      endDate,
+      startDate,
+      week,
+      billableHoursPercentage,
+      displayExpected,
+      displayInternal,
+      displayLogged,
+      displayProject
+    } = data;
+
+    const slackNameMatches = slackUsers.find(user => user.real_name === name);
+
+    expect(message).toBeDefined();
+    expect(typeof message).toEqual(typeof "string");
+    expect(name).toBeDefined();
+    expect(endDate).toBeDefined();
+    expect(startDate).toBeDefined();
+    expect(week).toBeDefined();
     expect(billableHoursPercentage).toBeDefined();
     expect(displayExpected).toBeDefined();
     expect(displayInternal).toBeDefined();

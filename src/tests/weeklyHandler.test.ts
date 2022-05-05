@@ -13,35 +13,16 @@ describe("mock the weekly handler", () => {
     TestHelpers.mockTotalTimeEntries();
     TestHelpers.mockSlackPostMessage();
 
-    const messageData: WeeklyHandlerResponse = await sendWeeklyMessageHandler();
+    const messageBody: WeeklyHandlerResponse = await sendWeeklyMessageHandler();
+    const messageData = messageBody.data;
 
-    expect(messageData).toBeDefined();
-    expect(messageData).toBeDefined();
-    expect(messageData.data[0].message).toBeDefined();
-    expect(typeof messageData.data[0].message).toEqual(typeof "string");
-    expect(messageData.data[0].name).toBeDefined();
-    expect(messageData.data[0].week).toBeDefined();
-    expect(messageData.data[0].startDate).toBeDefined();
-    expect(messageData.data[0].endDate).toBeDefined();
-    expect(messageData.data[0].displayLogged).toBeDefined();
-    expect(messageData.data[0].displayExpected).toBeDefined();
-    expect(messageData.data[0].displayProject).toBeDefined();
-    expect(messageData.data[0].displayInternal).toBeDefined();
-    expect(messageData.data[0].billableHoursPercentage).toBeDefined();
-    expect(messageData.data[0].name).toEqual(slackUserData.members[0].real_name);
-    expect(messageData.data[1].message).toBeDefined();
-    expect(typeof messageData.data[1].message).toEqual(typeof "string");
-    expect(messageData.data[1].name).toBeDefined();
-    expect(messageData.data[1].week).toBeDefined();
-    expect(messageData.data[1].startDate).toBeDefined();
-    expect(messageData.data[1].endDate).toBeDefined();
-    expect(messageData.data[1].displayLogged).toBeDefined();
-    expect(messageData.data[1].displayExpected).toBeDefined();
-    expect(messageData.data[1].displayProject).toBeDefined();
-    expect(messageData.data[1].displayInternal).toBeDefined();
-    expect(messageData.data[1].billableHoursPercentage).toBeDefined();
-    expect(messageData.data[1].name).toEqual(slackUserData.members[1].real_name);
-    expect(messageData.data[2]).toBeUndefined();
+    const spy = jest.spyOn(TestHelpers, "validateWeeklyMessage");
+
+    messageData.forEach(messageData => {
+      TestHelpers.validateWeeklyMessage(messageData, slackUserData.members);
+    });
+
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 });
 

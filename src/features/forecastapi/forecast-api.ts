@@ -22,8 +22,8 @@ namespace ForecastApiUtilities {
 
     if (result.status !== 200) throw new Error(`Error while loading non project time, ${result.message}`);
 
-    const nonProjectTimes = await result.json();
-    
+    const nonProjectTimes: NonProjectTime[] = await result.json();
+
     return nonProjectTimes.filter(nonPTime => !nonPTime.is_internal_time);
   };
 
@@ -39,9 +39,9 @@ namespace ForecastApiUtilities {
 
     if (result.status !== 200) throw new Error("Error while loading time registrations", result.message);
 
-    const timeRegistrations = await result.json();
+    const timeRegistrations: TimeRegistrations[] = await result.json();
 
-    return timeRegistrations.filter(timeReg => timeReg.non_project_time !== null);
+    return timeRegistrations.filter(timeReg => timeReg.non_project_time);
   };
 }
 

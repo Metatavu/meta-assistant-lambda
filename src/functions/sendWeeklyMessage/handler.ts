@@ -8,7 +8,9 @@ import TimeBankUtilities from "src/features/timebank/timebank-utils";
 import schema, { TimePeriod, WeeklyCombinedData } from "../schema";
 
 /**
- * AWS-less handler.
+ * AWS-less handler for sendWeeklyMessage
+ * 
+ * @returns Promise of WeeklyHandlerResponse
  */
 export async function sendWeeklyMessageHandler(): Promise<WeeklyHandlerResponse> {
   try {

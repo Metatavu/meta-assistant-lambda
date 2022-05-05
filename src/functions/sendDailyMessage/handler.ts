@@ -10,7 +10,9 @@ import ForecastApiUtilities from "src/features/forecastapi/forecast-api";
 import TimeUtilities from "src/features/generic/time-utils";
 
 /**
+ * AWS-less handler for sendDailyMessage
  * 
+ * @returns Promise of DailyHandlerResponse
  */
 export async function sendDailyMessageHandler(): Promise<DailyHandlerResponse> {
   try {

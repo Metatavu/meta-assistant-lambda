@@ -1,6 +1,5 @@
 import { NonProjectTime, TimeRegistrations } from "@functions/schema";
 import fetch, { Headers } from "node-fetch";
-import { resourceUsage } from "process";
 
 /**
  * Namespace for forecast-api

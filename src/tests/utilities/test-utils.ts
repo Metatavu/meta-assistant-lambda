@@ -6,6 +6,8 @@ import { timebankGetUsersMock, timeEntryMock1, timeEntryMock2, timeEntryMock3, t
 import { slackUserData, slackPostMessageMock, slackPostMessageError } from "../__mocks__/slackMocks";
 import fetch from "node-fetch";
 import { forecastMockNonProjectTime, mockForecastTimeRegistrations } from "../__mocks__/forecastMocks";
+import { DailyMessageData } from "src/functions/schema";
+import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 
 namespace TestHelpers {
   const timebankClient = TimeBankApiProvider.client;
@@ -124,6 +126,37 @@ namespace TestHelpers {
   export const mockTotalTimeEntriesCustom = (mockData: any[]) => {
     jest.spyOn(timebankClient, "timebankControllerGetTotal")
       .mockReturnValueOnce(Promise.resolve({ response: message, body: mockData }));
+  };
+
+  /**
+   * 
+   * @param data user's data 
+   * @param slackUsers slack users 
+   */
+  export const validateDailyMessage = (data: DailyMessageData, slackUsers: Member[]) => {
+    const {
+      message,
+      name,
+      displayDate,
+      billableHoursPercentage,
+      displayExpected,
+      displayInternal,
+      displayLogged,
+      displayProject
+    } = data;
+
+    const slackNameMatches = slackUsers.find(user => user.real_name === name);
+
+    expect(message).toBeDefined();
+    expect(typeof message).toEqual(typeof "string");
+    expect(name).toBeDefined();
+    expect(displayDate).toBeDefined();
+    expect(billableHoursPercentage).toBeDefined();
+    expect(displayExpected).toBeDefined();
+    expect(displayInternal).toBeDefined();
+    expect(displayLogged).toBeDefined();
+    expect(displayProject).toBeDefined();
+    expect(slackNameMatches).toBeDefined();
   };
 }
 

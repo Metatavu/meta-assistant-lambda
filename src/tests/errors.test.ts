@@ -4,7 +4,6 @@ import TestHelpers from "./utilities/test-utils";
 import { forecastErrorMock, forecastMockNonProjectTime, mockForecastTimeRegistrations } from "./__mocks__/forecastMocks";
 import { timebankGetUsersEmptyDataMock, timeEntryEmptyDataMock,timeTotalsEmptyDataMock } from "./__mocks__/timebankMocks";
 import { DailyHandlerResponse, WeeklyHandlerResponse } from "../libs/api-gateway";
-import { slackUserDataError, slackPostMessageError } from "./__mocks__/slackMocks";
 
 jest.mock("node-fetch");
 

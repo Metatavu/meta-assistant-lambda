@@ -117,7 +117,7 @@ namespace TimeUtilities {
    * Gets two previous workdays
    *
    * @param testValueToday Value for today
-   * @param testValueDayOfWeek Day of the week
+   * @param testValueDayOfWeek  Day of the week
    * @returns two previous workdays
    */
   export const getPreviousTwoWorkdays = (testValueToday?: DateTime, testValueDayOfWeek?: number): PreviousWorkdayDates => {

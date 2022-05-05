@@ -14,6 +14,8 @@ jspm_packages
 # notes
 *.txt
 
+generated/
+
 .dccache
 
 /coverage

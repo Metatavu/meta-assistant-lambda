@@ -13,17 +13,13 @@ namespace TimeBankApiProvider {
    * @returns valid persons data
    */
   export const getTimebankUsers = async (): Promise<PersonDto[]> => {
-    try {
-      const { body } = await client.timebankControllerGetPersons();
-      if (!body.length) {
-        throw new Error("Error while loading persons from Timebank");
-      }
+    const { body } = await client.timebankControllerGetPersons();
 
-      return body.filter(person => person.defaultRole !== null);
-    } catch (error) {
-      console.error(error);
-      Promise.reject(error);
+    if (!body.length) {
+      throw new Error("Error while loading persons from Timebank");
     }
+
+    return body.filter(person => person.defaultRole !== null);
   };
 
   /**
@@ -35,16 +31,11 @@ namespace TimeBankApiProvider {
    * @returns Array of time entries for person
    */
   export const getTimeEntries = async (id: number, before: string, after: string): Promise<TimeEntry[]> => {
-    try {
-      const { body } = await client.timebankControllerGetEntries(id.toString(), before, after);
-      if(body){
-        return body;
-      }
-      throw new Error("Error while loading time entries from Timebank");
-    } catch (error) {
-      console.error(error);
-      return Promise.reject(error);
-    }
+    const { body } = await client.timebankControllerGetEntries(id.toString(), before, after);
+
+    if (body) return body;
+
+    throw new Error("Error while loading time entries from Timebank");
   };
 
   /**
@@ -57,28 +48,24 @@ namespace TimeBankApiProvider {
    * @returns total time data with user name
    */
   export const getTotalTimeEntries = async (timePeriod: TimePeriod, person: PersonDto, year: number, week: number): Promise<WeeklyCombinedData> => {
-    try {
-      const { body } = await client.timebankControllerGetTotal(person.id.toString(), timePeriod);
-      if (body.length){
-        const selectedWeek = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week)[0];
+    const { body } = await client.timebankControllerGetTotal(person.id.toString(), timePeriod);
+    if (!body.length) throw new Error("Error while loading total time entries");
 
-        const { firstName, lastName } = person;
-        const combinedName = `${firstName} ${lastName}`;
-        if (selectedWeek){
-          return {
-            selectedWeek: selectedWeek,
-            name: combinedName,
-            firstName: person.firstName,
-            personId: person.id,
-            expected: person.monday
-          };
-        }
-      }
-      throw new Error("Error while loading total time entries");
-    } catch (error) {
-      console.error(error);
-      return Promise.reject(error);
-    }
+    const filteredWeeks = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week);
+    if (filteredWeeks.length !== 1) throw new Error("Found more than one time period for given year and week");
+
+
+    const selectedWeek = filteredWeeks[0];
+    const { firstName, lastName } = person;
+    const combinedName = `${firstName} ${lastName}`;
+
+    return {
+      selectedWeek: selectedWeek,
+      name: combinedName,
+      firstName: person.firstName,
+      personId: person.id,
+      expected: person.monday
+    };
   };
 }
 

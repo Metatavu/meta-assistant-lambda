@@ -1,12 +1,9 @@
-import { sendWeeklyMessage } from "../functions/sendWeeklyMessage/handler";
+import { sendWeeklyMessage, sendWeeklyMessageHandler } from "../functions/sendWeeklyMessage/handler";
 import TestHelpers from "./utilities/test-utils";
 import { slackUserDataError, slackUserData, slackPostMessageError } from "./__mocks__/slackMocks";
+import { WeeklyHandlerResponse } from "../libs/api-gateway";
 
 jest.mock("node-fetch");
-
-let event;
-let context;
-let callback;
 
 describe("mock the weekly handler", () => {
   it("should return all expected message data", async () => {
@@ -16,38 +13,16 @@ describe("mock the weekly handler", () => {
     TestHelpers.mockTotalTimeEntries();
     TestHelpers.mockSlackPostMessage();
 
-    const res: any = await sendWeeklyMessage(event, context, callback);
-    const messageData = JSON.parse(res.body);
-    const statusCode = JSON.parse(res.statusCode);
+    const messageBody: WeeklyHandlerResponse = await sendWeeklyMessageHandler();
+    const messageData = messageBody.data;
 
-    expect(res).toBeDefined();
-    expect(messageData).toBeDefined();
-    expect(messageData.data[0].message).toBeDefined();
-    expect(typeof messageData.data[0].message).toEqual(typeof "string");
-    expect(messageData.data[0].name).toBeDefined();
-    expect(messageData.data[0].week).toBeDefined();
-    expect(messageData.data[0].startDate).toBeDefined();
-    expect(messageData.data[0].endDate).toBeDefined();
-    expect(messageData.data[0].displayLogged).toBeDefined();
-    expect(messageData.data[0].displayExpected).toBeDefined();
-    expect(messageData.data[0].displayProject).toBeDefined();
-    expect(messageData.data[0].displayInternal).toBeDefined();
-    expect(messageData.data[0].billableHoursPercentage).toBeDefined();
-    expect(messageData.data[0].name).toEqual(slackUserData.members[0].real_name);
-    expect(messageData.data[1].message).toBeDefined();
-    expect(typeof messageData.data[1].message).toEqual(typeof "string");
-    expect(messageData.data[1].name).toBeDefined();
-    expect(messageData.data[1].week).toBeDefined();
-    expect(messageData.data[1].startDate).toBeDefined();
-    expect(messageData.data[1].endDate).toBeDefined();
-    expect(messageData.data[1].displayLogged).toBeDefined();
-    expect(messageData.data[1].displayExpected).toBeDefined();
-    expect(messageData.data[1].displayProject).toBeDefined();
-    expect(messageData.data[1].displayInternal).toBeDefined();
-    expect(messageData.data[1].billableHoursPercentage).toBeDefined();
-    expect(messageData.data[1].name).toEqual(slackUserData.members[1].real_name);
-    expect(messageData.data[2]).toBeUndefined();
-    expect(statusCode).toEqual(200);
+    const spy = jest.spyOn(TestHelpers, "validateWeeklyMessage");
+
+    messageData.forEach(messageData => {
+      TestHelpers.validateWeeklyMessage(messageData, slackUserData.members);
+    });
+
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 });
 
@@ -59,13 +34,13 @@ describe("Weekly vacation time test", () => {
     TestHelpers.mockTotalTimeEntries();
     TestHelpers.mockSlackPostMessage();
 
-    const res: any = await sendWeeklyMessage(event, context, callback);
-    const messageData = JSON.parse(res.body);
+    const messageData: WeeklyHandlerResponse = await sendWeeklyMessageHandler();
 
     expect(messageData.data.length).toBe(2);
   });
 });
 
+// @todo find out why when tests below are moved don't work
 describe("handler is mocked for error handling", () => {
   it("should return expected error handling for slack API get user endpoint", async () => {
     TestHelpers.mockTimebankUsers();
@@ -74,12 +49,11 @@ describe("handler is mocked for error handling", () => {
     TestHelpers.mockTotalTimeEntries();
     TestHelpers.mockSlackPostMessage();
 
-    const res: any = await sendWeeklyMessage(event, context, callback);
-    const messageData = JSON.parse(res.body);
+    const res: WeeklyHandlerResponse = await sendWeeklyMessageHandler();
 
     expect(res).toBeDefined();
-    expect(messageData.message).toMatch("Error while sending slack message:");
-    expect(messageData.message).toMatch(slackUserDataError.error);
+    expect(res.message).toMatch("Error while sending slack message:");
+    expect(res.message).toMatch(slackUserDataError.error);
   });
 
   it("should return expected error handling for slack API postmessage endpoint", async () => {
@@ -89,11 +63,10 @@ describe("handler is mocked for error handling", () => {
     TestHelpers.mockTimebankTimeEntries();
     TestHelpers.mockSlackPostMessageError();
 
-    const res: any = await sendWeeklyMessage(event, context, callback);
-    const messageData = JSON.parse(res.body);
+    const res: WeeklyHandlerResponse = await sendWeeklyMessageHandler();
 
     expect(res).toBeDefined();
-    expect(messageData.message).toMatch("Error while sending slack message:");
-    expect(messageData.message).toMatch(slackPostMessageError.error);
+    expect(res.message).toMatch("Error while sending slack message:");
+    expect(res.message).toMatch(slackPostMessageError.error);
   });
 });

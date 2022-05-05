@@ -1,13 +1,10 @@
-import { sendDailyMessage } from "../functions/sendDailyMessage/handler";
+import { sendDailyMessageHandler } from "../functions/sendDailyMessage/handler";
 import TestHelpers from "./utilities/test-utils";
 import { timebankSpecialCharsMock, timeEntrySpecialCharsMock } from "./__mocks__/timebankMocks";
 import { slackUserDataError, slackUserData, slackPostMessageError, slackSpecialCharsMock } from "./__mocks__/slackMocks";
+import { DailyHandlerResponse } from "../libs/api-gateway";
 
 jest.mock("node-fetch");
-
-let event;
-let context;
-let callback;
 
 describe("mock the daily handler", () => {
   describe("handler is mocked and run to send a message", () => {
@@ -18,37 +15,20 @@ describe("mock the daily handler", () => {
       TestHelpers.mockTimebankTimeEntries();
       TestHelpers.mockSlackPostMessage();
 
-      const res: any = await sendDailyMessage(event, context, callback);
-      const statusCode = JSON.parse(res.statusCode);
-      const messageData = JSON.parse(res.body);
+      const messageBody: DailyHandlerResponse = await sendDailyMessageHandler();
+      const messageData = messageBody.data;
 
-      expect(res).toBeDefined();
-      expect(messageData).toBeDefined();
-      expect(messageData.data[0].message).toBeDefined();
-      expect(typeof messageData.data[0].message).toEqual(typeof "string");
-      expect(messageData.data[0].name).toBeDefined();
-      expect(messageData.data[0].displayDate).toBeDefined();
-      expect(messageData.data[0].displayLogged).toBeDefined();
-      expect(messageData.data[0].displayExpected).toBeDefined();
-      expect(messageData.data[0].displayProject).toBeDefined();
-      expect(messageData.data[0].displayInternal).toBeDefined();
-      expect(messageData.data[0].billableHoursPercentage).toBeDefined();
-      expect(messageData.data[0].name).toEqual(slackUserData.members[0].real_name);
-      expect(messageData.data[1].message).toBeDefined();
-      expect(typeof messageData.data[1].message).toEqual(typeof "string");
-      expect(messageData.data[1].name).toBeDefined();
-      expect(messageData.data[1].displayDate).toBeDefined();
-      expect(messageData.data[1].displayLogged).toBeDefined();
-      expect(messageData.data[1].displayExpected).toBeDefined();
-      expect(messageData.data[1].displayProject).toBeDefined();
-      expect(messageData.data[1].displayInternal).toBeDefined();
-      expect(messageData.data[1].billableHoursPercentage).toBeDefined();
-      expect(messageData.data[1].name).toEqual(slackUserData.members[1].real_name);
-      expect(messageData.data[2]).toBeUndefined();
-      expect(statusCode).toEqual(200);
+      const spy = jest.spyOn(TestHelpers, "validateDailyMessage");
+
+      messageData.forEach(messageData => {
+        TestHelpers.validateDailyMessage(messageData, slackUserData.members);
+      });
+
+      expect(spy).toHaveBeenCalledTimes(2);
     });
   });
 
+  // @todo find out why tests below won't work when reorganized
   describe("Daily vacation time test", () => {
     it("Should not return user who is on vacation", async () => {
       TestHelpers.mockTimebankUsers();
@@ -57,9 +37,8 @@ describe("mock the daily handler", () => {
       TestHelpers.mockTimebankTimeEntries();
       TestHelpers.mockSlackPostMessage();
 
-      const res: any = await sendDailyMessage(event, context, callback);
-      const messageData = JSON.parse(res.body);
-
+      const messageData: DailyHandlerResponse = await sendDailyMessageHandler();
+      
       expect(messageData.data.length).toBe(2);
     });
   });
@@ -72,10 +51,9 @@ describe("mock the daily handler", () => {
       TestHelpers.mockTimebankTimeEntries();
       TestHelpers.mockSlackPostMessage();
 
-      const res: any = await sendDailyMessage(event, context, callback);
-      const messageData = JSON.parse(res.body);
+      const messageData: DailyHandlerResponse = await sendDailyMessageHandler();
 
-      expect(res).toBeDefined();
+      expect(messageData).toBeDefined();
       expect(messageData.message).toMatch("Error while sending slack message:");
       expect(messageData.message).toMatch(slackUserDataError.error);
     });
@@ -87,10 +65,9 @@ describe("mock the daily handler", () => {
       TestHelpers.mockTimebankTimeEntries();
       TestHelpers.mockSlackPostMessageError();
 
-      const res: any = await sendDailyMessage(event, context, callback);
-      const messageData = JSON.parse(res.body);
+      const messageData: DailyHandlerResponse = await sendDailyMessageHandler();
 
-      expect(res).toBeDefined();
+      expect(messageData).toBeDefined();
       expect(messageData.message).toMatch("Error while sending slack message:");
       expect(messageData.message).toMatch(slackPostMessageError.error);
     });
@@ -104,10 +81,9 @@ describe("mock the daily handler", () => {
       TestHelpers.mockTimebankTimeEntriesCustom(timeEntrySpecialCharsMock);
       TestHelpers.mockSlackPostMessage();
 
-      const res: any = await sendDailyMessage(event, context, callback);
-      const messageData = JSON.parse(res.body);
+      const messageData: DailyHandlerResponse = await sendDailyMessageHandler();
 
-      expect(res).toBeDefined();
+      expect(messageData).toBeDefined();
       expect(messageData.data[0].name).toBe("Ñöä!£ Çøæé");
     });
   });

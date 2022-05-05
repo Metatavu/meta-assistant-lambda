@@ -6,7 +6,12 @@ import { timebankGetUsersMock, timeEntryMock1, timeEntryMock2, timeEntryMock3, t
 import { slackUserData, slackPostMessageMock, slackPostMessageError } from "../__mocks__/slackMocks";
 import fetch from "node-fetch";
 import { forecastMockNonProjectTime, mockForecastTimeRegistrations } from "../__mocks__/forecastMocks";
+import { DailyMessageData, WeeklyMessageData } from "src/functions/schema";
+import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 
+/**
+ * Helper functions for testing suites.
+ */
 namespace TestHelpers {
   const timebankClient = TimeBankApiProvider.client;
   const message: IncomingMessage = new IncomingMessage(new Socket);
@@ -24,6 +29,7 @@ namespace TestHelpers {
 
   /**
    * Get timebank Users mock custom data
+   * 
    * @param mockData custom timebank Users data
    */
   export const mockTimebankUsersCustom = (mockData: any) => {
@@ -39,6 +45,7 @@ namespace TestHelpers {
 
   /**
    * Get Slack users mock data
+   * 
    * @param mockData custom data
    */
   export const mockSlackUsersCustom = (mockData: any) => {
@@ -54,23 +61,24 @@ namespace TestHelpers {
     };
 
     jest.spyOn(mockedFetch, "fetch")
-      .mockReturnValue(new Response(JSON.stringify(forecastMockNonProjectTime)))
-      .mockReturnValueOnce(new Response(JSON.stringify(mockForecastTimeRegistrations)));
+      .mockReturnValueOnce(new Response(JSON.stringify(mockForecastTimeRegistrations)))
+      .mockReturnValueOnce(new Response(JSON.stringify(forecastMockNonProjectTime)));
   };
 
   /**
    * Mock Forecast error response
+   * 
    * @param firstMock custom forecast data for the first endpoint
    * @param secondMock custom forecast data for the second endpoint
    */
-  export const mockForecastDataCustom = (firstEndPointMock, secondEndPointMock) => {
+  export const mockForecastDataCustom = (firstEndPointMock, secondEndPointMock, firstResponseStatus, secondResponseStatus) => {
     const mockedFetch = {
       fetch: fetch
     };
 
     jest.spyOn(mockedFetch, "fetch")
-      .mockReturnValueOnce(new Response(JSON.stringify(firstEndPointMock)))
-      .mockReturnValueOnce(new Response(JSON.stringify(secondEndPointMock)));
+      .mockReturnValueOnce(new Response(JSON.stringify(firstEndPointMock), firstResponseStatus))
+      .mockReturnValueOnce(new Response(JSON.stringify(secondEndPointMock), secondResponseStatus));
   };
 
   /**
@@ -86,6 +94,7 @@ namespace TestHelpers {
 
   /**
    * Timebank custom time entries mock
+   * 
    * @param mockData custom time entry data
    */
   export const mockTimebankTimeEntriesCustom = (mockData: any[] ) => {
@@ -119,11 +128,78 @@ namespace TestHelpers {
 
   /**
    * Timebank total custom time entries mock
+   * 
    * @param mockData custom total time entries data
    */
   export const mockTotalTimeEntriesCustom = (mockData: any[]) => {
     jest.spyOn(timebankClient, "timebankControllerGetTotal")
       .mockReturnValueOnce(Promise.resolve({ response: message, body: mockData }));
+  };
+
+  /**
+   * 
+   * @param data user's data 
+   * @param slackUsers slack users 
+   */
+  export const validateDailyMessage = (data: DailyMessageData, slackUsers: Member[]) => {
+    const {
+      message,
+      name,
+      displayDate,
+      billableHoursPercentage,
+      displayExpected,
+      displayInternal,
+      displayLogged,
+      displayProject
+    } = data;
+
+    const slackNameMatches = slackUsers.find(user => user.real_name === name);
+
+    expect(message).toBeDefined();
+    expect(typeof message).toEqual(typeof "string");
+    expect(name).toBeDefined();
+    expect(displayDate).toBeDefined();
+    expect(billableHoursPercentage).toBeDefined();
+    expect(displayExpected).toBeDefined();
+    expect(displayInternal).toBeDefined();
+    expect(displayLogged).toBeDefined();
+    expect(displayProject).toBeDefined();
+    expect(slackNameMatches).toBeDefined();
+  };
+
+  /**
+   * 
+   * @param data user's data 
+   * @param slackUsers slack users 
+   */
+  export const validateWeeklyMessage = (data: WeeklyMessageData, slackUsers: Member[]) => {
+    const {
+      message,
+      name,
+      endDate,
+      startDate,
+      week,
+      billableHoursPercentage,
+      displayExpected,
+      displayInternal,
+      displayLogged,
+      displayProject
+    } = data;
+
+    const slackNameMatches = slackUsers.find(user => user.real_name === name);
+
+    expect(message).toBeDefined();
+    expect(typeof message).toEqual(typeof "string");
+    expect(name).toBeDefined();
+    expect(endDate).toBeDefined();
+    expect(startDate).toBeDefined();
+    expect(week).toBeDefined();
+    expect(billableHoursPercentage).toBeDefined();
+    expect(displayExpected).toBeDefined();
+    expect(displayInternal).toBeDefined();
+    expect(displayLogged).toBeDefined();
+    expect(displayProject).toBeDefined();
+    expect(slackNameMatches).toBeDefined();
   };
 }
 

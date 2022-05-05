@@ -35,7 +35,6 @@ describe("forecast api tests", () => {
 
       try{
         const result = await ForecastApiUtilities.getNonProjectTime();
-        console.log(`Expected the call to fail with message: ${expectedError}`);
       }catch(error){
         expect(error).toEqual(expectedError);
       }
@@ -69,10 +68,9 @@ describe("forecast api tests", () => {
       jest.spyOn(mockedFetch, "fetch").mockReturnValueOnce(new Response(JSON.stringify(emptyTimeRegistrationsArray)));
       const expectedError = new Error("Error while loading time registrations");
 
-      try{
+      try {
         const result = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
-        console.log(`Expected the call to fail with message: ${expectedError}`);
-      }catch(error){
+      } catch(error) {
         expect(error).toEqual(expectedError);
       }
     });

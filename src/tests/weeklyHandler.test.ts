@@ -5,10 +5,6 @@ import { WeeklyHandlerResponse } from "../libs/api-gateway";
 
 jest.mock("node-fetch");
 
-let event;
-let context;
-let callback;
-
 describe("mock the weekly handler", () => {
   it("should return all expected message data", async () => {
     TestHelpers.mockTimebankUsers();
@@ -63,6 +59,7 @@ describe("Weekly vacation time test", () => {
   });
 });
 
+// @todo find out why when tests below are moved don't work
 describe("handler is mocked for error handling", () => {
   it("should return expected error handling for slack API get user endpoint", async () => {
     TestHelpers.mockTimebankUsers();

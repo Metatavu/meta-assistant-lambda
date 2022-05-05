@@ -61,8 +61,8 @@ namespace TestHelpers {
     };
 
     jest.spyOn(mockedFetch, "fetch")
-      .mockReturnValue(new Response(JSON.stringify(forecastMockNonProjectTime)))
-      .mockReturnValueOnce(new Response(JSON.stringify(mockForecastTimeRegistrations)));
+      .mockReturnValueOnce(new Response(JSON.stringify(mockForecastTimeRegistrations)))  
+      .mockReturnValueOnce(new Response(JSON.stringify(forecastMockNonProjectTime)));
   };
 
   /**
@@ -71,14 +71,14 @@ namespace TestHelpers {
    * @param firstMock custom forecast data for the first endpoint
    * @param secondMock custom forecast data for the second endpoint
    */
-  export const mockForecastDataCustom = (firstEndPointMock, secondEndPointMock) => {
+  export const mockForecastDataCustom = (firstEndPointMock, secondEndPointMock, firstResponseStatus, secondResponseStatus) => {
     const mockedFetch = {
       fetch: fetch
     };
 
     jest.spyOn(mockedFetch, "fetch")
-      .mockReturnValueOnce(new Response(JSON.stringify(firstEndPointMock)))
-      .mockReturnValueOnce(new Response(JSON.stringify(secondEndPointMock)));
+      .mockReturnValueOnce(new Response(JSON.stringify(firstEndPointMock), firstResponseStatus))
+      .mockReturnValueOnce(new Response(JSON.stringify(secondEndPointMock), secondResponseStatus));
   };
 
   /**

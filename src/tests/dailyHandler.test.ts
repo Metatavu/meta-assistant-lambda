@@ -6,9 +6,6 @@ import { DailyHandlerResponse } from "../libs/api-gateway";
 
 jest.mock("node-fetch");
 
-let event;
-let context;
-let callback;
 
 describe("mock the daily handler", () => {
   describe("handler is mocked and run to send a message", () => {
@@ -32,6 +29,7 @@ describe("mock the daily handler", () => {
     });
   });
 
+  // @todo find out why tests below won't work when reorganized
   describe("Daily vacation time test", () => {
     it("Should not return user who is on vacation", async () => {
       TestHelpers.mockTimebankUsers();
@@ -41,8 +39,7 @@ describe("mock the daily handler", () => {
       TestHelpers.mockSlackPostMessage();
 
       const messageData: DailyHandlerResponse = await sendDailyMessageHandler();
-      console.log("RESPONSE FROM HANDLER", messageData);
-
+      
       expect(messageData.data.length).toBe(2);
     });
   });

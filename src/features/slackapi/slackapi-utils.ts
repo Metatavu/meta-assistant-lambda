@@ -169,7 +169,13 @@ Have a great week!
     const errors = responses.filter(response => response?.error);
 
     if (errors.length) {
-      throw new Error(`Error while posting slack messages, ${errors[0].error}`);
+      let errorMessage = "Error while posting slack messages, ";
+      
+      errors.forEach(e => {
+        errorMessage += `${e.error}\n`;
+      });
+
+      throw new Error(errorMessage);
     }
 
     return messagesRecord;
@@ -212,7 +218,13 @@ Have a great week!
     const errors: ChatPostMessageResponse[] = responses.filter(response => response.error);
 
     if (errors.length) {
-      throw new Error(`Error while posting slack messages, ${errors[0].error}`);
+      let errorMessage = "Error while posting slack messages, ";
+      
+      errors.forEach(e => {
+        errorMessage += `${e.error}\n`;
+      });
+
+      throw new Error(errorMessage);
     }
 
     return messagesRecord;

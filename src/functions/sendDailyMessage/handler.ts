@@ -31,14 +31,14 @@ export async function sendDailyMessageHandler(): Promise<DailyHandlerResponse> {
     const dailyCombinedData = TimeBankUtilities.combineDailyData(timebankUsers, timeEntries, slackUsers);
     const messagesSent = await SlackApiUtilities.postDailyMessage(dailyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
 
-    return Promise.resolve({
+    return {
       message: "Everything went well sending the daily, see data for message breakdown...",
       data: messagesSent
-    });
+    };
   } catch (error) {
-    return Promise.resolve({
+    return {
       message: `Error while sending slack message: ${error}`
-    });
+    };
   }
 }
 

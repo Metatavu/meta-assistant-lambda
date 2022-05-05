@@ -31,14 +31,15 @@ export async function sendWeeklyMessageHandler(): Promise<WeeklyHandlerResponse>
 
     const messagesSent = await SlackApiUtilities.postWeeklyMessage(weeklyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
 
-    return Promise.resolve({
+    return {
       message: "Everything went well sending the weekly, see data for message breakdown...",
       data: messagesSent
-    });
+    };
   } catch (error) {
-    return Promise.resolve({
+
+    return {
       message: `Error while sending slack message: ${error}`
-    });
+    };
   }
 }
 

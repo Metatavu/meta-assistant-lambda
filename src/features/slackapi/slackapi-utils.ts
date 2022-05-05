@@ -19,16 +19,11 @@ namespace SlackApiUtilities {
    * @returns Promise of slack user data
    */
   export const getSlackUsers = async (): Promise<Member[]> => {
-    try {
-      const result = await client.users.list();
+    const result = await client.users.list();
 
-      if (result.members) return result.members;
+    if (result.members) return result.members;
 
-      throw new Error(`Error while loading slack users list, ${result.error}`);
-    } catch (error) {
-      console.error(error);
-      return Promise.reject(error);
-    }
+    throw new Error(`Error while loading slack users list, ${result.error}`);
   };
 
   /**
@@ -152,36 +147,32 @@ Have a great week!
     previousWorkDays: PreviousWorkdayDates,
     nonProjectTimes: NonProjectTime[]
   ): Promise<DailyMessageData[]> => {
-    try {
-      const { numberOfToday, yesterday, today } = previousWorkDays;
+    const { numberOfToday, yesterday, today } = previousWorkDays;
 
-      let messagesRecord: DailyMessageData[] = [];
+    let messagesRecord: DailyMessageData[] = [];
 
-      const promises = dailyCombinedData.map(user => {
-        const { slackId, personId, expected } = user;
+    const promises = dailyCombinedData.map(user => {
+      const { slackId, personId, expected } = user;
 
-        const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
-        const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
+      const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
+      const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
-        const message = constructDailyMessage(user, numberOfToday);
+      const message = constructDailyMessage(user, numberOfToday);
 
-        if (!isAway && !firstDayBack && expected !== 0) {
-          messagesRecord.push(message);
-          return sendMessage(slackId, message.message);
-        }
-      });
-
-      const responses: ChatPostMessageResponse[] = await Promise.all(promises);
-      const errors = responses.filter(response => response?.error);
-
-      if (errors.length) {
-        throw new Error(`Error while posting slack messages, ${errors[0].error}`);
+      if (!isAway && !firstDayBack && expected !== 0) {
+        messagesRecord.push(message);
+        return sendMessage(slackId, message.message);
       }
+    });
 
-      return messagesRecord;
-    } catch (error) {
-      return Promise.reject(error);
+    const responses: ChatPostMessageResponse[] = await Promise.all(promises);
+    const errors = responses.filter(response => response?.error);
+
+    if (errors.length) {
+      throw new Error(`Error while posting slack messages, ${errors[0].error}`);
     }
+
+    return messagesRecord;
   };
 
   /**
@@ -198,37 +189,33 @@ Have a great week!
     previousWorkDays: PreviousWorkdayDates,
     nonProjectTimes: NonProjectTime[]
   ): Promise<WeeklyMessageData[]> => {
-    try {
-      const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
-      const { yesterday, today } = previousWorkDays;
+    const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
+    const { yesterday, today } = previousWorkDays;
 
-      let messagesRecord: WeeklyMessageData[] = [];
+    let messagesRecord: WeeklyMessageData[] = [];
 
-      const promises: Promise<ChatPostMessageResponse>[] = weeklyCombinedData.map(user => {
-        const { slackId, personId, expected } = user;
+    const promises: Promise<ChatPostMessageResponse>[] = weeklyCombinedData.map(user => {
+      const { slackId, personId, expected } = user;
 
-        const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
-        const firstDayBack = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
+      const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
+      const firstDayBack = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
-        const message = constructWeeklySummaryMessage(user, weekStartDate.toISODate(), weekEndDate.toISODate());
+      const message = constructWeeklySummaryMessage(user, weekStartDate.toISODate(), weekEndDate.toISODate());
 
-        if (!isAway && !firstDayBack) {
-          messagesRecord.push(message);
-          return sendMessage(slackId, message.message);
-        }
-      }).filter(p => p);
-
-      const responses: ChatPostMessageResponse[] = await Promise.all(promises);
-      const errors: ChatPostMessageResponse[] = responses.filter(response => response.error);
-
-      if (errors.length) {
-        throw new Error(`Error while posting slack messages, ${errors[0].error}`);
+      if (!isAway && !firstDayBack) {
+        messagesRecord.push(message);
+        return sendMessage(slackId, message.message);
       }
+    }).filter(p => p);
 
-      return messagesRecord;
-    } catch (error) {
-      return Promise.reject(error);
+    const responses: ChatPostMessageResponse[] = await Promise.all(promises);
+    const errors: ChatPostMessageResponse[] = responses.filter(response => response.error);
+
+    if (errors.length) {
+      throw new Error(`Error while posting slack messages, ${errors[0].error}`);
     }
+
+    return messagesRecord;
   };
 }
 

@@ -151,7 +151,7 @@ Have a great week!
 
     let messagesRecord: DailyMessageData[] = [];
 
-    const promises = dailyCombinedData.map(user => {
+    const promises: Promise<ChatPostMessageResponse>[] = dailyCombinedData.map(user => {
       const { slackId, personId, expected } = user;
 
       const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
@@ -163,14 +163,14 @@ Have a great week!
         messagesRecord.push(message);
         return sendMessage(slackId, message.message);
       }
-    });
+    }).filter(p => p);
 
     const responses: ChatPostMessageResponse[] = await Promise.all(promises);
-    const errors = responses.filter(response => response?.error);
+    const errors = responses.filter(response => response.error);
 
     if (errors.length) {
       let errorMessage = "Error while posting slack messages, ";
-      
+
       errors.forEach(e => {
         errorMessage += `${e.error}\n`;
       });
@@ -200,7 +200,7 @@ Have a great week!
 
     let messagesRecord: WeeklyMessageData[] = [];
 
-    const promises: Promise<ChatPostMessageResponse>[] = weeklyCombinedData.map(user => {
+    const promises: Promise<ChatPostMessageResponse>[]  = weeklyCombinedData.map(user => {
       const { slackId, personId, expected } = user;
 
       const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
@@ -219,7 +219,7 @@ Have a great week!
 
     if (errors.length) {
       let errorMessage = "Error while posting slack messages, ";
-      
+
       errors.forEach(e => {
         errorMessage += `${e.error}\n`;
       });

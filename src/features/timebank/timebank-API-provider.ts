@@ -19,7 +19,7 @@ namespace TimeBankApiProvider {
       throw new Error("Error while loading persons from Timebank");
     }
 
-    return body.filter(person => person.defaultRole !== null);
+    return body.filter(person => person.defaultRole !== null && person.active);
   };
 
   /**
@@ -53,7 +53,6 @@ namespace TimeBankApiProvider {
 
     const filteredWeeks = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week);
     if (filteredWeeks.length !== 1) throw new Error("Found more than one time period for given year and week");
-
 
     const selectedWeek = filteredWeeks[0];
     const { firstName, lastName } = person;

@@ -11,7 +11,7 @@ import TimeUtilities from "src/features/generic/time-utils";
 
 /**
  * AWS-less handler for sendDailyMessage
- * 
+ *
  * @returns Promise of DailyHandlerResponse
  */
 export async function sendDailyMessageHandler(): Promise<DailyHandlerResponse> {
@@ -38,7 +38,7 @@ export async function sendDailyMessageHandler(): Promise<DailyHandlerResponse> {
       data: messagesSent
     };
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return {
       message: `Error while sending slack message: ${error}`
     };

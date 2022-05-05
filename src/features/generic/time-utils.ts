@@ -1,4 +1,4 @@
-import { DailyCombinedData, Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime } from "@functions/schema";
+import { DailyCombinedData, Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, HandleTimeConversion, CalculateWorkedTimeAndBillableHours } from "@functions/schema";
 import { DateTime, Duration } from "luxon";
 import { TimeEntryTotalDto } from "src/generated/client/api";
 
@@ -39,7 +39,7 @@ namespace TimeUtilities {
    * @param user data from timebank
    * @returns human friendly time formats
    */
-  export const handleTimeConversion = (user: TimeEntryTotalDto) => {
+  export const handleTimeConversion = (user: TimeEntryTotalDto): HandleTimeConversion => {
     const { logged, expected, internalTime, total, projectTime } = user;
 
     const displayLogged = TimeUtilities.timeConversion(logged);
@@ -62,7 +62,7 @@ namespace TimeUtilities {
    * @param user data from timebank
    * @returns a message based on the worked time and the percentage of billable hours
    */
-  export const calculateWorkedTimeAndBillableHours = (user: TimeEntryTotalDto | DailyCombinedData) => {
+  export const calculateWorkedTimeAndBillableHours = (user: TimeEntryTotalDto | DailyCombinedData): CalculateWorkedTimeAndBillableHours => {
     const { total, projectTime, logged } = user;
 
     const billableHoursPercentage = logged === 0 ? "0" : (projectTime/logged * 100).toFixed(0);
@@ -101,7 +101,7 @@ namespace TimeUtilities {
     expected: number,
     date: string,
     nonProjectTimes: NonProjectTime[]
-  ) => {
+  ): boolean => {
     const personsTimeRegistration = timeRegistrations.find(timeRegistration =>
       timeRegistration.person === personId
       && timeRegistration.date === date

@@ -112,6 +112,25 @@ export interface DailyMessageData {
 }
 
 /**
+ * Interface for handleTimeConversion
+ */
+export interface HandleTimeConversion {
+  displayLogged: string;
+  displayExpected: string;
+  displayDifference: string;
+  displayProject: string;
+  displayInternal: string;
+}
+
+/**
+ * Interface for calculateWorkedTimeAndBillableHours
+ */
+export interface CalculateWorkedTimeAndBillableHours {
+  message: string;
+  billableHoursPercentage: string;
+}
+
+/**
  * Interface for Weekly Message Data
  */
 export interface WeeklyMessageData {

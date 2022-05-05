@@ -31,13 +31,13 @@ describe("forecast api tests", () => {
       const mockEmptyNonProjectTimeArray = emptyNonProjecTimeArray;
       jest.spyOn(mockedFetch, "fetch").mockReturnValueOnce(new Response(JSON.stringify(mockEmptyNonProjectTimeArray)));
 
-      const e = new Error("Error while loading non project time, undefined");
+      const expectedError = new Error("Error while loading non project time, undefined");
 
       try{
         const result = await ForecastApiUtilities.getNonProjectTime();
-        console.log(result);
+        console.log(`Expected the call to fail with message: ${expectedError}`);
       }catch(error){
-        expect(error).toEqual(e);
+        expect(error).toEqual(expectedError);
       }
     });
   });
@@ -67,13 +67,13 @@ describe("forecast api tests", () => {
       const dayBeforeYesterday = "2020-04-30";
 
       jest.spyOn(mockedFetch, "fetch").mockReturnValueOnce(new Response(JSON.stringify(emptyTimeRegistrationsArray)));
-      const e = new Error("Error while loading time registrations");
+      const expectedError = new Error("Error while loading time registrations");
 
       try{
         const result = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
-        console.log(result);
+        console.log(`Expected the call to fail with message: ${expectedError}`);
       }catch(error){
-        expect(error).toEqual(e);
+        expect(error).toEqual(expectedError);
       }
     });
 

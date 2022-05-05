@@ -21,6 +21,7 @@ namespace SlackApiUtilities {
   export const getSlackUsers = async (): Promise<Member[]> => {
     try {
       const result = await client.users.list();
+
       if (result.members) return result.members;
 
       throw new Error(`Error while loading slack users list, ${result.error}`);
@@ -37,7 +38,7 @@ namespace SlackApiUtilities {
    * @param numberOfToday Todays number
    * @returns string message if id match
    */
-  const constructDailyMessage = (user: DailyCombinedData, numberOfToday: number) => {
+  const constructDailyMessage = (user: DailyCombinedData, numberOfToday: number): DailyMessageData => {
     const { name, date, firstName } = user;
 
     const displayDate = DateTime.fromISO(date).toFormat("dd.MM.yyyy");
@@ -82,7 +83,7 @@ Have a great rest of the day!
    * @param weekEnd date for data
    * @returns message
    */
-  const constructWeeklySummaryMessage = (user: WeeklyCombinedData, weekStart: string, weekEnd: string) => {
+  const constructWeeklySummaryMessage = (user: WeeklyCombinedData, weekStart: string, weekEnd: string): WeeklyMessageData => {
     const { name, selectedWeek: { id: { week } }, firstName } = user;
 
     const startDate = DateTime.fromISO(weekStart).toFormat("dd.MM.yyyy");
@@ -124,15 +125,15 @@ Have a great week!
   };
 
   /**
-   * Send slack message and await response
+   * Sends given message to given slack channel
    *
-   * @param slackId
-   * @param message
-   * @returns
+   * @param channelId channel ID
+   * @param message message to be send
+   * @returns Promise of ChatPostMessageResponse
    */
-  const sendMessage = (slackId: string, message: string): Promise<ChatPostMessageResponse> => (
+  const sendMessage = (channelId: string, message: string): Promise<ChatPostMessageResponse> => (
     client.chat.postMessage({
-      channel: slackId,
+      channel: channelId,
       text: message
     })
   );
@@ -149,8 +150,9 @@ Have a great week!
     dailyCombinedData: DailyCombinedData[],
     timeRegistrations: TimeRegistrations[],
     previousWorkDays: PreviousWorkdayDates,
-    nonProjectTimes: NonProjectTime[]): Promise<DailyMessageData[]> => {
-    try{
+    nonProjectTimes: NonProjectTime[]
+  ): Promise<DailyMessageData[]> => {
+    try {
       const { numberOfToday, yesterday, today } = previousWorkDays;
 
       let messagesRecord: DailyMessageData[] = [];
@@ -164,7 +166,6 @@ Have a great week!
         const message = constructDailyMessage(user, numberOfToday);
 
         if (!isAway && !firstDayBack && expected !== 0) {
-          console.log(message.message, slackId);
           messagesRecord.push(message);
           return sendMessage(slackId, message.message);
         }
@@ -195,30 +196,30 @@ Have a great week!
     weeklyCombinedData: WeeklyCombinedData[],
     timeRegistrations:TimeRegistrations[],
     previousWorkDays: PreviousWorkdayDates,
-    nonProjectTimes: NonProjectTime[]): Promise<WeeklyMessageData[]> => {
+    nonProjectTimes: NonProjectTime[]
+  ): Promise<WeeklyMessageData[]> => {
     try {
       const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
       const { yesterday, today } = previousWorkDays;
 
       let messagesRecord: WeeklyMessageData[] = [];
 
-      const promises = weeklyCombinedData.map(user => {
+      const promises: Promise<ChatPostMessageResponse>[] = weeklyCombinedData.map(user => {
         const { slackId, personId, expected } = user;
 
         const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
-        const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
+        const firstDayBack = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
         const message = constructWeeklySummaryMessage(user, weekStartDate.toISODate(), weekEndDate.toISODate());
 
         if (!isAway && !firstDayBack) {
-          console.log(message.message, slackId);
           messagesRecord.push(message);
           return sendMessage(slackId, message.message);
         }
-      });
+      }).filter(p => p);
 
       const responses: ChatPostMessageResponse[] = await Promise.all(promises);
-      const errors = responses.filter(response => response?.error);
+      const errors: ChatPostMessageResponse[] = responses.filter(response => response.error);
 
       if (errors.length) {
         throw new Error(`Error while posting slack messages, ${errors[0].error}`);

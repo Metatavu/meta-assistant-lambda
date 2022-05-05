@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import { DateTime } from "luxon";
 import TimeUtilities from "src/features/generic/time-utils";
 import { forecastMockNonProjectTime, mockForecastTimeRegistrations } from "./__mocks__/forecastMocks";
@@ -14,7 +13,12 @@ describe("vacation time tests", () => {
     const fakePersonId = 3;
     const fakeExpected = 433;
 
-    const result = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(mockForecastTimeRegistrations, fakePersonId, fakeExpected, today, forecastMockNonProjectTime);
+    const result = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(
+      mockForecastTimeRegistrations,
+      fakePersonId,
+      fakeExpected,
+      today,
+      forecastMockNonProjectTime);
 
     expect(result).toBe(false);
   });
@@ -23,7 +27,12 @@ describe("vacation time tests", () => {
     const fakePersonId = 124;
     const fakeExpected = 100;
 
-    const result = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(mockForecastTimeRegistrations, fakePersonId, fakeExpected, today, forecastMockNonProjectTime);
+    const result = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(
+      mockForecastTimeRegistrations,
+      fakePersonId,
+      fakeExpected,
+      today,
+      forecastMockNonProjectTime);
 
     expect(result).toBe(true);
   });
@@ -44,7 +53,12 @@ describe("vacation time tests", () => {
     const fakeExpected = undefined;
     const fakeDate = undefined;
 
-    const result = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(mockForecastTimeRegistrations, fakePersonId1, fakeExpected, fakeDate, forecastMockNonProjectTime);
+    const result = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(
+      mockForecastTimeRegistrations,
+      fakePersonId1,
+      fakeExpected,
+      fakeDate,
+      forecastMockNonProjectTime);
     expect(result).toBe(false);
   });
 
@@ -64,7 +78,12 @@ describe("vacation time tests", () => {
     const fakeExpected = NaN;
     const fakeDate = null;
 
-    const result = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(mockForecastTimeRegistrations, fakePersonId1, fakeExpected, fakeDate, forecastMockNonProjectTime);
+    const result = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(
+      mockForecastTimeRegistrations,
+      fakePersonId1,
+      fakeExpected,
+      fakeDate,
+      forecastMockNonProjectTime);
     expect(result).toBe(false);
   });
 });

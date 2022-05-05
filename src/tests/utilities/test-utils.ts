@@ -67,9 +67,11 @@ namespace TestHelpers {
 
   /**
    * Mock Forecast error response
-   * 
+   *
    * @param firstMock custom forecast data for the first endpoint
    * @param secondMock custom forecast data for the second endpoint
+   * @param firstResponseStatus custom fetch response for status code check
+   * @param secondResponseStatus custom fetch response for status code check
    */
   export const mockForecastDataCustom = (firstEndPointMock, secondEndPointMock, firstResponseStatus, secondResponseStatus) => {
     const mockedFetch = {

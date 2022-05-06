@@ -1,10 +1,8 @@
 import { sendDailyMessageHandler } from "../functions/sendDailyMessage/handler";
 import TestHelpers from "./utilities/test-utils";
-import { timebankSpecialCharsMock, timeEntrySpecialCharsMock } from "./__mocks__/timebankMocks";
-import { slackUserDataError, slackUserData, slackPostMessageError, slackSpecialCharsMock } from "./__mocks__/slackMocks";
+import { timebankSpecialCharsMock } from "./__mocks__/timebankMocks";
+import { slackUserData, slackSpecialCharsMock } from "./__mocks__/slackMocks";
 import { DailyHandlerResponse } from "../libs/api-gateway";
-import { Console } from "console";
-import { MessageChannel } from "worker_threads";
 
 jest.mock("node-fetch");
 

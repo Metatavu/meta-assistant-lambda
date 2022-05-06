@@ -112,3 +112,33 @@ describe("Daily handler is mocked for error handling", () => {
     expect(messageData.message).toMatch(slackPostMessageError.error);
   });
 });
+
+describe("Weekly handler is mocked for error handling", () => {
+  it("should return expected error handling for slack API get user endpoint", async () => {
+    TestHelpers.mockTimebankUsers();
+    TestHelpers.mockSlackUsersCustom(slackUserDataError);
+    TestHelpers.mockForecastData();
+    TestHelpers.mockTotalTimeEntries();
+    TestHelpers.mockSlackPostMessage();
+
+    const res: WeeklyHandlerResponse = await sendWeeklyMessageHandler();
+
+    expect(res).toBeDefined();
+    expect(res.message).toMatch("Error while sending slack message:");
+    expect(res.message).toMatch(slackUserDataError.error);
+  });
+
+  it("should return expected error handling for slack API postmessage endpoint", async () => {
+    TestHelpers.mockTimebankUsers();
+    TestHelpers.mockSlackUsers();
+    TestHelpers.mockForecastData();
+    TestHelpers.mockTotalTimeEntries();
+    TestHelpers.mockSlackPostMessageError();
+
+    const res: WeeklyHandlerResponse = await sendWeeklyMessageHandler();
+
+    expect(res).toBeDefined();
+    expect(res.message).toMatch("Error while sending slack message:");
+    expect(res.message).toMatch(slackPostMessageError.error);
+  });
+});

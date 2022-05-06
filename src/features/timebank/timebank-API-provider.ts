@@ -16,7 +16,7 @@ namespace TimeBankApiProvider {
       const client = new TimebankApi(process.env.timebank_base_url);
       const { body } = await client.timebankControllerGetPersons();
 
-      return body.filter(person => person.defaultRole !== null);
+      return body.filter(person => person.defaultRole !== null && person.active);
     } catch (error) {
       console.error("Error while loading persons");
       Promise.reject(error);

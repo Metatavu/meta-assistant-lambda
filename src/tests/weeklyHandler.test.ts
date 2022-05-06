@@ -40,7 +40,7 @@ describe("Weekly vacation time test", () => {
   });
 });
 
-// @todo find out why when tests below are moved don't work
+// @todo find out why when tests below are moved don't work, some persistance issues
 describe("handler is mocked for error handling", () => {
   it("should return expected error handling for slack API get user endpoint", async () => {
     TestHelpers.mockTimebankUsers();

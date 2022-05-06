@@ -38,7 +38,7 @@ namespace SlackApiUtilities {
   const constructDailyMessage = (user: DailyCombinedData, numberOfToday: number) => {
     const { name, date } = user;
 
-    const displayDate = DateTime.fromISO(date).toFormat("dd-MM-yyyy");
+    const displayDate = DateTime.fromISO(date).toFormat("dd.MM.yyyy");
 
     const {
       displayLogged,
@@ -73,8 +73,8 @@ Have a great rest of the day!
   const constructWeeklySummaryMessage = (user: WeeklyCombinedData, weekStart: string, weekEnd: string) => {
     const { name, selectedWeek: { id: { week } } } = user;
 
-    const startDate = DateTime.fromISO(weekStart).toFormat("dd-MM-yyyy");
-    const endDate = DateTime.fromISO(weekEnd).toFormat("dd-MM-yyyy");
+    const startDate = DateTime.fromISO(weekStart).toFormat("dd.MM.yyyy");
+    const endDate = DateTime.fromISO(weekEnd).toFormat("dd.MM.yyyy");
 
     const {
       displayLogged,
@@ -120,7 +120,7 @@ Have a great week!
       const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
       const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
-      if (!isAway && !firstDayBack) {
+      if (!isAway && !firstDayBack && expected !== 0) {
         try {
           client.chat.postMessage({
             channel: slackId,

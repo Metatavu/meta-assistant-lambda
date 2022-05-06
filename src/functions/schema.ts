@@ -17,6 +17,7 @@ export default {
  */
 export interface DailyCombinedData {
   name: string;
+  firstName: string;
   personId: number;
   expected: number;
   logged: number;

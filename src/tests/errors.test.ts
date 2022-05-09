@@ -83,7 +83,7 @@ describe("timebank api get users error response", () => {
   });
 });
 
-describe("Daily handler is mocked for error handling", () => {
+describe("Slack API error handling in daily message handler", () => {
   it("should return expected error handling for slack API get user endpoint", async () => {
     TestHelpers.mockTimebankUsers();
     TestHelpers.mockSlackUsersCustom(slackUserDataError);
@@ -105,15 +105,19 @@ describe("Daily handler is mocked for error handling", () => {
     TestHelpers.mockTimebankTimeEntries();
     TestHelpers.mockSlackPostMessageError();
 
+    const consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+
     const messageData: DailyHandlerResponse = await sendDailyMessageHandler();
 
     expect(messageData).toBeDefined();
-    expect(messageData.message).toMatch("Error while sending slack message:");
-    expect(messageData.message).toMatch(slackPostMessageError.error);
+    expect(consoleErrorSpy).toHaveBeenCalled();
+    expect(console.error).toHaveBeenCalled();
   });
 });
 
-describe("Weekly handler is mocked for error handling", () => {
+describe("Slack API error handling in weekly message handler", () => {
   it("should return expected error handling for slack API get user endpoint", async () => {
     TestHelpers.mockTimebankUsers();
     TestHelpers.mockSlackUsersCustom(slackUserDataError);
@@ -135,10 +139,14 @@ describe("Weekly handler is mocked for error handling", () => {
     TestHelpers.mockTotalTimeEntries();
     TestHelpers.mockSlackPostMessageError();
 
+    const consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+
     const res: WeeklyHandlerResponse = await sendWeeklyMessageHandler();
 
     expect(res).toBeDefined();
-    expect(res.message).toMatch("Error while sending slack message:");
-    expect(res.message).toMatch(slackPostMessageError.error);
+    expect(consoleErrorSpy).toHaveBeenCalled();
+    expect(console.error).toHaveBeenCalled();
   });
 });

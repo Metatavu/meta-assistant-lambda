@@ -21,9 +21,9 @@ namespace SlackApiUtilities {
   export const getSlackUsers = async (): Promise<Member[]> => {
     const result = await client.users.list();
 
-    if (result.members) return result.members;
+    if (!result.members) throw new Error(`Error while loading slack users list, ${result.error}`);
 
-    throw new Error(`Error while loading slack users list, ${result.error}`);
+    return result.members;
   };
 
   /**
@@ -151,7 +151,7 @@ Have a great week!
 
     let messagesRecord: DailyMessageData[] = [];
 
-    const promises: Promise<ChatPostMessageResponse>[] = dailyCombinedData.map(user => {
+    const promises: Promise<ChatPostMessageResponse | undefined>[] = dailyCombinedData.map(user => {
       const { slackId, personId, expected } = user;
 
       const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
@@ -174,8 +174,7 @@ Have a great week!
       errors.forEach(e => {
         errorMessage += `${e.error}\n`;
       });
-
-      throw new Error(errorMessage);
+      console.error(errorMessage);
     }
 
     return messagesRecord;
@@ -200,7 +199,8 @@ Have a great week!
 
     let messagesRecord: WeeklyMessageData[] = [];
 
-    const promises: Promise<ChatPostMessageResponse>[]  = weeklyCombinedData.map(user => {
+    const promises: Promise<ChatPostMessageResponse | undefined>[]  =
+    weeklyCombinedData.map(user => {
       const { slackId, personId, expected } = user;
 
       const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
@@ -224,7 +224,7 @@ Have a great week!
         errorMessage += `${e.error}\n`;
       });
 
-      throw new Error(errorMessage);
+      console.error(errorMessage);
     }
 
     return messagesRecord;

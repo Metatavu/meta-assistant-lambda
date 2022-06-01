@@ -6,7 +6,7 @@ import { timebankGetUsersMock, timeEntryMock1, timeEntryMock2, timeEntryMock3, t
 import { slackUserData, slackPostMessageMock, slackPostMessageError } from "../__mocks__/slackMocks";
 import fetch from "node-fetch";
 import { forecastMockNonProjectTime, mockForecastTimeRegistrations } from "../__mocks__/forecastMocks";
-import { DailyMessageData, WeeklyMessageData } from "src/functions/schema";
+import { DailyMessageData, DailyMessageResult, WeeklyMessageData, WeeklyMessageResult } from "src/functions/schema";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 
 /**
@@ -143,7 +143,7 @@ namespace TestHelpers {
    * @param data user's data 
    * @param slackUsers slack users 
    */
-  export const validateDailyMessage = (data: DailyMessageData, slackUsers: Member[]) => {
+  export const validateDailyMessage = (data: DailyMessageResult, slackUsers: Member[]) => {
     const {
       message,
       name,
@@ -153,7 +153,7 @@ namespace TestHelpers {
       displayInternal,
       displayLogged,
       displayProject
-    } = data;
+    } = data.message;
 
     const slackNameMatches = slackUsers.find(user => user.real_name === name);
 
@@ -174,7 +174,7 @@ namespace TestHelpers {
    * @param data user's data 
    * @param slackUsers slack users 
    */
-  export const validateWeeklyMessage = (data: WeeklyMessageData, slackUsers: Member[]) => {
+  export const validateWeeklyMessage = (data: WeeklyMessageResult, slackUsers: Member[]) => {
     const {
       message,
       name,
@@ -186,7 +186,7 @@ namespace TestHelpers {
       displayInternal,
       displayLogged,
       displayProject
-    } = data;
+    } = data.message;
 
     const slackNameMatches = slackUsers.find(user => user.real_name === name);
 

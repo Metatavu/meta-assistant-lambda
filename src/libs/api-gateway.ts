@@ -1,6 +1,6 @@
 import type { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from "aws-lambda";
 import type { FromSchema } from "json-schema-to-ts";
-import { DailyMessageData, WeeklyMessageData } from "@functions/schema";
+import { DailyMessageResult, WeeklyMessageResult } from "@functions/schema";
 import schema from "../functions/schema";
 
 /**
@@ -13,15 +13,21 @@ export type ValidatedAPIGatewayProxyEvent<S> = Omit<APIGatewayProxyEvent, "body"
  */
 export type ValidatedEventAPIGatewayProxyEvent<S> = Handler<ValidatedAPIGatewayProxyEvent<S>, APIGatewayProxyResult>;
 
+/**
+ * Type for DailyHandlerResponse
+ */
 export type DailyHandlerResponse = {
   message: string,
-  data?: DailyMessageData[],
+  data?: DailyMessageResult[],
   event?: ValidatedAPIGatewayProxyEvent<typeof schema>,
 };
 
+/**
+ * Type for WeeklyHandlerResponse
+ */
 export type WeeklyHandlerResponse = {
   message: string,
-  data?: WeeklyMessageData[],
+  data?: WeeklyMessageResult[],
   event?: ValidatedAPIGatewayProxyEvent<typeof schema>,
 };
 

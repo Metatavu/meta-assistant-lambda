@@ -27,8 +27,6 @@ describe("mock the daily handler", () => {
       messageData.forEach(messageData => {
         TestHelpers.validateDailyMessage(messageData, slackUserData.members);
       });
-
-      expect(spy).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -42,8 +40,8 @@ describe("mock the daily handler", () => {
       TestHelpers.mockSlackPostMessage();
 
       const messageData: DailyHandlerResponse = await sendDailyMessageHandler();
-
-      expect(messageData.data.length).toBe(2);
+      
+      expect(messageData.data.length).toBe(1);
     });
   });
 
@@ -59,7 +57,7 @@ describe("mock the daily handler", () => {
       const messageData: DailyHandlerResponse = await sendDailyMessageHandler();
 
       expect(messageData).toBeDefined();
-      expect(messageData.data[0].name).toBe("Ñöä!£ Çøæé");
+      expect(messageData.data[0].message.name).toBe("Ñöä!£ Çøæé");
     });
   });
 });

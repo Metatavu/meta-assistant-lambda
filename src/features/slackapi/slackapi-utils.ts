@@ -1,4 +1,4 @@
-import { DailyCombinedData, WeeklyCombinedData, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DailyMessageData, WeeklyMessageData } from "@functions/schema";
+import { DailyCombinedData, WeeklyCombinedData, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DailyMessageData, DailyMessageResult, WeeklyMessageData, WeeklyMessageResult } from "@functions/schema";
 import { ChatPostMessageResponse, LogLevel, WebClient } from "@slack/web-api";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DateTime } from "luxon";
@@ -39,10 +39,10 @@ namespace SlackApiUtilities {
     const displayDate = DateTime.fromISO(date).toFormat("dd.MM.yyyy");
 
     const {
-      displayLogged,
-      displayExpected,
-      displayInternal,
-      displayProject
+      logged,
+      expected,
+      internal,
+      project
     } = TimeUtilities.handleTimeConversion(user);
 
     const {
@@ -52,9 +52,9 @@ namespace SlackApiUtilities {
 
     const customMessage = `
 Hi ${firstName},
-${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
+${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${logged} with an expected time of ${expected}.
 ${message}
-Project time: ${displayProject}, Internal time: ${displayInternal}.
+Project time: ${project}, Internal time: ${internal}.
 Your percentage of billable hours was: ${billableHoursPercentage}% ${+billableHoursPercentage >= 75 ? ":+1:" : ":-1:"}
 Have a great rest of the day!
     `;
@@ -62,10 +62,10 @@ Have a great rest of the day!
       message: customMessage,
       name: name,
       displayDate: displayDate,
-      displayLogged: displayLogged,
-      displayExpected: displayExpected,
-      displayProject: displayProject,
-      displayInternal: displayInternal,
+      displayLogged: logged,
+      displayExpected: expected,
+      displayProject: project,
+      displayInternal: internal,
       billableHoursPercentage: billableHoursPercentage
     };
   };
@@ -85,10 +85,10 @@ Have a great rest of the day!
     const endDate = DateTime.fromISO(weekEnd).toFormat("dd.MM.yyyy");
 
     const {
-      displayLogged,
-      displayExpected,
-      displayInternal,
-      displayProject
+      logged,
+      expected,
+      internal,
+      project
     } = TimeUtilities.handleTimeConversion(user.selectedWeek);
 
     const {
@@ -98,9 +98,9 @@ Have a great rest of the day!
 
     const customMessage = `
 Hi ${firstName},
-Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${displayLogged} with an expected time of ${displayExpected}.
+Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${logged} with an expected time of ${expected}.
 ${message}
-Project time: ${displayProject}, Internal time: ${displayInternal}.
+Project time: ${project}, Internal time: ${internal}.
 Your percentage of billable hours was: ${billableHoursPercentage}%
 You ${+billableHoursPercentage >= 75 ? "worked the target 75% billable hours last week:+1:" : "did not work the target 75% billable hours last week:-1:"}.
 Have a great week!
@@ -111,10 +111,10 @@ Have a great week!
       week: week,
       startDate: startDate,
       endDate: endDate,
-      displayLogged: displayLogged,
-      displayExpected: displayExpected,
-      displayProject: displayProject,
-      displayInternal: displayInternal,
+      displayLogged: logged,
+      displayExpected: expected,
+      displayProject: project,
+      displayInternal: internal,
       billableHoursPercentage: billableHoursPercentage
     };
   };
@@ -141,93 +141,71 @@ Have a great week!
    * @param previousWorkDays dates and the number of today
    * @param nonProjectTimes all non project times
    */
-  export const postDailyMessage = async (
+  export const postDailyMessageToUsers = async (
     dailyCombinedData: DailyCombinedData[],
     timeRegistrations: TimeRegistrations[],
     previousWorkDays: PreviousWorkdayDates,
     nonProjectTimes: NonProjectTime[]
-  ): Promise<DailyMessageData[]> => {
+  ): Promise<DailyMessageResult[]> => {
     const { numberOfToday, yesterday, today } = previousWorkDays;
 
-    let messagesRecord: DailyMessageData[] = [];
+    let messageResults: DailyMessageResult[] = [];
 
-    const promises: Promise<ChatPostMessageResponse | undefined>[] = dailyCombinedData.map(user => {
-      const { slackId, personId, expected } = user;
+    for (const userData of dailyCombinedData) {
+      const { slackId, personId, expected } = userData;
 
       const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
       const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
-      const message = constructDailyMessage(user, numberOfToday);
+      const message = constructDailyMessage(userData, numberOfToday);
 
-      if (!isAway && !firstDayBack && expected !== 0) {
-        messagesRecord.push(message);
-        return sendMessage(slackId, message.message);
+      if (!isAway && !firstDayBack) {
+        messageResults.push({
+          message: message,
+          response: await sendMessage(slackId, message.message)
+        });
       }
-    }).filter(p => p);
 
-    const responses: ChatPostMessageResponse[] = await Promise.all(promises);
-    const errors = responses.filter(response => response.error);
-
-    if (errors.length) {
-      let errorMessage = "Error while posting slack messages, ";
-
-      errors.forEach(e => {
-        errorMessage += `${e.error}\n`;
-      });
-      console.error(errorMessage);
+      return messageResults;
     }
-
-    return messagesRecord;
   };
 
   /**
-   * Post a slack message to users
+   * Post a weekly summary slack message to users
    *
    * @param weeklyCombinedData list of combined timebank and slack user data
    * @param nonProjectTimes all non project times
    * @param timeRegistrations all time registrations after yesterday
    * @param previousWorkDays dates and the number of today
    */
-  export const postWeeklyMessage = async (
+  export const postWeeklyMessageToUsers = async (
     weeklyCombinedData: WeeklyCombinedData[],
     timeRegistrations:TimeRegistrations[],
     previousWorkDays: PreviousWorkdayDates,
     nonProjectTimes: NonProjectTime[]
-  ): Promise<WeeklyMessageData[]> => {
+  ): Promise<WeeklyMessageResult[]> => {
     const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
     const { yesterday, today } = previousWorkDays;
 
-    let messagesRecord: WeeklyMessageData[] = [];
+    const messageResults: WeeklyMessageResult[] = [];
 
-    const promises: Promise<ChatPostMessageResponse | undefined>[]  =
-    weeklyCombinedData.map(user => {
-      const { slackId, personId, expected } = user;
+    for (const userData of weeklyCombinedData) {
+      const { slackId, personId, expected } = userData;
 
       const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
       const firstDayBack = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
-      const message = constructWeeklySummaryMessage(user, weekStartDate.toISODate(), weekEndDate.toISODate());
+      const message = constructWeeklySummaryMessage(userData, weekStartDate.toISODate(), weekEndDate.toISODate());
 
       if (!isAway && !firstDayBack) {
-        messagesRecord.push(message);
-        return sendMessage(slackId, message.message);
+        messageResults.push({
+          message: message,
+          response: await sendMessage(slackId, message.message)
+        });
       }
-    }).filter(p => p);
-
-    const responses: ChatPostMessageResponse[] = await Promise.all(promises);
-    const errors: ChatPostMessageResponse[] = responses.filter(response => response.error);
-
-    if (errors.length) {
-      let errorMessage = "Error while posting slack messages, ";
-
-      errors.forEach(e => {
-        errorMessage += `${e.error}\n`;
-      });
-
-      console.error(errorMessage);
     }
 
-    return messagesRecord;
+    return messageResults
   };
 }
 

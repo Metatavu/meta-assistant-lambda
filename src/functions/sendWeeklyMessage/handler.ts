@@ -12,7 +12,7 @@ import schema, { TimePeriod, WeeklyCombinedData } from "../schema";
  * 
  * @returns Promise of WeeklyHandlerResponse
  */
-export async function sendWeeklyMessageHandler(): Promise<WeeklyHandlerResponse> {
+export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse> => {
   try {
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { dayBeforeYesterday } = previousWorkDays;
@@ -31,7 +31,18 @@ export async function sendWeeklyMessageHandler(): Promise<WeeklyHandlerResponse>
 
     const weeklyCombinedData = TimeBankUtilities.combineWeeklyData(timeEntries, slackUsers);
 
-    const messagesSent = await SlackApiUtilities.postWeeklyMessage(weeklyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
+    const messagesSent = await SlackApiUtilities.postWeeklyMessageToUsers(weeklyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
+
+    const errors = messagesSent.filter(messageSent => messageSent.response.error);
+
+    if (errors.length) {
+      let errorMessage = "Error while posting slack messages, ";
+
+      errors.forEach(error => {
+        errorMessage += `${error.response.error}\n`;
+      });
+      console.error(errorMessage);
+    }
 
     return {
       message: "Everything went well sending the weekly, see data for message breakdown...",
@@ -43,7 +54,7 @@ export async function sendWeeklyMessageHandler(): Promise<WeeklyHandlerResponse>
       message: `Error while sending slack message: ${error}`
     };
   }
-}
+};
 
 /**
  * Lambda for sending weekly messages
@@ -51,12 +62,11 @@ export async function sendWeeklyMessageHandler(): Promise<WeeklyHandlerResponse>
  * @param event API Gateway proxy event
  * @returns JSON response
  */
-export const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
-  let res: WeeklyHandlerResponse = await sendWeeklyMessageHandler();
-
-  res.event = event;
-
-  return formatJSONResponse(res);
-};
+export const sendWeeklyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => (
+  formatJSONResponse({
+    ...await sendWeeklyMessageHandler(),
+    event: event
+  })
+);
 
 export const main = middyfy(sendWeeklyMessage);

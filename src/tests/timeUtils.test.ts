@@ -61,11 +61,11 @@ describe("time-utils functions testing", () => {
       const fakeUserData = timeTotalsMock;
 
       const result = TimeUtilities.handleTimeConversion(fakeUserData);
-      expect(result.displayExpected).toBe("2h 0 minutes");
-      expect(result.displayInternal).toBe("1h 0 minutes");
-      expect(result.displayLogged).toBe("1h 0 minutes");
-      expect(result.displayProject).toBe("1h 0 minutes");
-      expect(result.displayDifference).toBe("0h 0 minutes");
+      expect(result.expected).toBe("2h 0 minutes");
+      expect(result.internal).toBe("1h 0 minutes");
+      expect(result.logged).toBe("1h 0 minutes");
+      expect(result.project).toBe("1h 0 minutes");
+      expect(result.difference).toBe("0h 0 minutes");
     });
 
     it("should throw an error if no user data", () => {
@@ -85,45 +85,5 @@ describe("time-utils functions testing", () => {
 
     expect(results.weekStartDate).toEqual(fakeWeekStartDate);
     expect(results.weekEndDate).toEqual(fakeWeekEndDate);
-  });
-
-  describe("getPreviousTwoWorkDays test", () => {
-    const fakeToday = DateTime.now();
-    const fakeDayOfWeek = new Date().getDay();
-
-    let fakePreviousWorkDay = fakeToday.minus({ days: 1 }).toISODate();
-    let fakeDayBeforePreviousWorkDay = fakeToday.minus({ days: 2 }).toISODate();
-
-    if (fakeDayOfWeek === 1) {
-      fakePreviousWorkDay = fakeToday.minus({ days: 3 }).toISODate();
-      fakeDayBeforePreviousWorkDay = fakeToday.minus({ days: 4 }).toISODate();
-    }
-
-    const results = TimeUtilities.getPreviousTwoWorkdays();
-
-    expect(results.dayBeforeYesterday).toEqual(fakeDayBeforePreviousWorkDay);
-    expect(results.numberOfToday).toEqual(fakeDayOfWeek);
-    expect(results.today).toEqual(fakeToday.toISODate());
-    expect(results.yesterday).toEqual(fakePreviousWorkDay);
-  });
-
-  describe("getPreviousTwoWorkDays test when week day is 1", () => {
-    const fakeToday = DateTime.now().set({ day: 2, month: 1, year: 2022 });
-    const fakeDayOfWeek = 1;
-
-    let fakePreviousWorkDay = fakeToday.minus({ days: 1 }).toISODate();
-    let fakeDayBeforePreviousWorkDay = fakeToday.minus({ days: 2 }).toISODate();
-
-    if (fakeDayOfWeek === 1) {
-      fakePreviousWorkDay = fakeToday.minus({ days: 3 }).toISODate();
-      fakeDayBeforePreviousWorkDay = fakeToday.minus({ days: 4 }).toISODate();
-    }
-
-    const results = TimeUtilities.getPreviousTwoWorkdays(fakeToday, fakeDayOfWeek);
-
-    expect(results.dayBeforeYesterday).toEqual(fakeDayBeforePreviousWorkDay);
-    expect(results.numberOfToday).toEqual(fakeDayOfWeek);
-    expect(results.today).toEqual(fakeToday.toISODate());
-    expect(results.yesterday).toEqual(fakePreviousWorkDay);
   });
 });

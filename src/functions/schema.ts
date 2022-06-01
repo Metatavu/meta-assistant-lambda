@@ -1,3 +1,4 @@
+import { ChatPostMessageResponse } from "@slack/web-api/dist/response/ChatPostMessageResponse";
 import { DateTime } from "luxon";
 import { TimeEntryTotalDto } from "src/generated/client/api";
 
@@ -112,20 +113,20 @@ export interface DailyMessageData {
 }
 
 /**
- * Interface for handleTimeConversion
+ * Interface for DisplayValues
  */
-export interface HandleTimeConversion {
-  displayLogged: string;
-  displayExpected: string;
-  displayDifference: string;
-  displayProject: string;
-  displayInternal: string;
+export interface DisplayValues {
+  logged: string;
+  expected: string;
+  difference: string;
+  project: string;
+  internal: string;
 }
 
 /**
  * Interface for calculateWorkedTimeAndBillableHours
  */
-export interface CalculateWorkedTimeAndBillableHours {
+export interface CalculateWorkedTimeAndBillableHoursResponse {
   message: string;
   billableHoursPercentage: string;
 }
@@ -144,4 +145,20 @@ export interface WeeklyMessageData {
   displayProject: string;
   displayInternal: string;
   billableHoursPercentage: string;
+}
+
+/**
+ * Interface for Weekly Message Result
+ */
+export interface WeeklyMessageResult {
+  message: WeeklyMessageData;
+  response: ChatPostMessageResponse;
+}
+
+/**
+ * Interface for Daily Message Result
+ */
+export interface DailyMessageResult {
+  message: DailyMessageData;
+  response: ChatPostMessageResponse;
 }

@@ -1,4 +1,4 @@
-import { DailyCombinedData, Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, HandleTimeConversion, CalculateWorkedTimeAndBillableHours } from "@functions/schema";
+import { DailyCombinedData, Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DisplayValues, CalculateWorkedTimeAndBillableHoursResponse } from "@functions/schema";
 import { DateTime, Duration } from "luxon";
 import { TimeEntryTotalDto } from "src/generated/client/api";
 
@@ -39,7 +39,7 @@ namespace TimeUtilities {
    * @param user data from timebank
    * @returns human friendly time formats
    */
-  export const handleTimeConversion = (user: TimeEntryTotalDto): HandleTimeConversion => {
+  export const handleTimeConversion = (user: TimeEntryTotalDto): DisplayValues => {
     const { logged, expected, internalTime, total, projectTime } = user;
 
     const displayLogged = TimeUtilities.timeConversion(logged);
@@ -49,20 +49,21 @@ namespace TimeUtilities {
     const displayInternal = TimeUtilities.timeConversion(internalTime);
 
     return {
-      displayLogged: displayLogged,
-      displayExpected: displayExpected,
-      displayDifference: displayDifference,
-      displayProject: displayProject,
-      displayInternal: displayInternal
+      logged: displayLogged,
+      expected: displayExpected,
+      difference: displayDifference,
+      project: displayProject,
+      internal: displayInternal
     };
   };
 
   /**
+   * Calculates worked time and billable hours
    * 
    * @param user data from timebank
    * @returns a message based on the worked time and the percentage of billable hours
    */
-  export const calculateWorkedTimeAndBillableHours = (user: TimeEntryTotalDto | DailyCombinedData): CalculateWorkedTimeAndBillableHours => {
+  export const calculateWorkedTimeAndBillableHours = (user: TimeEntryTotalDto | DailyCombinedData): CalculateWorkedTimeAndBillableHoursResponse => {
     const { total, projectTime, logged } = user;
 
     const billableHoursPercentage = logged === 0 ? "0" : (projectTime/logged * 100).toFixed(0);
@@ -116,18 +117,11 @@ namespace TimeUtilities {
   /**
    * Gets two previous workdays
    *
-   * @param testValueToday Value for today
-   * @param testValueDayOfWeek  Day of the week
    * @returns two previous workdays
    */
-  export const getPreviousTwoWorkdays = (testValueToday?: DateTime, testValueDayOfWeek?: number): PreviousWorkdayDates => {
+  export const getPreviousTwoWorkdays = (): PreviousWorkdayDates => {
     let today = DateTime.now();
     let dayOfWeek = new Date().getDay();
-
-    if (testValueToday && testValueDayOfWeek) {
-      today = testValueToday;
-      dayOfWeek = testValueDayOfWeek;
-    }
 
     let previousWorkDay = today.minus({ days: 1 }).toISODate();
     let dayBeforePreviousWorkDay = today.minus({ days: 2 }).toISODate();

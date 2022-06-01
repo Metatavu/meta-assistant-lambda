@@ -13,7 +13,7 @@ import TimeUtilities from "src/features/generic/time-utils";
  *
  * @returns Promise of DailyHandlerResponse
  */
-export async function sendDailyMessageHandler(): Promise<DailyHandlerResponse> {
+export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> => {
   try {
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { yesterday, dayBeforeYesterday } = previousWorkDays;
@@ -30,8 +30,18 @@ export async function sendDailyMessageHandler(): Promise<DailyHandlerResponse> {
     }
 
     const dailyCombinedData = TimeBankUtilities.combineDailyData(timebankUsers, timeEntries, slackUsers);
-    const messagesSent = await SlackApiUtilities.postDailyMessage(dailyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
+    const messagesSent = await SlackApiUtilities.postDailyMessageToUsers(dailyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
+    
+    const errors = messagesSent.filter(messageSent => messageSent.response.error);
 
+    if (errors.length) {
+      let errorMessage = "Error while posting slack messages, ";
+
+      errors.forEach(error => {
+        errorMessage += `${error.response.error}\n`;
+      });
+      console.error(errorMessage);
+    }
     return {
       message: "Everything went well sending the daily, see data for message breakdown...",
       data: messagesSent
@@ -42,7 +52,7 @@ export async function sendDailyMessageHandler(): Promise<DailyHandlerResponse> {
       message: `Error while sending slack message: ${error}`
     };
   }
-}
+};
 
 /**
  * Lambda function for sending slack message
@@ -50,12 +60,11 @@ export async function sendDailyMessageHandler(): Promise<DailyHandlerResponse> {
  * @param event API Gateway proxy event
  * @returns JSON response
  */
-export const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
-  let res: DailyHandlerResponse = await sendDailyMessageHandler();
-
-  res.event = event;
-
-  return formatJSONResponse(res);
-};
+export const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => (
+  formatJSONResponse({
+    ...await sendDailyMessageHandler(),
+    event: event
+  })
+);
 
 export const main = middyfy(sendDailyMessage);

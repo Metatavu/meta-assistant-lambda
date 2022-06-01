@@ -23,7 +23,7 @@ namespace ForecastApiUtilities {
 
     const nonProjectTimes: NonProjectTime[] = await result.json();
 
-    return nonProjectTimes.filter(nonPTime => !nonPTime.is_internal_time);
+    return nonProjectTimes.filter(nonProjectTime => !nonProjectTime.is_internal_time);
   };
 
   /**
@@ -40,7 +40,7 @@ namespace ForecastApiUtilities {
 
     const timeRegistrations: TimeRegistrations[] = await result.json();
 
-    return timeRegistrations.filter(timeReg => timeReg.non_project_time);
+    return timeRegistrations.filter(timeRegistration => timeRegistration.non_project_time);
   };
 }
 

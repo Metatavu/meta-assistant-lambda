@@ -1,3 +1,4 @@
+import { ChatPostMessageResponse } from "@slack/web-api/dist/response/ChatPostMessageResponse";
 import { DateTime } from "luxon";
 import { TimeEntryTotalDto } from "src/generated/client/api";
 
@@ -34,6 +35,7 @@ export interface DailyCombinedData {
 export interface WeeklyCombinedData {
   selectedWeek: TimeEntryTotalDto;
   name: string;
+  firstName: string;
   slackId?: string;
   personId: number;
   expected: number;
@@ -94,4 +96,69 @@ export interface NonProjectTime {
   id: number;
   name: string;
   is_internal_time: boolean;
+}
+
+/**
+ * Interface for Daily Message Data
+ */
+export interface DailyMessageData {
+  message: string;
+  name: string;
+  displayDate?: string;
+  displayLogged: string;
+  displayExpected: string;
+  displayProject: string;
+  displayInternal: string;
+  billableHoursPercentage: string;
+}
+
+/**
+ * Interface for DisplayValues
+ */
+export interface DisplayValues {
+  logged: string;
+  expected: string;
+  difference: string;
+  project: string;
+  internal: string;
+}
+
+/**
+ * Interface for calculateWorkedTimeAndBillableHours
+ */
+export interface CalculateWorkedTimeAndBillableHoursResponse {
+  message: string;
+  billableHoursPercentage: string;
+}
+
+/**
+ * Interface for Weekly Message Data
+ */
+export interface WeeklyMessageData {
+  message: string;
+  name: string;
+  week: number,
+  startDate: string,
+  endDate: string,
+  displayLogged: string;
+  displayExpected: string;
+  displayProject: string;
+  displayInternal: string;
+  billableHoursPercentage: string;
+}
+
+/**
+ * Interface for Weekly Message Result
+ */
+export interface WeeklyMessageResult {
+  message: WeeklyMessageData;
+  response: ChatPostMessageResponse;
+}
+
+/**
+ * Interface for Daily Message Result
+ */
+export interface DailyMessageResult {
+  message: DailyMessageData;
+  response: ChatPostMessageResponse;
 }

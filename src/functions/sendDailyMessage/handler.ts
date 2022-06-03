@@ -1,6 +1,5 @@
-import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from "@libs/api-gateway";
-import { middyfy } from "@libs/lambda";
-
+import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse, DailyHandlerResponse } from "../../libs/api-gateway";
+import { middyfy } from "../../libs/lambda";
 import schema from "../schema";
 import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
 import TimeBankUtilities from "src/features/timebank/timebank-utils";
@@ -10,12 +9,11 @@ import ForecastApiUtilities from "src/features/forecastapi/forecast-api";
 import TimeUtilities from "src/features/generic/time-utils";
 
 /**
- * Lambda function for sending slack message
+ * AWS-less handler for sendDailyMessage
  *
- * @param event API Gateway proxy event
- * @returns JSON response
+ * @returns Promise of DailyHandlerResponse
  */
-const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => {
+export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> => {
   try {
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { yesterday, dayBeforeYesterday } = previousWorkDays;
@@ -32,18 +30,41 @@ const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asyn
     }
 
     const dailyCombinedData = TimeBankUtilities.combineDailyData(timebankUsers, timeEntries, slackUsers);
-    SlackApiUtilities.postDailyMessage(dailyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
+    const messagesSent = await SlackApiUtilities.postDailyMessageToUsers(dailyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
+    
+    const errors = messagesSent.filter(messageSent => messageSent.response.error);
 
-    return formatJSONResponse({
-      message: `Everything went well ${event.body.name}...`,
-      event: event
-    });
+    if (errors.length) {
+      let errorMessage = "Error while posting slack messages, ";
+
+      errors.forEach(error => {
+        errorMessage += `${error.response.error}\n`;
+      });
+      console.error(errorMessage);
+    }
+    return {
+      message: "Everything went well sending the daily, see data for message breakdown...",
+      data: messagesSent
+    };
   } catch (error) {
-    return formatJSONResponse({
-      message: `Error while sending slack message: ${error}`,
-      event: event
-    });
+    console.error(error);
+    return {
+      message: `Error while sending slack message: ${error}`
+    };
   }
 };
+
+/**
+ * Lambda function for sending slack message
+ *
+ * @param event API Gateway proxy event
+ * @returns JSON response
+ */
+export const sendDailyMessage: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event: ValidatedAPIGatewayProxyEvent<typeof schema>) => (
+  formatJSONResponse({
+    ...await sendDailyMessageHandler(),
+    event: event
+  })
+);
 
 export const main = middyfy(sendDailyMessage);

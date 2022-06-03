@@ -1,4 +1,4 @@
-import { DailyCombinedData, Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime } from "@functions/schema";
+import { DailyCombinedData, Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DisplayValues, CalculateWorkedTimeAndBillableHoursResponse } from "@functions/schema";
 import { DateTime, Duration } from "luxon";
 import { TimeEntryTotalDto } from "src/generated/client/api";
 
@@ -39,7 +39,7 @@ namespace TimeUtilities {
    * @param user data from timebank
    * @returns human friendly time formats
    */
-  export const handleTimeConversion = (user: TimeEntryTotalDto) => {
+  export const handleTimeConversion = (user: TimeEntryTotalDto): DisplayValues => {
     const { logged, expected, internalTime, total, projectTime } = user;
 
     const displayLogged = TimeUtilities.timeConversion(logged);
@@ -49,23 +49,24 @@ namespace TimeUtilities {
     const displayInternal = TimeUtilities.timeConversion(internalTime);
 
     return {
-      displayLogged: displayLogged,
-      displayExpected: displayExpected,
-      displayDifference: displayDifference,
-      displayProject: displayProject,
-      displayInternal: displayInternal
+      logged: displayLogged,
+      expected: displayExpected,
+      difference: displayDifference,
+      project: displayProject,
+      internal: displayInternal
     };
   };
 
   /**
+   * Calculates worked time and billable hours
    * 
    * @param user data from timebank
    * @returns a message based on the worked time and the percentage of billable hours
    */
-  export const calculateWorkedTimeAndBillableHours = (user: TimeEntryTotalDto | DailyCombinedData) => {
-    const { total, projectTime, expected } = user;
+  export const calculateWorkedTimeAndBillableHours = (user: TimeEntryTotalDto | DailyCombinedData): CalculateWorkedTimeAndBillableHoursResponse => {
+    const { total, projectTime, logged } = user;
 
-    const billableHoursPercentage = (projectTime/expected * 100).toFixed(1);
+    const billableHoursPercentage = logged === 0 ? "0" : (projectTime/logged * 100).toFixed(0);
 
     const undertime = TimeUtilities.timeConversion(total * -1);
     const overtime = TimeUtilities.timeConversion(total);
@@ -86,14 +87,14 @@ namespace TimeUtilities {
   };
 
   /**
-   * Checks if user is away or it is first day back
+   * Checks if user is away or is it first day back
    * 
    * @param timeRegistrations All timeregistrations after the day before yesterday
    * @param personId Users id
    * @param expected Users expected amount of work
    * @param date Today either yesterday depending on if function is checking is user on vacation or is it first day back at work
    * @param nonProjectTimes List of non project times
-   * @returns Undefined if can't find a time registration
+   * @returns false if can't find a time registration
    */
   export const checkIfUserIsAwayOrIsItFirstDayBack = (
     timeRegistrations: TimeRegistrations[],
@@ -101,7 +102,7 @@ namespace TimeUtilities {
     expected: number,
     date: string,
     nonProjectTimes: NonProjectTime[]
-  ) => {
+  ): boolean => {
     const personsTimeRegistration = timeRegistrations.find(timeRegistration =>
       timeRegistration.person === personId
       && timeRegistration.date === date
@@ -119,8 +120,8 @@ namespace TimeUtilities {
    * @returns two previous workdays
    */
   export const getPreviousTwoWorkdays = (): PreviousWorkdayDates => {
-    const today = DateTime.now();
-    const dayOfWeek = new Date().getDay();
+    let today = DateTime.now();
+    let dayOfWeek = new Date().getDay();
 
     let previousWorkDay = today.minus({ days: 1 }).toISODate();
     let dayBeforePreviousWorkDay = today.minus({ days: 2 }).toISODate();

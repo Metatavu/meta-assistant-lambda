@@ -5,6 +5,7 @@ import { PersonDto, TimebankApi, TimeEntry } from "src/generated/client/api";
  * Namespace for timebank API provider
  */
 namespace TimeBankApiProvider {
+  export const client = new TimebankApi(process.env.timebank_base_url);
 
   /**
    * Get list of timebank users from TimeBank API
@@ -12,15 +13,13 @@ namespace TimeBankApiProvider {
    * @returns valid persons data
    */
   export const getTimebankUsers = async (): Promise<PersonDto[]> => {
-    try {
-      const client = new TimebankApi(process.env.timebank_base_url);
-      const { body } = await client.timebankControllerGetPersons();
+    const { body } = await client.timebankControllerGetPersons();
 
-      return body.filter(person => person.defaultRole !== null && person.active);
-    } catch (error) {
-      console.error("Error while loading persons");
-      Promise.reject(error);
+    if (!body.length) {
+      throw new Error("Error while loading persons from Timebank");
     }
+
+    return body.filter(person => person.defaultRole !== null && person.active);
   };
 
   /**
@@ -32,15 +31,11 @@ namespace TimeBankApiProvider {
    * @returns Array of time entries for person
    */
   export const getTimeEntries = async (id: number, before: string, after: string): Promise<TimeEntry[]> => {
-    try {
-      const client = new TimebankApi(process.env.timebank_base_url);
+    const { body } = await client.timebankControllerGetEntries(id.toString(), before, after);
 
-      const { body } = await client.timebankControllerGetEntries(id.toString(), before, after);
-      return body;
-    } catch (error) {
-      console.error("Error while loading time entries");
-      Promise.reject(error);
-    }
+    if (body) return body;
+
+    throw new Error("Error while loading time entries from Timebank");
   };
 
   /**
@@ -53,25 +48,23 @@ namespace TimeBankApiProvider {
    * @returns total time data with user name
    */
   export const getTotalTimeEntries = async (timePeriod: TimePeriod, person: PersonDto, year: number, week: number): Promise<WeeklyCombinedData> => {
-    try {
-      const client = new TimebankApi(process.env.timebank_base_url);
+    const { body } = await client.timebankControllerGetTotal(person.id.toString(), timePeriod);
+    if (!body.length) throw new Error("Error while loading total time entries");
 
-      const { body } = await client.timebankControllerGetTotal(person.id.toString(), timePeriod);
-      const selectedWeek = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week)[0];
+    const filteredWeeks = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week);
+    if (filteredWeeks.length !== 1) throw new Error("Found more than one time period for given year and week");
 
-      const { firstName, lastName } = person;
-      const combinedName = `${firstName} ${lastName}`;
+    const selectedWeek = filteredWeeks[0];
+    const { firstName, lastName } = person;
+    const combinedName = `${firstName} ${lastName}`;
 
-      return {
-        selectedWeek: selectedWeek,
-        name: combinedName,
-        personId: person.id,
-        expected: person.monday
-      };
-    } catch (error) {
-      console.error("Error while loading total time entries");
-      Promise.reject(error);
-    }
+    return {
+      selectedWeek: selectedWeek,
+      name: combinedName,
+      firstName: person.firstName,
+      personId: person.id,
+      expected: person.monday
+    };
   };
 }
 

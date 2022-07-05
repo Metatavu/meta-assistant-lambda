@@ -1,6 +1,6 @@
 import { ChatPostMessageResponse } from "@slack/web-api/dist/response/ChatPostMessageResponse";
 import { DateTime } from "luxon";
-import { TimeEntryTotalDto } from "src/generated/client/api";
+import { PersonTotalTime } from "src/generated/client/api";
 
 /**
  * Serverless schema type
@@ -24,8 +24,8 @@ export interface DailyCombinedData {
   logged: number;
   projectTime: number;
   internalTime: number;
-  total: number;
   date: string;
+  balance: number;
   slackId?: string;
 }
 
@@ -33,7 +33,7 @@ export interface DailyCombinedData {
  * WeeklyCombinedData interface
  */
 export interface WeeklyCombinedData {
-  selectedWeek: TimeEntryTotalDto;
+  selectedWeek: PersonTotalTime;
   name: string;
   firstName: string;
   slackId?: string;
@@ -55,16 +55,6 @@ export interface WeeklyBreakdownCombinedData {
 export interface Dates {
   weekStartDate: DateTime;
   weekEndDate: DateTime;
-}
-
-/**
- * Enum for TimePeriod
- */
-export enum TimePeriod {
-  ALL_TIME = "ALL_TIME",
-  YEAR ="YEAR",
-  MONTH = "MONTH",
-  WEEK = "WEEK"
 }
 
 /**
@@ -161,4 +151,11 @@ export interface WeeklyMessageResult {
 export interface DailyMessageResult {
   message: DailyMessageData;
   response: ChatPostMessageResponse;
+}
+
+/**
+ * Interface for Parsed Access Token
+ */
+export interface ParsedAccessToken {
+  accessToken: string;
 }

@@ -1,25 +1,30 @@
-import { TimePeriod, WeeklyCombinedData } from "@functions/schema";
-import { PersonDto, TimebankApi, TimeEntry } from "src/generated/client/api";
+import { WeeklyCombinedData } from "@functions/schema";
+import { Person, DailyEntriesApi, PersonsApi, DailyEntry, Timespan } from "src/generated/client/api";
+import Auth from "src/features/auth/auth-provider"
 
 /**
  * Namespace for timebank API provider
  */
 namespace TimeBankApiProvider {
-  export const client = new TimebankApi(process.env.timebank_base_url);
+  export const personsClient = new PersonsApi(process.env.TIMEBANK_BASE_URL);
+  export const dailyEntriesClient = new DailyEntriesApi(process.env.TIMEBANK_BASE_URL);
 
   /**
    * Get list of timebank users from TimeBank API
    *
    * @returns valid persons data
    */
-  export const getTimebankUsers = async (): Promise<PersonDto[]> => {
-    const { body } = await client.timebankControllerGetPersons();
+  export const getTimebankUsers = async (accessToken: string): Promise<Person[]> => {
+    const { body } = await personsClient.listPersons(true, {
+      headers:
+        {"Authorization": `Bearer ${accessToken}`}
+    });
 
     if (!body.length) {
-      throw new Error("Error while loading persons from Timebank");
+      throw new Error("Error while loading Persons from Timebank");
     }
 
-    return body.filter(person => person.defaultRole !== null && person.active);
+    return body;
   };
 
   /**
@@ -30,12 +35,17 @@ namespace TimeBankApiProvider {
    * @param after string for timebank dates
    * @returns Array of time entries for person
    */
-  export const getTimeEntries = async (id: number, before: string, after: string): Promise<TimeEntry[]> => {
-    const { body } = await client.timebankControllerGetEntries(id.toString(), before, after);
-
-    if (body) return body;
-
-    throw new Error("Error while loading time entries from Timebank");
+  export const getDailyEntries = async (id: number, before: string, after: string, accessToken: string): Promise<DailyEntry> => {
+    try {
+      const request = await dailyEntriesClient.listDailyEntries(id, before, after, undefined, {
+          headers: 
+            { "Authorization": `Bearer ${accessToken}` }
+        });
+        
+      if (request.response.statusCode === 200) return request.body[0]
+    } catch (error) {
+      console.error(`Error while loading DailyEntries for person ${id} from Timebank`);
+    }
   };
 
   /**
@@ -47,24 +57,31 @@ namespace TimeBankApiProvider {
    * @param week of data to request
    * @returns total time data with user name
    */
-  export const getTotalTimeEntries = async (timePeriod: TimePeriod, person: PersonDto, year: number, week: number): Promise<WeeklyCombinedData> => {
-    const { body } = await client.timebankControllerGetTotal(person.id.toString(), timePeriod);
-    if (!body.length) throw new Error("Error while loading total time entries");
+  export const getPersonTotalEntries = async (timespan: Timespan, person: Person, year: number, month: number, week: number, accessToken: string): Promise<WeeklyCombinedData> => {
+    try {
+      const { body } = await personsClient.listPersonTotalTime(person.id, timespan, {
+        headers:
+          { "Authorization": `Bearer ${accessToken}`}
+      });
+      if (!body.length) throw new Error("Error while loading PersonTotalTimes");
 
-    const filteredWeeks = body.filter(timePeriod => timePeriod.id.year === year && timePeriod.id.week === week);
-    if (filteredWeeks.length !== 1) throw new Error("Found more than one time period for given year and week");
+      const filteredWeeks = body.filter(personTotalTime => personTotalTime.timePeriod === `${year},${month},${week}` );
+      if (filteredWeeks.length !== 1) throw new Error("Found more than one PersonTotalTime for given year and week");
 
-    const selectedWeek = filteredWeeks[0];
-    const { firstName, lastName } = person;
-    const combinedName = `${firstName} ${lastName}`;
+      const selectedWeek = filteredWeeks[0];
+      const { firstName, lastName } = person;
+      const combinedName = `${firstName} ${lastName}`;
 
-    return {
-      selectedWeek: selectedWeek,
-      name: combinedName,
-      firstName: person.firstName,
-      personId: person.id,
-      expected: person.monday
-    };
+      return {
+        selectedWeek: selectedWeek,
+        name: combinedName,
+        firstName: person.firstName,
+        personId: person.id,
+        expected: person.monday
+      };
+    } catch (error) {
+      console.error(`Error while loading PersonTotalTimes for person ${person.id}`)
+    }
   };
 }
 

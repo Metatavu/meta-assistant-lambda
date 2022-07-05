@@ -1,6 +1,6 @@
 import { DailyCombinedData, WeeklyCombinedData } from "@functions/schema";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
-import { PersonDto, TimeEntry } from "src/generated/client/api";
+import { DailyEntry, Person } from "src/generated/client/api";
 
 /**
  * Namespace for timebank utilities
@@ -16,8 +16,8 @@ namespace TimeBankUtilities {
    * @returns list of combined daily slack data
    */
   export const combineDailyData = (
-    personData: PersonDto[],
-    timeData: TimeEntry[],
+    personData: Person[],
+    timeData: DailyEntry[],
     slackUsers: Member[]
   ): DailyCombinedData[] => (
     personData.map(person => {
@@ -38,8 +38,8 @@ namespace TimeBankUtilities {
           logged: personsTimeEntries[0].logged,
           projectTime: personsTimeEntries[0].projectTime,
           internalTime: personsTimeEntries[0].internalTime,
-          total: personsTimeEntries[0].total,
-          date: personsTimeEntries[0].date.toISOString()
+          balance: personsTimeEntries[0].balance,
+          date: personsTimeEntries[0].date
         };
       }
     })

@@ -5,7 +5,9 @@ import TimeUtilities from "src/features/generic/time-utils";
 import SlackApiUtilities from "src/features/slackapi/slackapi-utils";
 import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
 import TimeBankUtilities from "src/features/timebank/timebank-utils";
-import schema, { TimePeriod, WeeklyCombinedData } from "../schema";
+import schema, { WeeklyCombinedData } from "../schema";
+import { Timespan } from "src/generated/client/api";
+import Auth from "src/features/auth/auth-provider";
 
 /**
  * AWS-less handler for sendWeeklyMessage
@@ -14,22 +16,28 @@ import schema, { TimePeriod, WeeklyCombinedData } from "../schema";
  */
 export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse> => {
   try {
+    const { accessToken } = await Auth.getAccessToken();
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { dayBeforeYesterday } = previousWorkDays;
 
-    const timebankUsers = await TimeBankApiProvider.getTimebankUsers();
+    let timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
     const slackUsers = await SlackApiUtilities.getSlackUsers();
     const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
     const NonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
 
     const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
-    const timeEntries: WeeklyCombinedData[] = [];
+    const personTotalTimes: WeeklyCombinedData[] = [];
 
-    for (const person of timebankUsers) {
-      timeEntries.push(await TimeBankApiProvider.getTotalTimeEntries(TimePeriod.WEEK, person, weekStartDate.year, weekEndDate.weekNumber));
+    for (const timebankUser of timebankUsers) {
+      let personTotalTime = await TimeBankApiProvider.getPersonTotalEntries(Timespan.WEEK, timebankUser, weekStartDate.year, weekStartDate.month, weekEndDate.weekNumber, accessToken);
+      if (personTotalTime) {
+        personTotalTimes.push(personTotalTime);
+      }
     }
 
-    const weeklyCombinedData = TimeBankUtilities.combineWeeklyData(timeEntries, slackUsers);
+    timebankUsers = timebankUsers.filter(person => personTotalTimes.find(personTotalTime => personTotalTime.personId === person.id));
+
+    const weeklyCombinedData = TimeBankUtilities.combineWeeklyData(personTotalTimes, slackUsers);
 
     const messagesSent = await SlackApiUtilities.postWeeklyMessageToUsers(weeklyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
 

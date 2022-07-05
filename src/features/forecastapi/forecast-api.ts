@@ -17,7 +17,7 @@ namespace ForecastApiUtilities {
    * @returns All non project times where is_internal_time is false
    */
   export const getNonProjectTime = async (): Promise<NonProjectTime[]> => {
-    const result = await fetch(`${process.env.forecast_base_url}non_project_time`, { headers: headers });
+    const result: any = await fetch(`${process.env.FORECAST_BASE_URL}/v1/non_project_time`, { headers: headers });
 
     if (result.status !== 200) throw new Error(`Error while loading non project time, ${result.message}`);
 
@@ -34,7 +34,7 @@ namespace ForecastApiUtilities {
    */
   export const getTimeRegistrations = async (dayBeforeYesterday: string): Promise<TimeRegistrations[]> => {
     const dayBeforeYesterdayUrl = dayBeforeYesterday.replace(/[-]/g, "");
-    const result = await fetch(`${process.env.forecast_v3_url}time_registrations?date_after=${dayBeforeYesterdayUrl}`, { headers: headers });
+    const result: any = await fetch(`${process.env.FORECAST_BASE_URL}/v3/time_registrations?date_after=${dayBeforeYesterdayUrl}`, { headers: headers });
 
     if (result.status !== 200) throw new Error("Error while loading time registrations", result.message);
 

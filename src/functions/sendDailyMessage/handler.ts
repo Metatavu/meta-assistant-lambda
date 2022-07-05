@@ -4,9 +4,10 @@ import schema from "../schema";
 import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
 import TimeBankUtilities from "src/features/timebank/timebank-utils";
 import SlackApiUtilities from "src/features/slackapi/slackapi-utils";
-import { TimeEntry } from "src/generated/client/api";
+import { DailyEntry } from "src/generated/client/api";
 import ForecastApiUtilities from "src/features/forecastapi/forecast-api";
 import TimeUtilities from "src/features/generic/time-utils";
+import Auth from "src/features/auth/auth-provider";
 
 /**
  * AWS-less handler for sendDailyMessage
@@ -15,21 +16,27 @@ import TimeUtilities from "src/features/generic/time-utils";
  */
 export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> => {
   try {
+    const { accessToken } = await Auth.getAccessToken();
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { yesterday, dayBeforeYesterday } = previousWorkDays;
 
-    const timebankUsers = await TimeBankApiProvider.getTimebankUsers();
+    let timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
     const slackUsers = await SlackApiUtilities.getSlackUsers();
     const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
     const NonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
 
-    const timeEntries: TimeEntry[] = [];
+    const dailyEntries: DailyEntry[] = [];
 
-    for (const person of timebankUsers) {
-      timeEntries.push(...await TimeBankApiProvider.getTimeEntries(person.id, yesterday, yesterday));
+    for (const timebankUser of timebankUsers) {
+      let dailyEntry = await TimeBankApiProvider.getDailyEntries(timebankUser.id, yesterday, yesterday, accessToken)
+      if (dailyEntry) {
+        dailyEntries.push(dailyEntry)
+      }
     }
+    
+    timebankUsers = timebankUsers.filter(person => dailyEntries.find(dailyEntry => dailyEntry.person === person.id))
 
-    const dailyCombinedData = TimeBankUtilities.combineDailyData(timebankUsers, timeEntries, slackUsers);
+    const dailyCombinedData = TimeBankUtilities.combineDailyData(timebankUsers, dailyEntries, slackUsers);
     const messagesSent = await SlackApiUtilities.postDailyMessageToUsers(dailyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
     
     const errors = messagesSent.filter(messageSent => messageSent.response.error);

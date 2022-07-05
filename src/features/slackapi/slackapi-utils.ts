@@ -9,7 +9,7 @@ import TimeUtilities from "../generic/time-utils";
  */
 namespace SlackApiUtilities {
 
-  export const client = new WebClient(process.env.metatavu_bot_token, {
+  export const client = new WebClient(process.env.METATAVU_BOT_TOKEN, {
     logLevel: LogLevel.DEBUG
   });
 
@@ -79,7 +79,8 @@ Have a great rest of the day!
    * @returns message
    */
   const constructWeeklySummaryMessage = (user: WeeklyCombinedData, weekStart: string, weekEnd: string): WeeklyMessageData => {
-    const { name, selectedWeek: { id: { week } }, firstName } = user;
+    const { name, firstName } = user;
+    const week = Number(user.selectedWeek.timePeriod.split(",")[2])
 
     const startDate = DateTime.fromISO(weekStart).toFormat("dd.MM.yyyy");
     const endDate = DateTime.fromISO(weekEnd).toFormat("dd.MM.yyyy");
@@ -98,7 +99,7 @@ Have a great rest of the day!
 
     const customMessage = `
 Hi ${firstName},
-Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${logged} with an expected time of ${expected}.
+Last week (week: ${week}, ${startDate} - ${endDate}) you worked ${logged} with an expected time of ${expected}.
 ${message}
 Project time: ${project}, Internal time: ${internal}.
 Your percentage of billable hours was: ${billableHoursPercentage}%
@@ -149,8 +150,7 @@ Have a great week!
   ): Promise<DailyMessageResult[]> => {
     const { numberOfToday, yesterday, today } = previousWorkDays;
 
-    let messageResults: DailyMessageResult[] = [];
-
+    let messageResults: any[] = [];
     for (const userData of dailyCombinedData) {
       const { slackId, personId, expected } = userData;
 
@@ -165,9 +165,9 @@ Have a great week!
           response: await sendMessage(slackId, message.message)
         });
       }
-
-      return messageResults;
     }
+
+    return messageResults;
   };
 
   /**
@@ -187,7 +187,7 @@ Have a great week!
     const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
     const { yesterday, today } = previousWorkDays;
 
-    const messageResults: WeeklyMessageResult[] = [];
+    const messageResults: any[] = [];
 
     for (const userData of weeklyCombinedData) {
       const { slackId, personId, expected } = userData;

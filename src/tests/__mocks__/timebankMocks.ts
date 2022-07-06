@@ -1,15 +1,12 @@
 import TimeUtilities from "src/features/generic/time-utils";
 import { DailyCombinedData } from "src/functions/schema";
-import { PersonDto, TimeEntry, TimeEntryTotalDto } from "src/generated/client/api";
+import { Person, DailyEntry, PersonTotalTime } from "src/generated/client/api";
 
-export const timebankGetUsersMock: PersonDto[] = [{
+export const timebankGetUsersMock: Person[] = [{
   id: 123,
   firstName:"tester",
   lastName: "test",
   email: "test",
-  userType: "test",
-  clientId: 123,
-  holidayCalendarId: 123,
   monday: 123,
   tuesday: 123,
   wednesday: 123,
@@ -18,23 +15,16 @@ export const timebankGetUsersMock: PersonDto[] = [{
   saturday: 123,
   sunday: 123,
   active: true,
-  defaultRole: 123,
-  cost: 123,
   language: "test",
-  createdBy: 123,
-  updatedBy: 123,
-  createdAt: new Date,
-  updatedAt: new Date,
-  startDate: "test"
+  startDate: "test",
+  unspentVacations: 0,
+  spentVacations: 0
 },
 {
   id: 4040,
   firstName:"Meta",
   lastName: "T",
   email: "me@here",
-  userType: "test",
-  clientId: 123,
-  holidayCalendarId: 123,
   monday: 123,
   tuesday: 123,
   wednesday: 123,
@@ -43,23 +33,16 @@ export const timebankGetUsersMock: PersonDto[] = [{
   saturday: 123,
   sunday: 123,
   active: true,
-  defaultRole: 123,
-  cost: 123,
   language: "test",
-  createdBy: 123,
-  updatedBy: 123,
-  createdAt: new Date,
-  updatedAt: new Date,
-  startDate: "test"
+  startDate: "test",
+  unspentVacations: 0,
+  spentVacations: 0
 },
 {
   id: 124,
   firstName:"on",
   lastName: "vacation",
   email: "me@vacation",
-  userType: "test",
-  clientId: 123,
-  holidayCalendarId: 123,
   monday: 100,
   tuesday: 123,
   wednesday: 123,
@@ -68,26 +51,19 @@ export const timebankGetUsersMock: PersonDto[] = [{
   saturday: 123,
   sunday: 123,
   active: true,
-  defaultRole: 123,
-  cost: 123,
   language: "test",
-  createdBy: 123,
-  updatedBy: 123,
-  createdAt: new Date,
-  updatedAt: new Date,
-  startDate: "test"
+  startDate: "test",
+  unspentVacations: 0,
+  spentVacations: 0
 }
 ];
 
-export const timebankGetUsersMock2: PersonDto[] = [
+export const timebankGetUsersMock2: Person[] = [
   {
     id: 1,
     firstName:"tester",
     lastName: "test",
     email: "test",
-    userType: "test",
-    clientId: 123,
-    holidayCalendarId: 123,
     monday: 123,
     tuesday: 123,
     wednesday: 123,
@@ -96,23 +72,16 @@ export const timebankGetUsersMock2: PersonDto[] = [
     saturday: 123,
     sunday: 123,
     active: true,
-    defaultRole: 123,
-    cost: 123,
     language: "test",
-    createdBy: 123,
-    updatedBy: 123,
-    createdAt: new Date,
-    updatedAt: new Date,
-    startDate: "test"
+    startDate: "test",
+    unspentVacations: 0,
+    spentVacations: 0
   },
   {
     id: 2,
     firstName:"tester2",
     lastName: "test",
     email: "test2",
-    userType: "test",
-    clientId: 123,
-    holidayCalendarId: 123,
     monday: 123,
     tuesday: 123,
     wednesday: 123,
@@ -121,23 +90,16 @@ export const timebankGetUsersMock2: PersonDto[] = [
     saturday: 123,
     sunday: 123,
     active: true,
-    defaultRole: null,
-    cost: 123,
     language: "test",
-    createdBy: 123,
-    updatedBy: 123,
-    createdAt: new Date,
-    updatedAt: new Date,
-    startDate: "test"
+    startDate: "test",
+    unspentVacations: 0,
+    spentVacations: 0
   },
   {
     id: 3,
     firstName:"tester3",
     lastName: "test",
     email: "test3",
-    userType: "test",
-    clientId: 123,
-    holidayCalendarId: 123,
     monday: 123,
     tuesday: 123,
     wednesday: 123,
@@ -146,25 +108,18 @@ export const timebankGetUsersMock2: PersonDto[] = [
     saturday: 123,
     sunday: 123,
     active: true,
-    defaultRole: 124,
-    cost: 123,
     language: "test",
-    createdBy: 123,
-    updatedBy: 123,
-    createdAt: new Date,
-    updatedAt: new Date,
-    startDate: "test"
+    startDate: "test",
+    unspentVacations: 0,
+    spentVacations: 0
   }
 ];
 
-export const timebankUser1: PersonDto = {
+export const timebankUser1: Person = {
   id: 1,
   firstName:"tester",
   lastName: "test",
   email: "test",
-  userType: "test",
-  clientId: 123,
-  holidayCalendarId: 123,
   monday: 123,
   tuesday: 123,
   wednesday: 123,
@@ -173,24 +128,17 @@ export const timebankUser1: PersonDto = {
   saturday: 123,
   sunday: 123,
   active: true,
-  defaultRole: 123,
-  cost: 123,
   language: "test",
-  createdBy: 123,
-  updatedBy: 123,
-  createdAt: new Date,
-  updatedAt: new Date,
-  startDate: "test"
+  startDate: "test",
+  unspentVacations: 0,
+  spentVacations: 0
 };
 
-export const timebankUser2: PersonDto = {
+export const timebankUser2: Person = {
   id: 3,
   firstName:"tester3",
   lastName: "test",
   email: "test3",
-  userType: "test",
-  clientId: 123,
-  holidayCalendarId: 123,
   monday: 123,
   tuesday: 123,
   wednesday: 123,
@@ -199,178 +147,169 @@ export const timebankUser2: PersonDto = {
   saturday: 123,
   sunday: 123,
   active: true,
-  defaultRole: 124,
-  cost: 123,
   language: "test",
-  createdBy: 123,
-  updatedBy: 123,
-  createdAt: new Date,
-  updatedAt: new Date,
-  startDate: "test"
+  startDate: "test",
+  unspentVacations: 0,
+  spentVacations: 0
 };
 
-export const timebankGetUsersEmptyDataMock: PersonDto[] = [];
+export const timebankGetUsersEmptyDataMock: Person[] = [];
 
-export const timeEntryMock1: TimeEntry[] = [
+export const dailyEntryMock1: DailyEntry[] = [
   {
-    externalId: "tester",
     person: 123,
     internalTime: 123,
     projectTime: 100,
     logged: 123,
     expected: 123,
-    total: 1,
-    date: new Date
+    balance: 1,
+    date: new Date().toString(),
+    isVacation: false
   }
 ];
 
-export const timeEntryMock2: TimeEntry[] = [
+export const dailyEntryMock2: DailyEntry[] = [
   {
-    externalId: "MetaT",
     person: 4040,
     internalTime: 600,
     projectTime: 500,
     logged: 600,
     expected: 500,
-    total: 123,
-    date: new Date
+    balance: 123,
+    date: new Date().toString(),
+    isVacation: false
   }
 ];
 
-export const timeEntryEmptyDataMock: TimeEntry[] = [];
-
-export const timeEntryMock3: TimeEntry[] = [
+export const dailyEntryMock3: DailyEntry[] = [
   {
-    externalId: "tester2",
     person: 124,
     internalTime: 0,
     projectTime: 0,
     logged: 0,
     expected: 100,
-    total: 0,
-    date: new Date
+    balance: 0,
+    date: new Date().toString(),
+    isVacation: false
   }
 ];
 
-export const timeEntryMock4: TimeEntry[] = [
+export const dailyEntryMock4: DailyEntry[] = [
   {
-    externalId: "tester3",
     person: 3,
     internalTime: 600,
     projectTime: 0,
     logged: 600,
     expected: 1000,
-    total: -400,
-    date: new Date
+    balance: -400,
+    date: new Date().toString(),
+    isVacation: false
   }
 ];
 
-export const timeEntryArrayMock: TimeEntry[] = [
+export const dailyEntryEmptyDataMock: DailyEntry[] = [];
+
+export const dailyEntryArrayMock: DailyEntry[] = [
   {
-    externalId: "tester",
     person: 1,
     internalTime: 76,
     projectTime: 0,
     logged: 600,
     expected: 1000,
-    total: 100,
-    date: new Date
+    balance: 100,
+    date: new Date().toString(),
+    isVacation: false
   },
   {
-    externalId: "tester3",
     person: 3,
     internalTime: 600,
     projectTime: 0,
     logged: 600,
     expected: 1000,
-    total: -400,
-    date: new Date
+    balance: -400,
+    date: new Date().toString(),
+    isVacation: false
   },
   {
-    externalId: "tester3",
     person: 3,
     internalTime: 600,
     projectTime: 0,
     logged: 600,
     expected: 1000,
-    total: 10,
-    date: new Date
+    balance: 10,
+    date: new Date().toString(),
+    isVacation: false
   },
   {
-    externalId: "tester3",
     person: 3,
     internalTime: 600,
     projectTime: 0,
     logged: 600,
     expected: 1000,
-    total: 100,
-    date: new Date
+    balance: 100,
+    date: new Date().toString(),
+    isVacation: false
   },
   {
-    externalId: "MetaT",
     person: 4040,
     internalTime: 600,
     projectTime: 500,
     logged: 600,
     expected: 500,
-    total: 123,
-    date: new Date
+    balance: 123,
+    date: new Date().toString(),
+    isVacation: false
   }
 ];
 
 const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
 
-export const timeTotalsMock: TimeEntryTotalDto = {
-  total: 0,
+export const timeTotalsMock: PersonTotalTime = {
+  personId: 1,
+  balance: 0,
   logged: 60,
   expected: 120,
   internalTime: 60,
   projectTime: 60
 };
 
-export const timeTotalsMock1: TimeEntryTotalDto[] = [
+export const timeTotalsMock1: PersonTotalTime[] = [
   {
-    id: {
-      year: weekStartDate.year,
-      week: weekEndDate.weekNumber
-    },
-    total: 32,
+    personId: 2,
+    balance: 32,
     logged: 2175,
     expected: 2175,
     internalTime: 2175,
-    projectTime: 50
+    projectTime: 50,
+    timePeriod: `${weekStartDate.year},${weekStartDate.month},${weekStartDate.weekNumber}`
   }
 ];
 
-export const timeTotalsMock2: TimeEntryTotalDto[] = [
+export const timeTotalsMock2: PersonTotalTime[] = [
   {
-    id: {
-      year: weekStartDate.year,
-      week: weekEndDate.weekNumber
-    },
-    total: 0,
+    personId: 3,
+    balance: 0,
     logged: 100,
     expected: 100,
     internalTime: 25,
-    projectTime: 75
+    projectTime: 75,
+    timePeriod: `${weekStartDate.year},${weekStartDate.month},${weekStartDate.weekNumber}`
   }
 ];
 
-export const timeTotalsMock3: TimeEntryTotalDto[] = [
+export const timeTotalsMock3: PersonTotalTime[] = [
   {
-    id: {
-      year: weekStartDate.year,
-      week: weekEndDate.weekNumber
-    },
-    total: 0,
+    personId: 4,
+    balance: 0,
     logged: 0,
     expected: 100,
     internalTime: 0,
-    projectTime: 0
+    projectTime: 0,
+    timePeriod: `${weekStartDate.year},${weekStartDate.month},${weekStartDate.weekNumber}`
   }
 ];
 
-export const timeTotalsEmptyDataMock: TimeEntryTotalDto[] = [];
+export const timeTotalsEmptyDataMock: PersonTotalTime[] = [];
 
 export const dailyCombinedDataMock1: DailyCombinedData = {
   name: "user a",
@@ -380,7 +319,7 @@ export const dailyCombinedDataMock1: DailyCombinedData = {
   logged: 100,
   projectTime: 100,
   internalTime: 0,
-  total: 0,
+  balance: 0,
   date: "2022-04-29"
 };
 
@@ -392,7 +331,7 @@ export const dailyCombinedDataMock2: DailyCombinedData = {
   logged: 100,
   projectTime: 0,
   internalTime: 100,
-  total: -50,
+  balance: -50,
   date: "2022-04-29"
 };
 
@@ -404,7 +343,7 @@ export const dailyCombinedDataMock3: DailyCombinedData = {
   logged: 100,
   projectTime: 50,
   internalTime: 50,
-  total: 0,
+  balance: 0,
   date: "2022-04-29"
 };
 
@@ -416,20 +355,17 @@ export const dailyCombinedDataMock4: DailyCombinedData = {
   logged: 150,
   projectTime: 100,
   internalTime: 50,
-  total: 50,
+  balance: 50,
   date: "2022-04-29"
 };
 
 export const dailyCombinedDataMock5: DailyCombinedData = undefined;
 
-export const timebankSpecialCharsMock: PersonDto[] = [{
+export const timebankSpecialCharsMock: Person[] = [{
   id: 123,
   firstName:"Ñöä!£",
   lastName: "Çøæé",
   email: "test",
-  userType: "test",
-  clientId: 123,
-  holidayCalendarId: 123,
   monday: 123,
   tuesday: 123,
   wednesday: 123,
@@ -438,23 +374,19 @@ export const timebankSpecialCharsMock: PersonDto[] = [{
   saturday: 123,
   sunday: 123,
   active: true,
-  defaultRole: 123,
-  cost: 123,
   language: "test",
-  createdBy: 123,
-  updatedBy: 123,
-  createdAt: new Date,
-  updatedAt: new Date,
-  startDate: "test"
+  startDate: "test",
+  unspentVacations: 0,
+  spentVacations: 0
 }];
 
-export const timeEntrySpecialCharsMock: TimeEntry[] = [{
-  externalId: "Ñöä!£",
+export const dailyEntrySpecialCharsMock: DailyEntry[] = [{
   person: 123,
   internalTime: 600,
   projectTime: 500,
   logged: 600,
   expected: 500,
-  total: 123,
-  date: new Date
+  balance: 123,
+  date: new Date().toString(),
+  isVacation: false
 }];

@@ -6,7 +6,7 @@ import { ParsedAccessToken } from "@functions/schema"
  */
 namespace Auth {
 
-    const { KEYCLOAK_AUTH_URL, KEYCLOAK_USERNAME, KEYCLOAK_PASSWORD, KEYCLOAK_CLIENT, KEYCLOAK_CLIENT_SECRET } = process.env
+    const { KEYCLOAK_BASE_URL, KEYCLOAK_REALM, KEYCLOAK_USERNAME, KEYCLOAK_PASSWORD, KEYCLOAK_CLIENT, KEYCLOAK_CLIENT_SECRET } = process.env
 
     export const getAccessToken = async (): Promise<ParsedAccessToken> => {
         const headers = {}
@@ -27,7 +27,7 @@ namespace Auth {
             formBody.append(encodedKey, encodedValue);
         }
 
-        const response = await fetch(`${KEYCLOAK_AUTH_URL}`, {
+        const response = await fetch(`${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token`, {
             method: "POST",
             headers: headers, 
             body: formBody

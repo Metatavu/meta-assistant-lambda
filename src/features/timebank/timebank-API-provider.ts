@@ -37,14 +37,17 @@ namespace TimeBankApiProvider {
    */
   export const getDailyEntries = async (id: number, before: string, after: string, accessToken: string): Promise<DailyEntry> => {
     try {
+      if (id === null) throw new Error("Invalid ID was given (expecting a number)")
       const request = await dailyEntriesClient.listDailyEntries(id, before, after, undefined, {
           headers: 
             { "Authorization": `Bearer ${accessToken}` }
         });
         
-      if (request.response.statusCode === 200) return request.body[0]
+        if (request.response.statusCode === 200) return request.body[0]
+        else throw new Error(`Error while loading DailyEntries for person ${id} from TImebank`)
     } catch (error) {
-      console.error(`Error while loading DailyEntries for person ${id} from Timebank`);
+      console.error(error);
+      throw new Error(error)
     }
   };
 
@@ -59,6 +62,7 @@ namespace TimeBankApiProvider {
    */
   export const getPersonTotalEntries = async (timespan: Timespan, person: Person, year: number, month: number, week: number, accessToken: string): Promise<WeeklyCombinedData> => {
     try {
+      if (person.id === null) throw new Error("No ID on person!")
       const { body } = await personsClient.listPersonTotalTime(person.id, timespan, {
         headers:
           { "Authorization": `Bearer ${accessToken}`}
@@ -81,6 +85,7 @@ namespace TimeBankApiProvider {
       };
     } catch (error) {
       console.error(`Error while loading PersonTotalTimes for person ${person.id}`)
+      throw new Error(error)
     }
   };
 }

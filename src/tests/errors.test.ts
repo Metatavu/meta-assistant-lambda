@@ -2,11 +2,14 @@ import { sendWeeklyMessageHandler } from "../functions/sendWeeklyMessage/handler
 import { sendDailyMessageHandler } from "../functions/sendDailyMessage/handler";
 import TestHelpers from "./utilities/test-utils";
 import { forecastErrorMock, forecastMockNonProjectTime, mockForecastTimeRegistrations } from "./__mocks__/forecastMocks";
-import { timebankGetUsersEmptyDataMock, timeEntryEmptyDataMock,timeTotalsEmptyDataMock } from "./__mocks__/timebankMocks";
+import { timebankGetUsersEmptyDataMock, dailyEntryEmptyDataMock,timeTotalsEmptyDataMock, timebankUser1 } from "./__mocks__/timebankMocks";
 import { DailyHandlerResponse, WeeklyHandlerResponse } from "../libs/api-gateway";
 import { slackPostMessageError, slackUserDataError } from "./__mocks__/slackMocks";
+import fetch from "node-fetch";
 
 jest.mock("node-fetch");
+
+const consoleSpy = jest.spyOn(console, "error");
 
 beforeEach(() => {
   jest.resetAllMocks();
@@ -14,15 +17,16 @@ beforeEach(() => {
 
 describe("timebank api get time entries error response", () => {
   it("should respond with corresponding error response", async () => {
-    TestHelpers.mockTimebankUsers();
-    TestHelpers.mockTimebankTimeEntriesCustom(timeEntryEmptyDataMock);
+    TestHelpers.mockTimebankUsersCustom(200, [timebankUser1]);
+    TestHelpers.mockTimebankTimeEntriesCustom(dailyEntryEmptyDataMock);
     TestHelpers.mockSlackUsers();
     TestHelpers.mockForecastData();
 
     const messageData: DailyHandlerResponse = await sendDailyMessageHandler();
 
     expect(messageData).toBeDefined();
-    expect(messageData.message).toMatch("Error while sending slack message: Error: Error while loading time entries from Timebank");
+    expect(consoleSpy).toHaveBeenCalledWith("Error: Error while loading DailyEntries for person 1 from Timebank");
+    expect(consoleSpy).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -36,7 +40,8 @@ describe("forecast api time registrations error response", () => {
     const messageData: DailyHandlerResponse = await sendDailyMessageHandler();
 
     expect(messageData).toBeDefined();
-    expect(messageData.message).toMatch("Error while sending slack message: Error: Error while loading time registrations");
+    expect(consoleSpy).toHaveBeenLastCalledWith("Error: Error while loading time registrations");
+    expect(consoleSpy).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -51,13 +56,14 @@ describe("forecast api non project time error response", () => {
     const messageData: DailyHandlerResponse = await sendDailyMessageHandler();
 
     expect(messageData).toBeDefined();
-    expect(messageData.message).toMatch("Error while sending slack message: Error: Error while loading non project time");
+    expect(consoleSpy).toHaveBeenCalledWith("Error: Error while loading non project time");
+    expect(consoleSpy).toHaveBeenCalledTimes(1);
   });
 });
 
 describe("timebank api get total time entries error response", () => {
   it("should respond with corresponding error response", async () => {
-    TestHelpers.mockTimebankUsers();
+    TestHelpers.mockTimebankUsersCustom(200, [timebankUser1]);
     TestHelpers.mockSlackUsers();
     TestHelpers.mockForecastData();
     TestHelpers.mockTotalTimeEntriesCustom(timeTotalsEmptyDataMock);
@@ -65,13 +71,14 @@ describe("timebank api get total time entries error response", () => {
     const messageData: WeeklyHandlerResponse = await sendWeeklyMessageHandler();
 
     expect(messageData).toBeDefined();
-    expect(messageData.message).toMatch("Error while sending slack message: Error: Error while loading total time entries");
+    expect(consoleSpy).toHaveBeenCalledWith("Error: Error while loading PersonTotalTimes for person 1 from Timebank");
+    expect(consoleSpy).toHaveBeenCalledTimes(1);
   });
-});
+}); 
 
 describe("timebank api get users error response", () => {
   it("should respond with corresponding error response", async () => {
-    TestHelpers.mockTimebankUsersCustom(timebankGetUsersEmptyDataMock);
+    TestHelpers.mockTimebankUsersCustom(404, timebankGetUsersEmptyDataMock);
     TestHelpers.mockSlackUsers();
     TestHelpers.mockForecastData();
     TestHelpers.mockTotalTimeEntries();
@@ -79,7 +86,7 @@ describe("timebank api get users error response", () => {
     const messageData: DailyHandlerResponse = await sendDailyMessageHandler();
 
     expect(messageData).toBeDefined();
-    expect(messageData.message).toMatch("Error while sending slack message: Error: Error while loading persons from Timebank");
+    expect(consoleSpy).toHaveBeenCalledWith("Error: Error while loading Persons from Timebank");
   });
 });
 
@@ -96,6 +103,8 @@ describe("Slack API error handling in daily message handler", () => {
     expect(messageData).toBeDefined();
     expect(messageData.message).toMatch("Error while sending slack message:");
     expect(messageData.message).toMatch(slackUserDataError.error);
+    expect(consoleSpy).toHaveBeenCalledWith("Error: Error while loading slack users list, invalid_cursor");
+    expect(consoleSpy).toHaveBeenCalledTimes(1);
   });
 
   it("should return expected error handling for slack API postmessage endpoint", async () => {
@@ -105,15 +114,12 @@ describe("Slack API error handling in daily message handler", () => {
     TestHelpers.mockTimebankTimeEntries();
     TestHelpers.mockSlackPostMessageError();
 
-    const consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-
     const messageData: DailyHandlerResponse = await sendDailyMessageHandler();
 
     expect(messageData).toBeDefined();
-    expect(consoleErrorSpy).toHaveBeenCalled();
-    expect(console.error).toHaveBeenCalled();
+    expect(messageData.message).toMatch("Everything went well sending the daily, see data for message breakdown...")
+    expect(consoleSpy).toHaveBeenCalledWith("Error while posting slack messages, too_many_attachments\n");
+    expect(consoleSpy).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -125,11 +131,13 @@ describe("Slack API error handling in weekly message handler", () => {
     TestHelpers.mockTotalTimeEntries();
     TestHelpers.mockSlackPostMessage();
 
-    const res: WeeklyHandlerResponse = await sendWeeklyMessageHandler();
+    const messageData: WeeklyHandlerResponse = await sendWeeklyMessageHandler();
 
-    expect(res).toBeDefined();
-    expect(res.message).toMatch("Error while sending slack message:");
-    expect(res.message).toMatch(slackUserDataError.error);
+    expect(messageData).toBeDefined();
+    expect(messageData.message).toMatch("Error while sending slack message:");
+    expect(messageData.message).toMatch(slackUserDataError.error);
+    expect(consoleSpy).toHaveBeenCalledWith("Error: Error while loading slack users list, invalid_cursor");
+    expect(consoleSpy).toHaveBeenCalledTimes(1);
   });
 
   it("should return expected error handling for slack API postmessage endpoint", async () => {
@@ -139,14 +147,11 @@ describe("Slack API error handling in weekly message handler", () => {
     TestHelpers.mockTotalTimeEntries();
     TestHelpers.mockSlackPostMessageError();
 
-    const consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+    const messageData: WeeklyHandlerResponse = await sendWeeklyMessageHandler();
 
-    const res: WeeklyHandlerResponse = await sendWeeklyMessageHandler();
-
-    expect(res).toBeDefined();
-    expect(consoleErrorSpy).toHaveBeenCalled();
-    expect(console.error).toHaveBeenCalled();
+    expect(messageData).toBeDefined();
+    expect(messageData.message).toMatch("Everything went well sending the weekly, see data for message breakdown...");
+    expect(consoleSpy).toHaveBeenCalledWith("Error while posting slack messages, too_many_attachments\ntoo_many_attachments\n");
+    expect(consoleSpy).toHaveBeenCalledTimes(1);
   });
 });

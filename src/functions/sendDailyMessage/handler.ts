@@ -25,11 +25,15 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
     const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
     const NonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
 
+    if (!timebankUsers) {
+      throw new Error("No persons retrieved from Timebank")
+    }
+
     const dailyEntries: DailyEntry[] = [];
 
     for (const timebankUser of timebankUsers) {
       let dailyEntry = await TimeBankApiProvider.getDailyEntries(timebankUser.id, yesterday, yesterday, accessToken)
-      if (dailyEntry) {
+      if (dailyEntry && !dailyEntry.isVacation) {
         dailyEntries.push(dailyEntry)
       }
     }
@@ -49,12 +53,13 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
       });
       console.error(errorMessage);
     }
+
     return {
       message: "Everything went well sending the daily, see data for message breakdown...",
       data: messagesSent
     };
   } catch (error) {
-    console.error(error);
+    console.error(error.toString());
     return {
       message: `Error while sending slack message: ${error}`
     };

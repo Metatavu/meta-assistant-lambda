@@ -21,7 +21,7 @@ namespace SlackApiUtilities {
   export const getSlackUsers = async (): Promise<Member[]> => {
     const result = await client.users.list();
 
-    if (!result.members) throw new Error(`Error while loading slack users list, ${result.error}`);
+    if (!result.ok) throw new Error(`Error while loading slack users list, ${result.error}`);
 
     return result.members;
   };
@@ -158,7 +158,7 @@ Have a great week!
       const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
       const message = constructDailyMessage(userData, numberOfToday);
-
+      
       if (!isAway && !firstDayBack) {
         messageResults.push({
           message: message,

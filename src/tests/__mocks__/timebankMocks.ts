@@ -177,7 +177,7 @@ export const dailyEntryMock2: DailyEntry[] = [
     expected: 500,
     balance: 123,
     date: new Date().toString(),
-    isVacation: false
+    isVacation: true
   }
 ];
 
@@ -300,6 +300,27 @@ export const timeTotalsMock2: PersonTotalTime[] = [
 export const timeTotalsMock3: PersonTotalTime[] = [
   {
     personId: 4,
+    balance: 0,
+    logged: 0,
+    expected: 100,
+    internalTime: 0,
+    projectTime: 0,
+    timePeriod: `${weekStartDate.year},${weekStartDate.month},${weekStartDate.weekNumber}`
+  }
+];
+
+export const timeTotalsMock4: PersonTotalTime[] = [
+  {
+    personId: 3,
+    balance: 0,
+    logged: 0,
+    expected: 100,
+    internalTime: 0,
+    projectTime: 0,
+    timePeriod: `${weekStartDate.year},${weekStartDate.month},${weekStartDate.weekNumber}`
+  },
+  {
+    personId: 3,
     balance: 0,
     logged: 0,
     expected: 100,

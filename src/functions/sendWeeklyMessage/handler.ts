@@ -25,6 +25,10 @@ export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse>
     const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
     const NonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
 
+    if (!timebankUsers) {
+      throw new Error("No persons retrieved from Timebank")
+    }
+
     const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
     const personTotalTimes: WeeklyCombinedData[] = [];
 
@@ -57,7 +61,7 @@ export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse>
       data: messagesSent
     };
   } catch (error) {
-    console.error(error);
+    console.error(error.toString());
     return {
       message: `Error while sending slack message: ${error}`
     };

@@ -4,7 +4,7 @@ import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
 import slackApiUtilities from "src/features/slackapi/slackapi-utils";
 import { timebankGetUsersMock, dailyEntryMock1, dailyEntryMock2, dailyEntryMock3, timeTotalsMock1, timeTotalsMock2, timeTotalsMock3 } from "../__mocks__/timebankMocks";
 import { slackUserData, slackPostMessageMock, slackPostMessageError } from "../__mocks__/slackMocks";
-import fetch from "node-fetch";
+import fetch, { FetchError } from "node-fetch";
 import { forecastMockNonProjectTime, mockForecastTimeRegistrations } from "../__mocks__/forecastMocks";
 import { DailyMessageData, DailyMessageResult, WeeklyMessageData, WeeklyMessageResult } from "src/functions/schema";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
@@ -22,7 +22,24 @@ namespace TestHelpers {
 
   const { Response } = jest.requireActual("node-fetch");
 
-  export const mockKeycloak = async (): Promise<string> => {
+  const createResponse = (status: number, body: any): any => {
+      let message = new IncomingMessage(new Socket);
+      message.statusCode = status;
+      return {
+        response: message,
+        body: body
+      }
+  }
+
+  const createError = (status: number, errorMessage: string): any => {
+    let message = {
+      status: status,
+      message: errorMessage
+    };
+    return Promise.reject(JSON.stringify(message))
+  }
+
+  const mockKeycloak = async (): Promise<KeycloakMock.MockInstance> => {
     const keycloak = await KeycloakMock.createMockInstance({
         authServerURL: "http://localhost:8080",
         realm: "quarkus",
@@ -36,15 +53,27 @@ namespace TestHelpers {
       credentials: [{
         value: "password"
       }]
-    })
-    return keycloak.createBearerToken(user.profile.id)
+    });
+    KeycloakMock.deactivateMock(mock);
+    return keycloak
   }
+
+  export const mockAccessToken = async (): Promise<any> => {
+    const keycloak = await mockKeycloak();
+    const user = keycloak.database.allUsers();
+    return new Response(JSON.stringify({access_token: keycloak.createBearerToken(user[0].profile.id)}))
+  }
+
+  export const mockedFetch = {
+    fetch: fetch
+  };
 
   /**
    * Get timebank Users mock data
    */
   export const mockTimebankUsers = () => {
-    jest.spyOn(personsClient, "listPersons").mockReturnValueOnce(Promise.resolve({ response: message, body: timebankGetUsersMock }));
+    jest.spyOn(personsClient, "listPersons")
+      .mockReturnValueOnce(createResponse(200, timebankGetUsersMock));
   };
 
   /**
@@ -52,8 +81,9 @@ namespace TestHelpers {
    * 
    * @param mockData custom timebank Users data
    */
-  export const mockTimebankUsersCustom = (mockData: any) => {
-    jest.spyOn(personsClient, "listPersons").mockReturnValueOnce(Promise.resolve({ response: message, body: mockData }));
+  export const mockTimebankUsersCustom = (statusCode: number, mockData: any) => {
+    jest.spyOn(personsClient, "listPersons")
+      .mockReturnValueOnce(createResponse(statusCode, mockData));
   };
 
   /**
@@ -76,11 +106,8 @@ namespace TestHelpers {
    * Mock Forecast non project time & time registrations endpoints
    */
   export const mockForecastData = () => {
-    const mockedFetch = {
-      fetch: fetch
-    };
-
     jest.spyOn(mockedFetch, "fetch")
+      .mockReturnValueOnce(mockAccessToken())
       .mockReturnValueOnce(new Response(JSON.stringify(mockForecastTimeRegistrations)))
       .mockReturnValueOnce(new Response(JSON.stringify(forecastMockNonProjectTime)));
   };
@@ -94,13 +121,10 @@ namespace TestHelpers {
    * @param secondResponseStatus custom fetch response for status code check
    */
   export const mockForecastDataCustom = (firstEndPointMock, secondEndPointMock, firstResponseStatus, secondResponseStatus) => {
-    const mockedFetch = {
-      fetch: fetch
-    };
-
     jest.spyOn(mockedFetch, "fetch")
+      .mockReturnValueOnce(mockAccessToken())
       .mockReturnValueOnce(new Response(JSON.stringify(firstEndPointMock), firstResponseStatus))
-      .mockReturnValueOnce(new Response(JSON.stringify(secondEndPointMock), secondResponseStatus));
+      .mockResolvedValueOnce(new Response(JSON.stringify(secondEndPointMock), secondResponseStatus));
   };
 
   /**
@@ -109,19 +133,38 @@ namespace TestHelpers {
   export const mockTimebankTimeEntries = () => {
     // Each user needs to be mocked one after the other in this way as each user is a seperate API call
     jest.spyOn(dailyEntriesClient, "listDailyEntries")
-      .mockReturnValueOnce(Promise.resolve({ response: message, body: dailyEntryMock1 }))
-      .mockReturnValueOnce(Promise.resolve({ response: message, body: dailyEntryMock2 }))
-      .mockReturnValueOnce(Promise.resolve({ response: message, body: dailyEntryMock3 }));
+      .mockReturnValueOnce(createResponse(200, dailyEntryMock1))
+      .mockReturnValueOnce(createResponse(200, dailyEntryMock2))
+      .mockReturnValueOnce(createResponse(200, dailyEntryMock3));
   };
+
+  export const mockTimebankDailyEntries = (statusCode: number, body: any[]) => {
+    const dailyEntriesSpy = jest.spyOn(dailyEntriesClient, "listDailyEntries");
+      for (let i = 0; i < body.length; i++) {
+        dailyEntriesSpy.mockReturnValueOnce(createResponse(statusCode, body[i]));
+      }
+  }
+
+  export const mockTimebankPersons = (statusCode: number, body: any[]) => {
+    jest.spyOn(personsClient, "listPersons")
+      .mockReturnValueOnce(createResponse(statusCode, body))
+  }
+
+  export const mockTimebankPersonTotalTimes = (statusCode: number, body: any[]) => {
+    const personTotalTimesSpy = jest.spyOn(personsClient, "listPersonTotalTime");
+      for (let i = 0; i < body.length; i++) {
+      personTotalTimesSpy.mockReturnValueOnce(createResponse(statusCode, body[i]));
+      }
+  }
 
   /**
    * Timebank custom time entries mock
    * 
    * @param mockData custom time entry data
    */
-  export const mockTimebankTimeEntriesCustom = (mockData: any[] ) => {
+  export const mockTimebankTimeEntriesCustom = (mockData: any[]) => {  
     jest.spyOn(dailyEntriesClient, "listDailyEntries")
-      .mockReturnValueOnce(Promise.resolve({ response: message, body: mockData[0] }));
+      .mockReturnValueOnce(createResponse(404, mockData[0]));
   };
 
   /**
@@ -129,9 +172,9 @@ namespace TestHelpers {
    */
   export const mockTotalTimeEntries = () => {
     jest.spyOn(personsClient, "listPersonTotalTime")
-      .mockReturnValueOnce(Promise.resolve({ response: message, body: timeTotalsMock1 }))
-      .mockReturnValueOnce(Promise.resolve({ response: message, body: timeTotalsMock2 }))
-      .mockReturnValueOnce(Promise.resolve({ response: message, body: timeTotalsMock3 }));
+      .mockReturnValueOnce(createResponse(200, timeTotalsMock1))
+      .mockReturnValueOnce(createResponse(200, timeTotalsMock2))
+      .mockReturnValueOnce(createResponse(200, timeTotalsMock3));
   };
 
   /**
@@ -145,7 +188,8 @@ namespace TestHelpers {
   * Slack post message mock error
   */
   export const mockSlackPostMessageError = () => {
-    jest.spyOn(slackUsersClient.chat, "postMessage").mockImplementation(() => Promise.resolve(slackPostMessageError));
+    jest.spyOn(slackUsersClient.chat, "postMessage")
+      .mockImplementation(() => Promise.resolve(slackPostMessageError));
   };
 
   /**
@@ -153,9 +197,9 @@ namespace TestHelpers {
    * 
    * @param mockData custom total time entries data
    */
-  export const mockTotalTimeEntriesCustom = (mockData: any[]) => {
+  export const mockTotalTimeEntriesCustom = (mockData: any) => {
     jest.spyOn(personsClient, "listPersonTotalTime")
-      .mockReturnValueOnce(Promise.resolve({ response: message, body: mockData }));
+      .mockReturnValueOnce(createResponse(404, mockData[0]));
   };
 
   /**

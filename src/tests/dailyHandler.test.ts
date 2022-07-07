@@ -48,7 +48,7 @@ describe("mock the daily handler", () => {
   // Unexpected behaviour with special characters passed to timebank time entries, causes Typeerror Found non-callable @@iterator- requires further investigation.
   describe("special character test", () => {
     it("should return expected data",async () => {
-      TestHelpers.mockTimebankUsersCustom(timebankSpecialCharsMock);
+      TestHelpers.mockTimebankUsersCustom(200, timebankSpecialCharsMock);
       TestHelpers.mockSlackUsersCustom(slackSpecialCharsMock);
       TestHelpers.mockForecastData();
       TestHelpers.mockTimebankTimeEntries();

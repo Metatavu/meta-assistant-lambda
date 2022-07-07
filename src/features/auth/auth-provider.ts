@@ -32,7 +32,7 @@ namespace Auth {
             headers: headers, 
             body: formBody
         })
-
+        
         if (response.status === 200) {
             const data: any = await response.json()
             return { accessToken: data.access_token } as ParsedAccessToken 

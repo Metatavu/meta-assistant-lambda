@@ -1,5 +1,6 @@
 import fetch from "node-fetch";
 import ForecastApiUtilities from "../features/forecastapi/forecast-api";
+import TestHelpers from "./utilities/test-utils";
 import { forecastMockNonProjectTime, emptyTimeRegistrationsArray, mockForecastTimeRegistrations, emptyNonProjecTimeArray } from "./__mocks__/forecastMocks";
 
 const mockedFetch = {
@@ -14,7 +15,7 @@ describe("forecast api tests", () => {
     const mockNonProjectTime = forecastMockNonProjectTime;
 
     it("should return mocked data", async () => {
-      jest.spyOn(mockedFetch, "fetch").mockReturnValueOnce(new Response(JSON.stringify(mockNonProjectTime)));
+      TestHelpers.mockForecastResponse(200, [mockNonProjectTime], false);
 
       const results = await ForecastApiUtilities.getNonProjectTime();
 

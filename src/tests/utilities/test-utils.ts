@@ -44,7 +44,7 @@ namespace TestHelpers {
       message: errorMessage
     };
 
-    return Promise.reject(JSON.stringify(message))
+    return Promise.reject((message))
   }
 
   const mockKeycloak = async (): Promise<KeycloakMock.MockInstance> => {
@@ -80,7 +80,7 @@ namespace TestHelpers {
    * @param statusCode API response statusCode
    * @param body API response body
    */
-  export const mockTimebankDailyEntries = (statusCode: number, body: any[]) => {
+  export const mockTimebankDailyEntries = (statusCode: number, body: any) => {
     const dailyEntriesSpy = jest.spyOn(dailyEntriesClient, "listDailyEntries");
       for (let i = 0; i < body.length; i++) {
         dailyEntriesSpy.mockReturnValueOnce(createIncomingMessage(statusCode, body[i]));
@@ -93,7 +93,7 @@ namespace TestHelpers {
    * @param statusCode API response statusCode
    * @param body API response body
    */
-  export const mockTimebankPersons = (statusCode: number, body: any[]) => {
+  export const mockTimebankPersons = (statusCode: number, body: any) => {
     jest.spyOn(personsClient, "listPersons")
       .mockReturnValueOnce(createIncomingMessage(statusCode, body))
   }
@@ -104,7 +104,7 @@ namespace TestHelpers {
    * @param statusCode API response statusCode
    * @param body API response body
    */
-  export const mockTimebankPersonTotalTimes = (statusCode: number, body: any[]) => {
+  export const mockTimebankPersonTotalTimes = (statusCode: number, body: any) => {
     const personTotalTimesSpy = jest.spyOn(personsClient, "listPersonTotalTime");
     for (let i = 0; i < body.length; i++) {
       personTotalTimesSpy.mockReturnValueOnce(createIncomingMessage(statusCode, body[i]));
@@ -118,13 +118,16 @@ namespace TestHelpers {
    * @param statusCode API response statusCode
    * @param body API response body
    */
-  export const mockForecastResponse = (statusCode: number, body: any[], keycloakMock: boolean) => {
+  export const mockForecastResponse = (statusCode: number, body: any, keycloakMock: boolean) => {
     const fetchSpy = jest.spyOn(mockedFetch, "fetch");
     if (keycloakMock) {
       fetchSpy.mockReturnValueOnce(mockAccessToken());
     }
+    if (statusCode !== 200) {
+      fetchSpy.mockReturnValueOnce(createError(statusCode, body.message));
+    }
     for (let i = 0; i < body.length; i++) {
-      fetchSpy.mockReturnValueOnce(createResponse(statusCode, body[i]))
+      fetchSpy.mockReturnValueOnce(createResponse(statusCode, body[i]));
     }
   }
 

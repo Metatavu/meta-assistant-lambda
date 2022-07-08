@@ -1,14 +1,8 @@
-import fetch from "node-fetch";
 import ForecastApiUtilities from "../features/forecastapi/forecast-api";
 import TestHelpers from "./utilities/test-utils";
-import { forecastMockNonProjectTime, emptyTimeRegistrationsArray, mockForecastTimeRegistrations, emptyNonProjecTimeArray, forecastErrorMock } from "./__mocks__/forecastMocks";
-
-const mockedFetch = {
-  fetch: fetch
-};
+import { forecastMockNonProjectTime, mockForecastTimeRegistrations, forecastErrorMock } from "./__mocks__/forecastMocks";
 
 jest.mock("node-fetch");
-const { Response } = jest.requireActual("node-fetch");
 
 describe("forecast api tests", () => {
   describe("forecast getNonProjectTimes", () => {

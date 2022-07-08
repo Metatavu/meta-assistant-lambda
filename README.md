@@ -1,5 +1,5 @@
 # Serverless - AWS Node.js Typescript
-[![Coverage Status](https://coveralls.io/repos/github/Metatavu/meta-assistant-lambda/badge.svg?branch=feature-14-coveralls-main)](https://coveralls.io/github/Metatavu/meta-assistant-lambda?branch=feature-14-coveralls-main)
+[![Coverage Status](https://coveralls.io/repos/github/Metatavu/meta-assistant-lambda/badge.svg?branch=feature-15-migrate-new-api)](https://coveralls.io/github/Metatavu/meta-assistant-lambda?branch=feature-15-migrate-new-api)
 
 This project has been generated using the `aws-nodejs-typescript` template from the [Serverless framework](https://www.serverless.com/).
 
@@ -9,7 +9,7 @@ For detailed instructions, please refer to the [documentation](https://www.serve
 
 Depending on your preferred package manager, follow the instructions below to deploy your project.
 
-> **Requirements**: NodeJS `lts/fermium (v.14.15.0)`. If you're using [nvm](https://github.com/nvm-sh/nvm), run `nvm use` to ensure you're using the same Node version in local and in your lambda's runtime.
+> **Requirements**: NodeJS For Windows: `lts/fermium (v.14.15.0)` and for Linux: `v.18.4.0. If you're using [nvm](https://github.com/nvm-sh/nvm), run `nvm use` to ensure you're using the same Node version in local and in your lambda's runtime.
 
 ### Using NPM
 

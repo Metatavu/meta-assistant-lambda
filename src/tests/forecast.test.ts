@@ -74,12 +74,10 @@ describe("forecast api tests", () => {
     });
 
     it("should throw error if missing date", async () => {
-      const dayBeforeYesterday = null;
-
-      jest.spyOn(mockedFetch, "fetch").mockReturnValueOnce(new Response(JSON.stringify(mockForecastTimeRegistrations)));
+      TestHelpers.mockForecastResponse(200, [mockForecastTimeRegistrations], false);
 
       expect( async () => {
-        await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
+        await ForecastApiUtilities.getTimeRegistrations(null);
       }).rejects.toThrow(TypeError);
     });
   });

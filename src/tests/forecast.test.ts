@@ -6,10 +6,8 @@ jest.mock("node-fetch");
 
 describe("forecast api tests", () => {
   describe("forecast getNonProjectTimes", () => {
-    const mockNonProjectTime = forecastMockNonProjectTime;
-
     it("should return mocked data", async () => {
-      TestHelpers.mockForecastResponse(200, [mockNonProjectTime], false);
+      TestHelpers.mockForecastResponse(200, [forecastMockNonProjectTime], false);
 
       const results = await ForecastApiUtilities.getNonProjectTime();
 

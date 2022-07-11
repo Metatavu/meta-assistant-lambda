@@ -2,7 +2,7 @@ import TimeUtilities from "../features/generic/time-utils";
 import TimeBankApiProvider from "../features/timebank/timebank-API-provider";
 import TestHelpers from "./utilities/test-utils";
 import { Timespan, DailyEntry } from "src/generated/client/api";
-import { timebankGetUsersMock2, dailyEntryMock3, dailyEntryMock4, dailyEntryArrayMock, timebankUser1, timebankUser2, timeTotalsMock1, timeTotalsMock2, timeTotalsMock4 } from "./__mocks__/timebankMocks";
+import { personsMock2, dailyEntryMock3, dailyEntryMock4, dailyEntryArrayMock, personMock1, personMock2, personTotalTimeMock1, personTotalTimeMock2 } from "./__mocks__/timebankMocks";
 
 let accessToken: string;
 
@@ -19,7 +19,7 @@ beforeEach(() => {
 describe("timebank-api-provider tests", () => {
   describe("getTimebankUsers test", () => {
     it("should return two timebank users", async () => {
-      TestHelpers.mockTimebankPersons(200, timebankGetUsersMock2);
+      TestHelpers.mockTimebankPersons(200, personsMock2);
 
       const results = await TimeBankApiProvider.getTimebankUsers(accessToken);
 
@@ -73,12 +73,11 @@ describe("timebank-api-provider tests", () => {
   });
 
   describe("getTotalTimeEntries test", () => {
-    const fakePerson1 = timebankUser1;
-    const fakePerson2 = timebankUser2;
+    const fakePerson1 = personMock1;
+    const fakePerson2 = personMock2;
 
-    const fakePersonTotalTime1 = timeTotalsMock1;
-    const fakePersonTotalTime2 = timeTotalsMock2;
-    const fakePersonTotalTime3 = timeTotalsMock4;
+    const fakePersonTotalTime1 = personTotalTimeMock1;
+    const fakePersonTotalTime2 = personTotalTimeMock2;
 
     const {  weekEndDate, weekStartDate } = TimeUtilities.lastWeekDateProvider();
 

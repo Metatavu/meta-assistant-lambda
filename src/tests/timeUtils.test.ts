@@ -1,6 +1,6 @@
 import TimeUtilities from "../features/generic/time-utils";
 import { DateTime } from "luxon";
-import { dailyCombinedDataMock1, dailyCombinedDataMock2, dailyCombinedDataMock3, dailyCombinedDataMock4, dailyCombinedDataMock5, timeTotalsMock } from "./__mocks__/timebankMocks";
+import { dailyCombinedDataMock1, dailyCombinedDataMock2, dailyCombinedDataMock3, dailyCombinedDataMock4, dailyCombinedDataMock5, personTotalTimeMock } from "./__mocks__/timebankMocks";
 
 describe("time-utils functions testing", () => {
   describe("calculateWorkedTimeAndBillableHours test", () => {
@@ -58,7 +58,7 @@ describe("time-utils functions testing", () => {
 
   describe("handleTimeConversion test", () => {
     it("should return converted times", () => {
-      const fakeUserData = timeTotalsMock;
+      const fakeUserData = personTotalTimeMock;
 
       const result = TimeUtilities.handleTimeConversion(fakeUserData);
       expect(result.expected).toBe("2h 0 minutes");

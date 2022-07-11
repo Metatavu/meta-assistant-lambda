@@ -1,13 +1,13 @@
 import ForecastApiUtilities from "../features/forecastapi/forecast-api";
 import TestHelpers from "./utilities/test-utils";
-import { forecastMockNonProjectTime, mockForecastTimeRegistrations, forecastErrorMock } from "./__mocks__/forecastMocks";
+import { forecastMockNonProjectTimes, forecastMockTimeRegistrations, forecastMockError } from "./__mocks__/forecastMocks";
 
 jest.mock("node-fetch");
 
 describe("forecast api tests", () => {
   describe("forecast getNonProjectTimes", () => {
     it("should return mocked data", async () => {
-      TestHelpers.mockForecastResponse(200, [forecastMockNonProjectTime], false);
+      TestHelpers.mockForecastResponse(200, [forecastMockNonProjectTimes], false);
 
       const results = await ForecastApiUtilities.getNonProjectTime();
 
@@ -21,7 +21,7 @@ describe("forecast api tests", () => {
     });
 
     it("should throw error if no non project times", async () => {
-      TestHelpers.mockForecastResponse(401, forecastErrorMock, false);
+      TestHelpers.mockForecastResponse(401, forecastMockError, false);
 
       const expectedError = new Error("Error while loading non project times, Server failed to authenticate the request.");
 
@@ -35,7 +35,7 @@ describe("forecast api tests", () => {
 
   describe("forecast api get time registrations", () => {
     it("should return mock data", async () => {
-      TestHelpers.mockForecastResponse(200, [mockForecastTimeRegistrations], false);
+      TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations], false);
 
       const results = await ForecastApiUtilities.getTimeRegistrations("2020-04-22");
 
@@ -54,7 +54,7 @@ describe("forecast api tests", () => {
     });
 
     it("should throw error if no time registrations", async () => {
-      TestHelpers.mockForecastResponse(401, forecastErrorMock, false);
+      TestHelpers.mockForecastResponse(401, forecastMockError, false);
 
       const expectedError = new Error("Error while loading time registrations, Server failed to authenticate the request.");
 
@@ -66,7 +66,7 @@ describe("forecast api tests", () => {
     });
 
     it("should throw error if missing date", async () => {
-      TestHelpers.mockForecastResponse(200, [mockForecastTimeRegistrations], false);
+      TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations], false);
 
       expect( async () => {
         await ForecastApiUtilities.getTimeRegistrations(null);

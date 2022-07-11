@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import TimeUtilities from "src/features/generic/time-utils";
-import { forecastMockNonProjectTime, mockForecastTimeRegistrations } from "./__mocks__/forecastMocks";
+import { forecastMockNonProjectTimes, forecastMockTimeRegistrations } from "./__mocks__/forecastMocks";
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -14,11 +14,11 @@ describe("vacation time tests", () => {
     const fakeExpected = 433;
 
     const result = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(
-      mockForecastTimeRegistrations,
+      forecastMockTimeRegistrations,
       fakePersonId,
       fakeExpected,
       today,
-      forecastMockNonProjectTime);
+      forecastMockNonProjectTimes);
 
     expect(result).toBe(false);
   });
@@ -28,11 +28,11 @@ describe("vacation time tests", () => {
     const fakeExpected = 100;
 
     const result = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(
-      mockForecastTimeRegistrations,
+      forecastMockTimeRegistrations,
       fakePersonId,
       fakeExpected,
       today,
-      forecastMockNonProjectTime);
+      forecastMockNonProjectTimes);
 
     expect(result).toBe(true);
   });
@@ -44,7 +44,7 @@ describe("vacation time tests", () => {
     const fakeExpected = 100;
 
     expect(() =>
-      TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(mockForecastTimeRegistrations, fakePersonId1, fakeExpected, today, fakeProjectTimes)
+      TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(forecastMockTimeRegistrations, fakePersonId1, fakeExpected, today, fakeProjectTimes)
     ).toThrow(TypeError);
   });
 
@@ -54,11 +54,11 @@ describe("vacation time tests", () => {
     const fakeDate = undefined;
 
     const result = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(
-      mockForecastTimeRegistrations,
+      forecastMockTimeRegistrations,
       fakePersonId1,
       fakeExpected,
       fakeDate,
-      forecastMockNonProjectTime);
+      forecastMockNonProjectTimes);
     expect(result).toBe(false);
   });
 
@@ -69,7 +69,7 @@ describe("vacation time tests", () => {
     const fakeExpected = 435;
 
     expect(() =>
-      TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(fakeTimeRegistrations, fakePersonId1, fakeExpected, today, forecastMockNonProjectTime)
+      TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(fakeTimeRegistrations, fakePersonId1, fakeExpected, today, forecastMockNonProjectTimes)
     ).toThrow(TypeError);
   });
 
@@ -79,11 +79,11 @@ describe("vacation time tests", () => {
     const fakeDate = null;
 
     const result = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(
-      mockForecastTimeRegistrations,
+      forecastMockTimeRegistrations,
       fakePersonId1,
       fakeExpected,
       fakeDate,
-      forecastMockNonProjectTime);
+      forecastMockNonProjectTimes);
     expect(result).toBe(false);
   });
 });

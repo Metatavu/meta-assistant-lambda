@@ -24,6 +24,13 @@ namespace TestHelpers {
     fetch: fetch
   };
 
+  /**
+   * Creates Timebank API matching response
+   * 
+   * @param status statusCode of response
+   * @param body body of Response
+   * @returns IncomingMessage 
+   */
   const createIncomingMessage = (status: number, body: any): any => {
       let message = new IncomingMessage(new Socket);
       message.statusCode = status;
@@ -34,10 +41,22 @@ namespace TestHelpers {
       }
   }
 
+  /**
+   * Creates Forecast API matching response
+   * 
+   * @param status status of response
+   * @param body body of response
+   * @returns Response
+   */
   const createResponse = (status: number, body: any): any => {
     return new Response(JSON.stringify(body), { status: status })
   }
 
+  /**
+   * Create mock Keycloak instance that intercepts requests to given authServerUrl
+   * 
+   * @returns KeycloakMock.MockInstance
+   */
   const mockKeycloak = async (): Promise<KeycloakMock.MockInstance> => {
     const keycloak = await KeycloakMock.createMockInstance({
         authServerURL: "http://localhost:8080",
@@ -58,6 +77,11 @@ namespace TestHelpers {
     return keycloak
   }
 
+  /**
+   * Mocks access token to access mock Timebank API through tests
+   * 
+   * @returns access_token
+   */
   export const mockAccessToken = async (): Promise<any> => {
     const keycloak = await mockKeycloak();
     const user = keycloak.database.allUsers();
@@ -126,20 +150,25 @@ namespace TestHelpers {
   }
 
   /**
-    * Get Slack users mock data
-    */
+   * Configures mock list response 
+   * 
+   * @param mockData response mockData
+   */
   export const mockSlackUsers = (mockData: any) => {
     jest.spyOn(slackUsersClient.users, "list").mockReturnValueOnce(Promise.resolve(mockData));
   };
 
   /**
-  * Slack post message mock data
-  */
+   * Configures mock postMessage response
+   * 
+   * @param mockData response mockData 
+   */
   export const mockSlackPostMessage = (mockData: any) => {
     jest.spyOn(slackUsersClient.chat, "postMessage").mockImplementation(() => Promise.resolve(mockData));
   };
 
   /**
+   * Validates/tests that constructed daily message is correctly formatted etc.
    * 
    * @param data user's data 
    * @param slackUsers slack users 
@@ -177,6 +206,7 @@ namespace TestHelpers {
   };
 
   /**
+   * Validates/tests that constructed weekly message is correctly formatted etc.
    * 
    * @param data user's data 
    * @param slackUsers slack users 

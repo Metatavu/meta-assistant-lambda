@@ -1,17 +1,19 @@
 import { sendWeeklyMessageHandler } from "../functions/sendWeeklyMessage/handler";
 import TestHelpers from "./utilities/test-utils";
-import { slackUserData } from "./__mocks__/slackMocks";
+import { slackPostMessageMock, slackUserData } from "./__mocks__/slackMocks";
 import { WeeklyHandlerResponse } from "../libs/api-gateway";
+import { timebankGetUsersMock, timeTotalsMock1, timeTotalsMock2, timeTotalsMock3 } from "./__mocks__/timebankMocks";
+import { forecastMockNonProjectTime, mockForecastTimeRegistrations } from "./__mocks__/forecastMocks";
 
 jest.mock("node-fetch");
 
 describe("mock the weekly handler", () => {
   it("should return all expected message data", async () => {
-    TestHelpers.mockTimebankUsers();
-    TestHelpers.mockSlackUsers();
-    TestHelpers.mockForecastData();
-    TestHelpers.mockTotalTimeEntries();
-    TestHelpers.mockSlackPostMessage();
+    TestHelpers.mockTimebankPersons(200, timebankGetUsersMock);
+    TestHelpers.mockTimebankPersonTotalTimes(200, [timeTotalsMock1, timeTotalsMock2, timeTotalsMock3]);
+    TestHelpers.mockForecastResponse(200, [mockForecastTimeRegistrations, forecastMockNonProjectTime], true);
+    TestHelpers.mockSlackUsers(slackUserData);
+    TestHelpers.mockSlackPostMessage(slackPostMessageMock);
 
     const messageBody: WeeklyHandlerResponse = await sendWeeklyMessageHandler();
     const messageData = messageBody.data;
@@ -28,11 +30,11 @@ describe("mock the weekly handler", () => {
 
 describe("Weekly vacation time test", () => {
   it("Should not return user who is on vacation", async () => {
-    TestHelpers.mockTimebankUsers();
-    TestHelpers.mockSlackUsers();
-    TestHelpers.mockForecastData();
-    TestHelpers.mockTotalTimeEntries();
-    TestHelpers.mockSlackPostMessage();
+    TestHelpers.mockTimebankPersons(200, timebankGetUsersMock);
+    TestHelpers.mockTimebankPersonTotalTimes(200, [timeTotalsMock1, timeTotalsMock2, timeTotalsMock3]);
+    TestHelpers.mockForecastResponse(200, [mockForecastTimeRegistrations, forecastMockNonProjectTime], true);
+    TestHelpers.mockSlackUsers(slackUserData);
+    TestHelpers.mockSlackPostMessage(slackPostMessageMock);
 
     const messageData: WeeklyHandlerResponse = await sendWeeklyMessageHandler();
 

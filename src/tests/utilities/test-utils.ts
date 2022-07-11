@@ -38,15 +38,6 @@ namespace TestHelpers {
     return new Response(JSON.stringify(body), { status: status })
   }
 
-  const createError = (status: number, errorMessage: string): any => {
-    let message = {
-      status: status,
-      message: errorMessage
-    };
-
-    return Promise.reject((message))
-  }
-
   const mockKeycloak = async (): Promise<KeycloakMock.MockInstance> => {
     const keycloak = await KeycloakMock.createMockInstance({
         authServerURL: "http://localhost:8080",
@@ -55,7 +46,7 @@ namespace TestHelpers {
         clientSecret: "zoxruqJ6bBYptkJwewhu9bqmkgwxatzS"
     });
     const mock = KeycloakMock.activateMock(keycloak)
-    const user = keycloak.database.createUser({
+    keycloak.database.createUser({
       firstName: "test",
       email: "test@test.test",
       credentials: [{
@@ -82,9 +73,12 @@ namespace TestHelpers {
    */
   export const mockTimebankDailyEntries = (statusCode: number, body: any) => {
     const dailyEntriesSpy = jest.spyOn(dailyEntriesClient, "listDailyEntries");
-      for (let i = 0; i < body.length; i++) {
-        dailyEntriesSpy.mockReturnValueOnce(createIncomingMessage(statusCode, body[i]));
-      }
+    if (statusCode !== 200) {
+      dailyEntriesSpy.mockReturnValueOnce(createIncomingMessage(statusCode, body))
+    } 
+    for (let i = 0; i < body.length; i++) {
+      dailyEntriesSpy.mockReturnValueOnce(createIncomingMessage(statusCode, body[i]));
+    }
   }
 
   /**
@@ -124,128 +118,25 @@ namespace TestHelpers {
       fetchSpy.mockReturnValueOnce(mockAccessToken());
     }
     if (statusCode !== 200) {
-      fetchSpy.mockReturnValueOnce(createError(statusCode, body.message));
+      fetchSpy.mockReturnValueOnce(createResponse(statusCode, body));
     }
     for (let i = 0; i < body.length; i++) {
       fetchSpy.mockReturnValueOnce(createResponse(statusCode, body[i]));
     }
   }
 
-////////////////////
-  /**
-   * Get timebank Users mock data
-   */
-  export const mockTimebankUsers = () => {
-    jest.spyOn(personsClient, "listPersons")
-      .mockReturnValueOnce(createIncomingMessage(200, timebankGetUsersMock));
-  };
-
-  /**
-   * Get timebank Users mock custom data
-   * 
-   * @param mockData custom timebank Users data
-   */
-  export const mockTimebankUsersCustom = (statusCode: number, mockData: any) => {
-    jest.spyOn(personsClient, "listPersons")
-      .mockReturnValueOnce(createIncomingMessage(statusCode, mockData));
-  };
-
   /**
     * Get Slack users mock data
     */
-  export const mockSlackUsers = () => {
-    jest.spyOn(slackUsersClient.users, "list").mockReturnValueOnce(Promise.resolve(slackUserData));
-  };
-
-  /**
-   * Get Slack users mock data
-   * 
-   * @param mockData custom data
-   */
-  export const mockSlackUsersCustom = (mockData: any) => {
+  export const mockSlackUsers = (mockData: any) => {
     jest.spyOn(slackUsersClient.users, "list").mockReturnValueOnce(Promise.resolve(mockData));
-  };
-
-  /**
-   * Mock Forecast non project time & time registrations endpoints
-   */
-  export const mockForecastData = () => {
-    jest.spyOn(mockedFetch, "fetch")
-      .mockReturnValueOnce(mockAccessToken())
-      .mockReturnValueOnce(new Response(JSON.stringify(mockForecastTimeRegistrations)))
-      .mockReturnValueOnce(new Response(JSON.stringify(forecastMockNonProjectTime)));
-  };
-
-  /**
-   * Mock Forecast error response
-   *
-   * @param firstMock custom forecast data for the first endpoint
-   * @param secondMock custom forecast data for the second endpoint
-   * @param firstResponseStatus custom fetch response for status code check
-   * @param secondResponseStatus custom fetch response for status code check
-   */
-  export const mockForecastDataCustom = (firstEndPointMock, secondEndPointMock, firstResponseStatus, secondResponseStatus) => {
-    jest.spyOn(mockedFetch, "fetch")
-      .mockReturnValueOnce(mockAccessToken())
-      .mockReturnValueOnce(new Response(JSON.stringify(firstEndPointMock), firstResponseStatus))
-      .mockResolvedValueOnce(new Response(JSON.stringify(secondEndPointMock), secondResponseStatus));
-  };
-
-  /**
-   * Timebank time entries mock
-   */
-  export const mockTimebankTimeEntries = () => {
-    // Each user needs to be mocked one after the other in this way as each user is a seperate API call
-    jest.spyOn(dailyEntriesClient, "listDailyEntries")
-      .mockReturnValueOnce(createIncomingMessage(200, dailyEntryMock1))
-      .mockReturnValueOnce(createIncomingMessage(200, dailyEntryMock2))
-      .mockReturnValueOnce(createIncomingMessage(200, dailyEntryMock3));
-  };
-
-
-  /**
-   * Timebank custom time entries mock
-   * 
-   * @param mockData custom time entry data
-   */
-  export const mockTimebankTimeEntriesCustom = (mockData: any[]) => {  
-    jest.spyOn(dailyEntriesClient, "listDailyEntries")
-      .mockReturnValueOnce(createIncomingMessage(404, mockData[0]));
-  };
-
-  /**
-   * Timebank total time entries mock
-   */
-  export const mockTotalTimeEntries = () => {
-    jest.spyOn(personsClient, "listPersonTotalTime")
-      .mockReturnValueOnce(createIncomingMessage(200, timeTotalsMock1))
-      .mockReturnValueOnce(createIncomingMessage(200, timeTotalsMock2))
-      .mockReturnValueOnce(createIncomingMessage(200, timeTotalsMock3));
   };
 
   /**
   * Slack post message mock data
   */
-  export const mockSlackPostMessage = () => {
-    jest.spyOn(slackUsersClient.chat, "postMessage").mockImplementation(() => Promise.resolve(slackPostMessageMock));
-  };
-
-  /**
-  * Slack post message mock error
-  */
-  export const mockSlackPostMessageError = () => {
-    jest.spyOn(slackUsersClient.chat, "postMessage")
-      .mockImplementation(() => Promise.resolve(slackPostMessageError));
-  };
-
-  /**
-   * Timebank total custom time entries mock
-   * 
-   * @param mockData custom total time entries data
-   */
-  export const mockTotalTimeEntriesCustom = (mockData: any) => {
-    jest.spyOn(personsClient, "listPersonTotalTime")
-      .mockReturnValueOnce(createIncomingMessage(404, mockData[0]));
+  export const mockSlackPostMessage = (mockData: any) => {
+    jest.spyOn(slackUsersClient.chat, "postMessage").mockImplementation(() => Promise.resolve(mockData));
   };
 
   /**
@@ -266,7 +157,13 @@ namespace TestHelpers {
     } = data.message;
 
     const slackNameMatches = slackUsers.find(user => user.real_name === name);
+    const date = new Date(displayDate);
 
+    if (date.getDay() > 1) {
+      expect(message.includes("Yesterday")).toBeTruthy();
+    } else {
+      expect(message.includes("Last friday")).toBeTruthy();
+    }
     expect(message).toBeDefined();
     expect(typeof message).toEqual(typeof "string");
     expect(name).toBeDefined();

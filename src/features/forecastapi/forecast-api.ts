@@ -19,10 +19,11 @@ namespace ForecastApiUtilities {
   export const getNonProjectTime = async (): Promise<NonProjectTime[]> => {
     try {
       const request: any = await fetch(`${process.env.FORECAST_BASE_URL}/v1/non_project_time`, { headers: headers });
+      const result: any = await request.json();
 
-      const nonProjectTimes: NonProjectTime[] = await request.json();
+      if (request.status !== 200) throw new Error(result.message);
 
-      return nonProjectTimes.filter(nonProjectTime => !nonProjectTime.is_internal_time);
+      return result.filter(nonProjectTime => !nonProjectTime.is_internal_time);
     } catch (error) {
       throw new Error(`Error while loading non project times, ${error.message}`)
     }
@@ -37,11 +38,12 @@ namespace ForecastApiUtilities {
   export const getTimeRegistrations = async (dayBeforeYesterday: string): Promise<TimeRegistrations[]> => {
     try {
       const dayBeforeYesterdayUrl = dayBeforeYesterday.replace(/[-]/g, "");
-      const result: any = await fetch(`${process.env.FORECAST_BASE_URL}/v3/time_registrations?date_after=${dayBeforeYesterdayUrl}`, { headers: headers });
+      const request: any = await fetch(`${process.env.FORECAST_BASE_URL}/v3/time_registrations?date_after=${dayBeforeYesterdayUrl}`, { headers: headers });
+      const result: any = await request.json();
 
-      const timeRegistrations: TimeRegistrations[] = await result.json();
+      if (request.status !== 200) throw new Error(result.message);
 
-      return timeRegistrations.filter(timeRegistration => timeRegistration.non_project_time);
+      return result.filter(timeRegistration => timeRegistration.non_project_time);
     } catch (error) {
       if (error instanceof TypeError) {
         throw error

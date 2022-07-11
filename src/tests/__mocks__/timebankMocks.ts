@@ -153,7 +153,10 @@ export const timebankUser2: Person = {
   spentVacations: 0
 };
 
-export const timebankGetUsersEmptyDataMock: Person[] = [];
+export const timebankGetUsersEmptyDataMock = {
+  status: 404,
+  message: "No persons found!"
+};
 
 export const dailyEntryMock1: DailyEntry[] = [
   {
@@ -207,7 +210,10 @@ export const dailyEntryMock4: DailyEntry[] = [
   }
 ];
 
-export const dailyEntryEmptyDataMock: DailyEntry[] = [];
+export const dailyEntryEmptyDataMock = {
+  status: 404,
+  message: "No daily entries found!"
+};
 
 export const dailyEntryArrayMock: DailyEntry[] = [
   {
@@ -330,7 +336,10 @@ export const timeTotalsMock4: PersonTotalTime[] = [
   }
 ];
 
-export const timeTotalsEmptyDataMock: PersonTotalTime[] = [];
+export const timeTotalsEmptyDataMock = {
+  status: 404,
+  message: "Cannot calculate totals for given person"
+};
 
 export const dailyCombinedDataMock1: DailyCombinedData = {
   name: "user a",

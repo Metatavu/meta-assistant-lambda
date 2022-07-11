@@ -1,14 +1,9 @@
-import { IncomingMessage } from "http";
-import { Socket } from "net";
 import TimeUtilities from "../features/generic/time-utils";
 import TimeBankApiProvider from "../features/timebank/timebank-API-provider";
 import TestHelpers from "./utilities/test-utils";
 import { Timespan, DailyEntry } from "src/generated/client/api";
 import { timebankGetUsersMock2, dailyEntryMock3, dailyEntryMock4, dailyEntryArrayMock, timebankUser1, timebankUser2, timeTotalsMock1, timeTotalsMock2, timeTotalsMock4 } from "./__mocks__/timebankMocks";
 
-const message: IncomingMessage = new IncomingMessage(new Socket);
-const personsClient = TimeBankApiProvider.personsClient;
-const dailyEntriesClient = TimeBankApiProvider.dailyEntriesClient;
 let accessToken: string;
 
 const consoleSpy = jest.spyOn(console, "error");

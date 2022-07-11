@@ -2,14 +2,14 @@ import { sendWeeklyMessageHandler } from "../functions/sendWeeklyMessage/handler
 import TestHelpers from "./utilities/test-utils";
 import { slackPostMock, slackUserMock } from "./__mocks__/slackMocks";
 import { WeeklyHandlerResponse } from "../libs/api-gateway";
-import { personsMock, personTotalTimeMock1, personTotalTimeMock2, personTotalTimeMock3 } from "./__mocks__/timebankMocks";
+import { personsMock1, personTotalTimeMock1, personTotalTimeMock2, personTotalTimeMock3 } from "./__mocks__/timebankMocks";
 import { forecastMockNonProjectTimes, forecastMockTimeRegistrations } from "./__mocks__/forecastMocks";
 
 jest.mock("node-fetch");
 
 describe("mock the weekly handler", () => {
   it("should return all expected message data", async () => {
-    TestHelpers.mockTimebankPersons(200, personsMock);
+    TestHelpers.mockTimebankPersons(200, personsMock1);
     TestHelpers.mockTimebankPersonTotalTimes(200, [personTotalTimeMock1, personTotalTimeMock2, personTotalTimeMock3]);
     TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations, forecastMockNonProjectTimes], true);
     TestHelpers.mockSlackUsers(slackUserMock);
@@ -30,7 +30,7 @@ describe("mock the weekly handler", () => {
 
 describe("Weekly vacation time test", () => {
   it("Should not return user who is on vacation", async () => {
-    TestHelpers.mockTimebankPersons(200, personsMock);
+    TestHelpers.mockTimebankPersons(200, personsMock1);
     TestHelpers.mockTimebankPersonTotalTimes(200, [personTotalTimeMock1, personTotalTimeMock2, personTotalTimeMock3]);
     TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations, forecastMockNonProjectTimes], true);
     TestHelpers.mockSlackUsers(slackUserMock);

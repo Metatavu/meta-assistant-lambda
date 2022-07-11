@@ -159,3 +159,11 @@ export interface DailyMessageResult {
 export interface ParsedAccessToken {
   accessToken: string;
 }
+
+/**
+ * Interface for Last Sprint Dates
+ */
+export interface LastSprintDates {
+  sprintStart: string;
+  sprintEnd: string;
+}

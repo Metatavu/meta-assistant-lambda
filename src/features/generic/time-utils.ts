@@ -1,4 +1,4 @@
-import { DailyCombinedData, Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DisplayValues, CalculateWorkedTimeAndBillableHoursResponse } from "@functions/schema";
+import { DailyCombinedData, Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DisplayValues, CalculateWorkedTimeAndBillableHoursResponse, LastSprintDates } from "@functions/schema";
 import { DateTime, Duration } from "luxon";
 import { PersonTotalTime } from "src/generated/client/api";
 
@@ -137,6 +137,21 @@ namespace TimeUtilities {
       numberOfToday: dayOfWeek,
       dayBeforeYesterday: dayBeforePreviousWorkDay
     };
+  };
+
+  /**
+   * Gets last sprint start and end dates
+   * 
+   * @returns dates for last sprint start and end
+   */
+  export const getLastSprint = (): LastSprintDates => {
+    let sprintEnd = DateTime.now().minus( { days: 3} );
+    let sprintStart = sprintEnd.minus( { week: 1} ).startOf("week");
+
+    return {
+      sprintStart: sprintStart.toISODate(),
+      sprintEnd: sprintEnd.toISODate()
+    }
   };
 }
 

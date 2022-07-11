@@ -68,13 +68,13 @@ namespace TimeBankApiProvider {
   export const getPersonTotalEntries = async (timespan: Timespan, person: Person, year: number, month: number, week: number, accessToken: string): Promise<WeeklyCombinedData> => {
     try {
       let filteredWeeks: PersonTotalTime[]
-      
+
       if (person.id === null) throw new Error("No ID on person")
       const request = await personsClient.listPersonTotalTime(person.id, timespan, {
         headers:
           { "Authorization": `Bearer ${accessToken}`}
       });
-      
+
       if (request.response.statusCode === 200) {
         filteredWeeks = request.body.filter(personTotalTime => personTotalTime.timePeriod === `${year},${month},${week}`);
       } else {
@@ -82,7 +82,7 @@ namespace TimeBankApiProvider {
       }
       
       if (filteredWeeks.length > 1) throw new Error("Found more than one PersonTotalTime for given year and week")
-
+      
       const selectedWeek = filteredWeeks[0];
       const { firstName, lastName } = person;
       const combinedName = `${firstName} ${lastName}`;

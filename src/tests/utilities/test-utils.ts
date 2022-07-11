@@ -2,11 +2,8 @@ import { IncomingMessage } from "http";
 import { Socket } from "net";
 import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
 import slackApiUtilities from "src/features/slackapi/slackapi-utils";
-import { personsMock, dailyEntryMock1, dailyEntryMock2, dailyEntryMock3, personTotalTimeMock1, personTotalTimeMock2, personTotalTimeMock3 } from "../__mocks__/timebankMocks";
-import { slackUserMock, slackPostMock, slackPostErrorMock } from "../__mocks__/slackMocks";
-import fetch, { FetchError } from "node-fetch";
-import { forecastMockNonProjectTimes, forecastMockTimeRegistrations } from "../__mocks__/forecastMocks";
-import { DailyMessageData, DailyMessageResult, WeeklyMessageData, WeeklyMessageResult } from "src/functions/schema";
+import fetch from "node-fetch";
+import { DailyMessageResult, WeeklyMessageResult } from "src/functions/schema";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import * as KeycloakMock from "keycloak-mock";
 

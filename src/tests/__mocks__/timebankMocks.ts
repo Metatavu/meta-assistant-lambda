@@ -2,7 +2,7 @@ import TimeUtilities from "src/features/generic/time-utils";
 import { DailyCombinedData } from "src/functions/schema";
 import { Person, DailyEntry, PersonTotalTime } from "src/generated/client/api";
 
-export const personsMock: Person[] = [
+export const personsMock1: Person[] = [
   {
     id: 123,
     firstName:"tester",
@@ -334,6 +334,30 @@ export const personTotalTimeMock4: PersonTotalTime[] = [
     internalTime: 0,
     projectTime: 0,
     timePeriod: `${weekStartDate.year},${weekStartDate.month},${weekStartDate.weekNumber}`
+  }
+];
+
+export const personTotalTimeMock5: PersonTotalTime[] = [
+  {
+    personId: 1,
+    balance: 0,
+    internalTime: 0,
+    projectTime: 2175,
+    expected: 2175,
+    logged: 2175,
+    timePeriod: "2022,6,26"
+  }
+];
+
+export const personTotalTimeMock6: PersonTotalTime[] = [
+  {
+    personId: 1,
+    balance: 0,
+    internalTime: 0,
+    projectTime: 2175,
+    expected: 2175,
+    logged: 2175,
+    timePeriod: "2022,7,27"
   }
 ];
 

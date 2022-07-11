@@ -1,6 +1,6 @@
 import { sendDailyMessageHandler } from "../functions/sendDailyMessage/handler";
 import TestHelpers from "./utilities/test-utils";
-import { dailyEntryMock1, dailyEntryMock2, dailyEntryMock3, personsMock, personSpecialCharsMock } from "./__mocks__/timebankMocks";
+import { dailyEntryMock1, dailyEntryMock2, dailyEntryMock3, personsMock1, personSpecialCharsMock } from "./__mocks__/timebankMocks";
 import { slackUserMock, slackUserSpecialMock, slackPostMock } from "./__mocks__/slackMocks";
 import { DailyHandlerResponse } from "../libs/api-gateway";
 import { forecastMockNonProjectTimes, forecastMockTimeRegistrations } from "./__mocks__/forecastMocks";
@@ -14,7 +14,7 @@ beforeEach(() => {
 describe("mock the daily handler", () => {
   describe("handler is mocked and run to send a message", () => {
     it("should return all expected message data", async () => {
-      TestHelpers.mockTimebankPersons(200, personsMock);
+      TestHelpers.mockTimebankPersons(200, personsMock1);
       TestHelpers.mockTimebankDailyEntries(200, [dailyEntryMock1, dailyEntryMock2, dailyEntryMock3]);
       TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations, forecastMockNonProjectTimes], true);
       TestHelpers.mockSlackUsers(slackUserMock);
@@ -33,7 +33,7 @@ describe("mock the daily handler", () => {
 
   describe("Daily vacation time test", () => {
     it("Should not return user who is on vacation", async () => {
-      TestHelpers.mockTimebankPersons(200, personsMock);
+      TestHelpers.mockTimebankPersons(200, personsMock1);
       TestHelpers.mockTimebankDailyEntries(200, [dailyEntryMock1, dailyEntryMock2, dailyEntryMock3]);
       TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations, forecastMockNonProjectTimes], true);
       TestHelpers.mockSlackUsers(slackUserMock);

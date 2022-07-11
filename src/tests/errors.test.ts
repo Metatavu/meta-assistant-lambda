@@ -2,7 +2,7 @@ import { sendWeeklyMessageHandler } from "../functions/sendWeeklyMessage/handler
 import { sendDailyMessageHandler } from "../functions/sendDailyMessage/handler";
 import TestHelpers from "./utilities/test-utils";
 import { forecastMockError, forecastMockNonProjectTimes, forecastMockTimeRegistrations } from "./__mocks__/forecastMocks";
-import { personsErrorMock, dailyEntryErrorMock,personTotalTimeErrorMock, personMock1, personsMock, dailyEntryMock1, dailyEntryMock2, dailyEntryMock3, personTotalTimeMock1, personTotalTimeMock2, personTotalTimeMock3, personTotalTimeMock4 } from "./__mocks__/timebankMocks";
+import { personsErrorMock, dailyEntryErrorMock,personTotalTimeErrorMock, personMock1, personsMock1, dailyEntryMock1, dailyEntryMock2, dailyEntryMock3, personTotalTimeMock1, personTotalTimeMock2, personTotalTimeMock3, personTotalTimeMock4 } from "./__mocks__/timebankMocks";
 import { DailyHandlerResponse, WeeklyHandlerResponse } from "../libs/api-gateway";
 import { slackPostErrorMock, slackPostMock, slackUserMock, slackUserErrorMock } from "./__mocks__/slackMocks";
 
@@ -32,7 +32,7 @@ describe("timebank api get time entries error response", () => {
 
 describe("forecast api time registrations error response", () => {
   it("should respond with corresponding error response", async () => {
-    TestHelpers.mockTimebankPersons(200, personsMock);
+    TestHelpers.mockTimebankPersons(200, personsMock1);
     TestHelpers.mockTimebankDailyEntries(200, [dailyEntryMock1, dailyEntryMock2, dailyEntryMock3]);
     TestHelpers.mockForecastResponse(401, forecastMockError, true);
     TestHelpers.mockForecastResponse(200, [forecastMockNonProjectTimes], false);
@@ -49,7 +49,7 @@ describe("forecast api time registrations error response", () => {
 
 describe("forecast api non project time error response", () => {
   it("should respond with corresponding error response", async () => {
-    TestHelpers.mockTimebankPersons(200, personsMock);
+    TestHelpers.mockTimebankPersons(200, personsMock1);
     TestHelpers.mockTimebankDailyEntries(200, [dailyEntryMock1, dailyEntryMock2, dailyEntryMock3]);
     TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations], true);
     TestHelpers.mockForecastResponse(401, forecastMockError, false);
@@ -124,7 +124,7 @@ describe("timebank api get users error response", () => {
 
 describe("Slack API error handling in daily message handler", () => {
   it("should return expected error handling for slack API get user endpoint", async () => {
-    TestHelpers.mockTimebankPersons(200, personsMock);
+    TestHelpers.mockTimebankPersons(200, personsMock1);
     TestHelpers.mockTimebankDailyEntries( 200, [dailyEntryMock1, dailyEntryMock2, dailyEntryMock3]);
     TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations, forecastMockNonProjectTimes], true);
     TestHelpers.mockSlackUsers(slackUserErrorMock);
@@ -140,7 +140,7 @@ describe("Slack API error handling in daily message handler", () => {
   });
 
   it("should return expected error handling for slack API postmessage endpoint", async () => {
-    TestHelpers.mockTimebankPersons(200, personsMock);
+    TestHelpers.mockTimebankPersons(200, personsMock1);
     TestHelpers.mockTimebankDailyEntries(200, [dailyEntryMock1, dailyEntryMock2, dailyEntryMock3]);
     TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations, forecastMockNonProjectTimes], true);
     TestHelpers.mockSlackUsers(slackUserMock);
@@ -157,7 +157,7 @@ describe("Slack API error handling in daily message handler", () => {
 
 describe("Slack API error handling in weekly message handler", () => {
   it("should return expected error handling for slack API get user endpoint", async () => {
-    TestHelpers.mockTimebankPersons(200, personsMock);
+    TestHelpers.mockTimebankPersons(200, personsMock1);
     TestHelpers.mockTimebankDailyEntries(200, [dailyEntryMock1, dailyEntryMock2, dailyEntryMock3]);
     TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations, forecastMockNonProjectTimes], true);
     TestHelpers.mockSlackUsers(slackUserErrorMock);
@@ -173,7 +173,7 @@ describe("Slack API error handling in weekly message handler", () => {
   });
 
   it("should return expected error handling for slack API postmessage endpoint", async () => {
-    TestHelpers.mockTimebankPersons(200, personsMock);
+    TestHelpers.mockTimebankPersons(200, personsMock1);
     TestHelpers.mockTimebankPersonTotalTimes(200, [personTotalTimeMock1, personTotalTimeMock2, personTotalTimeMock3]);
     TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations, forecastMockNonProjectTimes], true);
     TestHelpers.mockSlackUsers(slackUserMock);

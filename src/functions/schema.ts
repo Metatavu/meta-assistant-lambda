@@ -36,6 +36,7 @@ export interface WeeklyCombinedData {
   selectedWeek: PersonTotalTime;
   name: string;
   firstName: string;
+  email: string;
   slackId?: string;
   personId: number;
   expected: number;

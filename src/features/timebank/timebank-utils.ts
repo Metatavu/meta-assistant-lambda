@@ -78,14 +78,6 @@ namespace TimeBankUtilities {
     const sprintStartWeek = Number(secondWeek.timePeriod.split(",")[2]);
     const sprintEndWeek = Number(firstWeek.timePeriod.split(",")[2]);
     const sprintYear = Number(secondWeek.timePeriod.split(",")[0]);
-    const email = () => {
-      let lowerCaseName = "";
-      for (let i = 0; i < timeData[0].name.length; i++) {
-        lowerCaseName += timeData[0].name[i].toLowerCase();
-      }
-
-      return lowerCaseName.replace(" ", ".")
-    }
 
     return {
       name: timeData[0].name,
@@ -100,7 +92,7 @@ namespace TimeBankUtilities {
         sprintYear: sprintYear,
         name: timeData[0].firstName,
         percentage: Math.round(totalProjectTime/totalLogged*100),
-        recipients: [`${email()}@gmail.com`, `${process.env.CEO_EMAIL}@metatavu.fi`]
+        recipients: [timeData[0].email, `${process.env.CEO_EMAIL}@metatavu.fi`]
       }
     }
   }

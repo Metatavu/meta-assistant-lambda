@@ -91,6 +91,7 @@ namespace TimeBankApiProvider {
         selectedWeek: selectedWeek,
         name: combinedName,
         firstName: person.firstName,
+        email: person.email,
         personId: person.id,
         expected: person.monday
       };

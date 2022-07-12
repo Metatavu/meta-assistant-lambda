@@ -1,13 +1,13 @@
 import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse, DailyHandlerResponse } from "../../libs/api-gateway";
 import { middyfy } from "../../libs/lambda";
-import schema, { MailData, WeeklyCombinedData } from "../schema";
+import schema, { WeeklyCombinedData } from "../schema";
 import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
 import TimeBankUtilities from "src/features/timebank/timebank-utils";
 import { Timespan } from "src/generated/client/api";
 import TimeUtilities from "src/features/generic/time-utils";
 import Auth from "src/features/auth/auth-provider";
 import { DateTime } from "luxon";
-import Mailer from "src/features/mailer";
+import Mailer from "src/features/mailer/mailer";
 
 /**
  * AWS-less handler for sendDailyMessage
@@ -30,49 +30,45 @@ export const sendSprintEmailHandler = async (): Promise<any> => {
     const weeklyCombinedDatas: WeeklyCombinedData[] = [];
 
     for (const timebankUser of timebankUsers) {
-      let firstWeek = await TimeBankApiProvider.getPersonTotalEntries(
-        Timespan.WEEK, timebankUser, sprintStart.year, sprintStart.month, sprintStart.weekNumber, accessToken
-      );
       let secondWeek = await TimeBankApiProvider.getPersonTotalEntries(
         Timespan.WEEK, timebankUser, sprintEnd.year, sprintEnd.month, sprintEnd.weekNumber, accessToken
+      );
+      let firstWeek = await TimeBankApiProvider.getPersonTotalEntries(
+        Timespan.WEEK, timebankUser, sprintStart.year, sprintStart.month, sprintStart.weekNumber, accessToken
       );
       if (firstWeek && secondWeek) {
         weeklyCombinedDatas.push(firstWeek, secondWeek);
       }
     }
+    timebankUsers = timebankUsers.filter(person => weeklyCombinedDatas.find(weeklyCombinedData => weeklyCombinedData.personId === person.id));
 
-    timebankUsers = timebankUsers.filter(person => Boolean(weeklyCombinedDatas.find(weeklyCombinedData => weeklyCombinedData.personId === person.id)));
+    const emails = timebankUsers.map(person => {
+      return TimeBankUtilities.combineSprintData(weeklyCombinedDatas.filter(weeklyCombinedData => weeklyCombinedData.personId == person.id))
+    }).filter(email => email.mailData.percentage < 50);
 
-    const mailData: MailData = {
-      sprintStartWeek: sprintStart.weekNumber,
-      sprintEndWeek: sprintEnd.weekNumber,
-      sprintYear: sprintEnd.year,
-      name: "",
-      percentage: 50,
-      recipients: ["", ""]
-    }
+    const sentEmails = await Promise.all(emails.map(async email => {
+      return await Mailer.sendMail(email);
+    }))
 
-    const emails = await Mailer.sendMail(mailData);
-
-    const errors = [];
+    const errors = sentEmails.filter(sentEmail => sentEmail.includes("Failed"));
 
     if (errors.length) {
-      let errorMessage = "Error while sending emails, ";
+      let errorMessage = "Error while sending emails,\n";
 
       errors.forEach(error => {
-        errorMessage += `${error.response.error}\n`;
+        errorMessage += `${error}\n`;
       });
       console.error(errorMessage);
     }
 
     return {
-      message: "Everything went well sending the emails, see data for sent messages breakdown...",
-      data: emails
+      message: "Everything went well sending the emails, see data for sent emails breakdown...",
+      data: sentEmails
     };
   } catch (error) {
     console.error(error.toString());
     return {
-      message: `Error while sending slack message: ${error}`
+      message: `Error while sending emails: ${error}`
     };
   }
 };

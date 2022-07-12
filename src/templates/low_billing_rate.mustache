@@ -1,13 +1,36 @@
-Hi,
-<br/>
-Last sprint ({{sprintStartWeek}}+{{sprintEndWeek}} / {{sprintYear}}) {{name}}'s percetange of billable hours was: {{percentage}}%.
+<p>
+    Hi,
+</p>
+<p>
+    Last sprint ({{mailData.sprintStartWeek}}+{{mailData.sprintEndWeek}} / {{mailData.sprintYear}})
+    {{mailData.name}}'s percetange of billable hours was: {{mailData.percentage}}%.
+</p>
+<p>
+    Summary of last sprints hours:<br/>
+    Internal time: <em>{{internalTime}}</em><br/>
+    Project time: <em>{{projectTime}}</em><br/>
+    Expected: <em>{{expected}}</em><br/>
+    Logged: <em>{{logged}}</em><br/>
+    Balance: <em>{{balance}}</em><br/>
+</p>
+<p>
+    You should investigate what has happened!<br/>
+    It's higly recommended to book an appointment with either
+    <ul>
+        <li>CTO Antti</li>
+        <li>CEO Jere</li>
+    </ul>
+    to find ways to improve.<br/>
+    The point of this message is not to mock but rather improve.<br/>
+    Billing rate is the single most important way to measure one's success.
+</p>
 <br/><br/>
-You should investigate what has happened!
-<br/><br/>
+
 <em>Kind regards,
     <br/><blockquote>
     Meta-Assistant, 
     <br/>
     your friendly company bot.</em></blockquote>
 <br/><br/>
+
 This is an automated billing report, please do not respond.

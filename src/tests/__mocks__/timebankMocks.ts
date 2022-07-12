@@ -339,10 +339,10 @@ export const personTotalTimeMock4: PersonTotalTime[] = [
 
 export const personTotalTimeMock5: PersonTotalTime[] = [
   {
-    personId: 1,
+    personId: 123,
     balance: 0,
-    internalTime: 0,
-    projectTime: 2175,
+    internalTime: 2175,
+    projectTime: 0,
     expected: 2175,
     logged: 2175,
     timePeriod: "2022,6,26"
@@ -351,12 +351,12 @@ export const personTotalTimeMock5: PersonTotalTime[] = [
 
 export const personTotalTimeMock6: PersonTotalTime[] = [
   {
-    personId: 1,
+    personId: 123,
     balance: 0,
     internalTime: 0,
-    projectTime: 2175,
+    projectTime: 2000,
     expected: 2175,
-    logged: 2175,
+    logged: 2000,
     timePeriod: "2022,7,27"
   }
 ];

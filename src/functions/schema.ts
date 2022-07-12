@@ -179,3 +179,16 @@ export interface MailData {
   percentage: number;
   recipients: string[];
 }
+
+/**
+ * Interface for SprintCombinedData
+ */
+export interface SprintCombinedData {
+  name: string;
+  internalTime: string;
+  projectTime: string;
+  logged: string;
+  expected: string;
+  balance: string;
+  mailData: MailData;
+}

@@ -1,6 +1,7 @@
-import { DailyCombinedData, WeeklyCombinedData } from "@functions/schema";
+import { DailyCombinedData, SprintCombinedData, WeeklyCombinedData } from "@functions/schema";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DailyEntry, Person } from "src/generated/client/api";
+import TimeUtilities from "../generic/time-utils";
 
 /**
  * Namespace for timebank utilities
@@ -59,6 +60,50 @@ namespace TimeBankUtilities {
       return slackUser ? { ...entry, slackId: slackUser.id } : entry;
     })
   );
+
+  /**
+   * Combines summary of last sprint worktimes
+   * 
+   * @param timeData array of WeeklyCombinedData
+   * @returns SprintCombinedData
+   */
+  export const combineSprintData = (timeData: WeeklyCombinedData[]): SprintCombinedData => {
+    const firstWeek = timeData[0].selectedWeek;
+    const secondWeek = timeData[1].selectedWeek;
+    const totalInternalTime = firstWeek.internalTime + secondWeek.internalTime;
+    const totalProjectTime = firstWeek.projectTime + secondWeek.projectTime;
+    const totalLogged = firstWeek.logged + secondWeek.logged;
+    const totalExpected = firstWeek.expected + secondWeek.expected;
+    const totalBalance = firstWeek.balance + secondWeek.balance;
+    const sprintStartWeek = Number(secondWeek.timePeriod.split(",")[2]);
+    const sprintEndWeek = Number(firstWeek.timePeriod.split(",")[2]);
+    const sprintYear = Number(secondWeek.timePeriod.split(",")[0]);
+    const email = () => {
+      let lowerCaseName = "";
+      for (let i = 0; i < timeData[0].name.length; i++) {
+        lowerCaseName += timeData[0].name[i].toLowerCase();
+      }
+
+      return lowerCaseName.replace(" ", ".")
+    }
+
+    return {
+      name: timeData[0].name,
+      internalTime: TimeUtilities.timeConversion(totalInternalTime),
+      projectTime: TimeUtilities.timeConversion(totalProjectTime),
+      logged: TimeUtilities.timeConversion(totalLogged),
+      expected: TimeUtilities.timeConversion(totalExpected),
+      balance: TimeUtilities.timeConversion(totalBalance),
+      mailData: {
+        sprintStartWeek: sprintStartWeek,
+        sprintEndWeek: sprintEndWeek,
+        sprintYear: sprintYear,
+        name: timeData[0].firstName,
+        percentage: Math.round(totalProjectTime/totalLogged*100),
+        recipients: [`${email()}@gmail.com`, `${process.env.CEO_EMAIL}@metatavu.fi`]
+      }
+    }
+  }
 }
 
 export default TimeBankUtilities;

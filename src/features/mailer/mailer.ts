@@ -1,12 +1,11 @@
 import Mailgun from "mailgun.js";
 import FormData from "form-data";
 import Mustache from "mustache";
-import { MailData } from "src/functions/schema";
-import { DateTime } from "luxon";
+import { SprintCombinedData } from "src/functions/schema";
 import fs from "fs";
 
 /**
- * Class for sending emails through Mailgun
+ * Namespace for sending emails through Mailgun
  */
 namespace Mailer {
 
@@ -15,18 +14,18 @@ namespace Mailer {
     const mailgun = new Mailgun(FormData);
     const mailer = mailgun.client({ username: "api", key: MAILGUN_API_KEY });
 
-    export const sendMail = async (data: MailData) => {
+    export const sendMail = async (data: SprintCombinedData) => {
         try {
             const message = await mailer.messages.create(MAILGUN_DOMAIN_NAME, {
-                from: `Do-not Reply <mailgun@${MAILGUN_DOMAIN_NAME}>`,
-                to: data.recipients,
+                from: `Meta-Assistant <mailgun@${MAILGUN_DOMAIN_NAME}>`,
+                to: data.mailData.recipients,
                 subject: "Low billing rate alert",
-                text: Mustache.render(await loadTemplate("low_billing_rate"), data)
+                html: Mustache.render(await loadTemplate("low_billing_rate"), data)
             });
-            return `Successfully sent emails to: ${data.recipients}`
+            return `Successfully sent emails to: ${data.mailData.recipients}`
         } catch (error) {
             console.error(error.toString());
-            return `Failed sending emails to: ${data.recipients}`
+            return `Failed sending emails to: ${data.mailData.recipients}, because: ${error}`
         }
     };
 

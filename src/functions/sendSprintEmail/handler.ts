@@ -1,11 +1,9 @@
 import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse, DailyHandlerResponse } from "../../libs/api-gateway";
 import { middyfy } from "../../libs/lambda";
-import schema, { WeeklyCombinedData } from "../schema";
+import schema, { MailData, WeeklyCombinedData } from "../schema";
 import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
 import TimeBankUtilities from "src/features/timebank/timebank-utils";
-import SlackApiUtilities from "src/features/slackapi/slackapi-utils";
 import { Timespan } from "src/generated/client/api";
-import ForecastApiUtilities from "src/features/forecastapi/forecast-api";
 import TimeUtilities from "src/features/generic/time-utils";
 import Auth from "src/features/auth/auth-provider";
 import { DateTime } from "luxon";
@@ -45,12 +43,21 @@ export const sendSprintEmailHandler = async (): Promise<any> => {
 
     timebankUsers = timebankUsers.filter(person => Boolean(weeklyCombinedDatas.find(weeklyCombinedData => weeklyCombinedData.personId === person.id)));
 
-    const emails = Mailer.sendMail({ recipient: ["", ""], subject: "Testing testing!", text: "Testing Mailgun!" });
+    const mailData: MailData = {
+      sprintStartWeek: sprintStart.weekNumber,
+      sprintEndWeek: sprintEnd.weekNumber,
+      sprintYear: sprintEnd.year,
+      name: "",
+      percentage: 50,
+      recipients: ["", ""]
+    }
+
+    const emails = await Mailer.sendMail(mailData);
 
     const errors = [];
 
     if (errors.length) {
-      let errorMessage = "Error while posting slack messages, ";
+      let errorMessage = "Error while sending emails, ";
 
       errors.forEach(error => {
         errorMessage += `${error.response.error}\n`;
@@ -59,7 +66,7 @@ export const sendSprintEmailHandler = async (): Promise<any> => {
     }
 
     return {
-      message: "Everything went well sending the daily, see data for message breakdown...",
+      message: "Everything went well sending the emails, see data for sent messages breakdown...",
       data: emails
     };
   } catch (error) {
@@ -71,7 +78,7 @@ export const sendSprintEmailHandler = async (): Promise<any> => {
 };
 
 /**
- * Lambda function for sending slack message
+ * Lambda function for sending email messages
  *
  * @param event API Gateway proxy event
  * @returns JSON response

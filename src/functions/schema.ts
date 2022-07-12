@@ -167,3 +167,15 @@ export interface LastSprintDates {
   sprintStart: string;
   sprintEnd: string;
 }
+
+/**
+ * Interface for MailData
+ */
+export interface MailData {
+  sprintStartWeek: number;
+  sprintEndWeek: number;
+  sprintYear: number;
+  name: string;
+  percentage: number;
+  recipients: string[];
+}

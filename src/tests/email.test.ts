@@ -16,8 +16,10 @@ describe("testing", () => {
         TestHelpers.mockTimebankPersons(200, [personMock1]);
         TestHelpers.mockTimebankPersonTotalTimes(200, [personTotalTimeMock5, personTotalTimeMock6])
         TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations, forecastMockNonProjectTimes], true);
+        
         const emails = await sendSprintEmailHandler();
 
-        expect(emails.data).toBe("Successfully sent emails to:  ")
+        expect(emails.data).toContain("Successfully sent emails to: ");
+        expect(emails.data).toContain("@metatavu.fi");
     });
 });

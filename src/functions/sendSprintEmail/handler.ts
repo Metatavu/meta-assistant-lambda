@@ -43,15 +43,18 @@ export const sendSprintEmailHandler = async (): Promise<any> => {
     timebankUsers = timebankUsers.filter(person => weeklyCombinedDatas.find(weeklyCombinedData => weeklyCombinedData.personId === person.id));
 
     const emails = timebankUsers.map(person => {
-      return TimeBankUtilities.combineSprintData(weeklyCombinedDatas.filter(weeklyCombinedData => weeklyCombinedData.personId == person.id))
-    }).filter(email => email.mailData.percentage < 50);
+      let email = TimeBankUtilities.combineSprintData(weeklyCombinedDatas.filter(weeklyCombinedData => weeklyCombinedData.personId == person.id))
 
-    // const sentEmails = await Promise.all(emails.map(async email => {
-    //   return await Mailer.sendMail(email);
-    // }));
+      if (email.mailData.percentage < person.minimumBillableRate) {
+        return email
+      }
+    });
 
-    const errors = []
-    // sentEmails.filter(sentEmail => sentEmail.includes("Failed"));
+    const sentEmails = await Promise.all(emails.map(async email => {
+      return await Mailer.sendMail(email);
+    }));
+
+    const errors = sentEmails.filter(sentEmail => sentEmail.includes("Failed"));
 
     if (errors.length) {
       let errorMessage = "Error while sending emails,\n";
@@ -64,7 +67,7 @@ export const sendSprintEmailHandler = async (): Promise<any> => {
 
     return {
       message: "Everything went well sending the emails, see data for sent emails breakdown...",
-      data: null
+      data: sentEmails
     };
   } catch (error) {
     console.error(error.toString());

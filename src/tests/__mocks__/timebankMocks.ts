@@ -19,7 +19,8 @@ export const personsMock1: Person[] = [
     language: "test",
     startDate: "test",
     unspentVacations: 0,
-    spentVacations: 0
+    spentVacations: 0,
+    minimumBillableRate: 85
   },
   {
     id: 4040,
@@ -37,7 +38,8 @@ export const personsMock1: Person[] = [
     language: "test",
     startDate: "test",
     unspentVacations: 0,
-    spentVacations: 0
+    spentVacations: 0,
+    minimumBillableRate: 85
   },
   {
     id: 124,
@@ -55,7 +57,8 @@ export const personsMock1: Person[] = [
     language: "test",
     startDate: "test",
     unspentVacations: 0,
-    spentVacations: 0
+    spentVacations: 0,
+    minimumBillableRate: 85
   }
 ];
 
@@ -76,7 +79,8 @@ export const personsMock2: Person[] = [
     language: "test",
     startDate: "test",
     unspentVacations: 0,
-    spentVacations: 0
+    spentVacations: 0,
+    minimumBillableRate: 85
   },
   {
     id: 2,
@@ -94,7 +98,8 @@ export const personsMock2: Person[] = [
     language: "test",
     startDate: "test",
     unspentVacations: 0,
-    spentVacations: 0
+    spentVacations: 0,
+    minimumBillableRate: 85
   },
   {
     id: 3,
@@ -112,7 +117,8 @@ export const personsMock2: Person[] = [
     language: "test",
     startDate: "test",
     unspentVacations: 0,
-    spentVacations: 0
+    spentVacations: 0,
+    minimumBillableRate: 85
   }
 ];
 
@@ -132,7 +138,8 @@ export const personMock1: Person = {
   language: "test",
   startDate: "test",
   unspentVacations: 0,
-  spentVacations: 0
+  spentVacations: 0,
+  minimumBillableRate: 85
 };
 
 export const personMock2: Person = {
@@ -151,7 +158,8 @@ export const personMock2: Person = {
   language: "test",
   startDate: "test",
   unspentVacations: 0,
-  spentVacations: 0
+  spentVacations: 0,
+  minimumBillableRate: 85
 };
 
 export const personsErrorMock = {
@@ -433,7 +441,8 @@ export const personSpecialCharsMock: Person[] = [
     language: "test",
     startDate: "test",
     unspentVacations: 0,
-    spentVacations: 0
+    spentVacations: 0,
+    minimumBillableRate: 85
   }
 ];
 

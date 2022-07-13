@@ -57,9 +57,9 @@ namespace TestHelpers {
   const mockKeycloak = async (): Promise<KeycloakMock.MockInstance> => {
     const keycloak = await KeycloakMock.createMockInstance({
         authServerURL: "http://localhost:8080",
-        realm: "quarkus",
+        realm: "timebank",
         clientID: "meta-assistant",
-        clientSecret: "zoxruqJ6bBYptkJwewhu9bqmkgwxatzS"
+        clientSecret: "secret"
     });
     const mock = KeycloakMock.activateMock(keycloak)
     keycloak.database.createUser({

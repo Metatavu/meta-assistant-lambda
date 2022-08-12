@@ -20,7 +20,7 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { yesterday, dayBeforeYesterday } = previousWorkDays;
 
-    let timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
+    const timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
     const slackUsers = await SlackApiUtilities.getSlackUsers();
     const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
     const NonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
@@ -38,9 +38,9 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
       }
     }
     
-    timebankUsers = timebankUsers.filter(person => dailyEntries.find(dailyEntry => dailyEntry.person === person.id))
+    const filteredTimebankUsers = timebankUsers.filter(person => dailyEntries.find(dailyEntry => dailyEntry.person === person.id))
 
-    const dailyCombinedData = TimeBankUtilities.combineDailyData(timebankUsers, dailyEntries, slackUsers);
+    const dailyCombinedData = TimeBankUtilities.combineDailyData(filteredTimebankUsers, dailyEntries, slackUsers);
     const messagesSent = await SlackApiUtilities.postDailyMessageToUsers(dailyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
     
     const errors = messagesSent.filter(messageSent => messageSent.response.error);

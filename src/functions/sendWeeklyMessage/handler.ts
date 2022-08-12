@@ -20,7 +20,7 @@ export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse>
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { dayBeforeYesterday } = previousWorkDays;
 
-    let timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
+    const timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
     const slackUsers = await SlackApiUtilities.getSlackUsers();
     const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
     const NonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
@@ -38,8 +38,6 @@ export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse>
         personTotalTimes.push(personTotalTime);
       }
     }
-
-    timebankUsers = timebankUsers.filter(person => personTotalTimes.find(personTotalTime => personTotalTime.personId === person.id));
 
     const weeklyCombinedData = TimeBankUtilities.combineWeeklyData(personTotalTimes, slackUsers);
 

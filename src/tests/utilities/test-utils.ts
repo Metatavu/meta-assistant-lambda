@@ -1,7 +1,7 @@
 import { IncomingMessage } from "http";
 import { Socket } from "net";
-import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
-import slackApiUtilities from "src/features/slackapi/slackapi-utils";
+import TimeBankApiProvider from "src/features/timebank/timebank-api";
+import slackApiUtilities from "src/features/slack/slackapi-utils";
 import fetch from "node-fetch";
 import { DailyMessageResult, WeeklyMessageResult } from "src/functions/schema";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";

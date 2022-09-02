@@ -29,7 +29,7 @@ namespace TimeBankUtilities {
       const slackUser = slackUsers.find(slackUser => slackUser.real_name === combinedName);
       const length = personsTimeEntries.length;
 
-      if (length === 1){
+      if (length === 1) {
         return {
           name: combinedName,
           firstName: firstName,
@@ -94,8 +94,8 @@ namespace TimeBankUtilities {
         percentage: Math.round(totalProjectTime/totalLogged*100),
         recipients: [timeData[0].email, `${process.env.CEO_EMAIL}@metatavu.fi`]
       }
-    }
-  }
+    };
+  };
 }
 
 export default TimeBankUtilities;

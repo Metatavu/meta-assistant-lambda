@@ -1,4 +1,4 @@
-import { sendDailyMessageHandler } from "../functions/sendDailyMessage/handler";
+import { sendDailyMessageHandler } from "../functions/send-daily-message/handler";
 import TestHelpers from "./utilities/test-utils";
 import { dailyEntryMock1, dailyEntryMock2, dailyEntryMock3, personsMock1, personSpecialCharsMock } from "./__mocks__/timebankMocks";
 import { slackUserMock, slackUserSpecialMock, slackPostMock } from "./__mocks__/slackMocks";

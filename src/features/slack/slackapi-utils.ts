@@ -80,7 +80,7 @@ Have a great rest of the day!
    */
   const constructWeeklySummaryMessage = (user: WeeklyCombinedData, weekStart: string, weekEnd: string): WeeklyMessageData => {
     const { name, firstName } = user;
-    const week = Number(user.selectedWeek.timePeriod.split(",")[2])
+    const week = Number(user.selectedWeek.timePeriod.split(",")[2]);
 
     const startDate = DateTime.fromISO(weekStart).toFormat("dd.MM.yyyy");
     const endDate = DateTime.fromISO(weekEnd).toFormat("dd.MM.yyyy");
@@ -205,7 +205,7 @@ Have a great week!
       }
     }
 
-    return messageResults
+    return messageResults;
   };
 }
 

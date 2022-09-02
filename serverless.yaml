@@ -1,0 +1,26 @@
+service:
+  name: meta-assistant-lambda
+frameworkVersion: '3'
+plugins:
+  - serverless-esbuild
+provider:
+  name: "aws"
+  runtime: "nodejs14.x"
+functions:
+  sendDailyMessage:
+    handler: src/functions/sendDailyMessage/handler.main
+  sendWeeklyMessage:
+    handler: src/functions/sendWeeklyMessage/handler.main
+package:
+  individually: true
+custom:
+  esbuild:
+    bundle: true
+    minify: false
+    sourcemap: true
+    exclude:
+      - aws-sdk
+    target: node14
+    define: {}
+    platform: node
+    concurrency: 10

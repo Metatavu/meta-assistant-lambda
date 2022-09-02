@@ -1,4 +1,4 @@
-import ForecastApiUtilities from "../features/forecastapi/forecast-api";
+import ForecastApiUtilities from "../features/forecast/forecast-api";
 import TestHelpers from "./utilities/test-utils";
 import { forecastMockNonProjectTimes, forecastMockTimeRegistrations, forecastMockError } from "./__mocks__/forecastMocks";
 

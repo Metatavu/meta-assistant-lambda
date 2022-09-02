@@ -1,4 +1,4 @@
-import { sendSprintEmailHandler } from "src/functions/sendSprintEmail/handler";
+import { sendSprintEmailHandler } from "src/functions/send-sprint-email/handler";
 import TestHelpers from "./utilities/test-utils";
 import { forecastMockNonProjectTimes, forecastMockTimeRegistrations } from "./__mocks__/forecastMocks";
 import { personsMock1, personTotalTimeMock5, personTotalTimeMock6, personTotalTimeErrorMock } from "./__mocks__/timebankMocks";

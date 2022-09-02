@@ -1,7 +1,7 @@
 import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse, DailyHandlerResponse } from "../../libs/api-gateway";
 import { middyfy } from "../../libs/lambda";
 import schema, { WeeklyCombinedData } from "../schema";
-import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
+import TimeBankApiProvider from "src/features/timebank/timebank-api";
 import TimeBankUtilities from "src/features/timebank/timebank-utils";
 import { Timespan } from "src/generated/client/api";
 import TimeUtilities from "src/features/generic/time-utils";
@@ -21,10 +21,10 @@ export const sendSprintEmailHandler = async (): Promise<any> => {
     const sprintStart = DateTime.fromISO(lastSprintDates.sprintStart);
     const sprintEnd = DateTime.fromISO(lastSprintDates.sprintEnd);
 
-    let timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
+    const timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
 
     if (!timebankUsers) {
-      throw new Error("No persons retrieved from Timebank")
+      throw new Error("No persons retrieved from Timebank");
     }
 
     const weeklyCombinedDatas: WeeklyCombinedData[] = [];
@@ -40,13 +40,13 @@ export const sendSprintEmailHandler = async (): Promise<any> => {
         weeklyCombinedDatas.push(firstWeek, secondWeek);
       }
     }
-    timebankUsers = timebankUsers.filter(person => weeklyCombinedDatas.find(weeklyCombinedData => weeklyCombinedData.personId === person.id));
+    const filteredTimebankUsers = timebankUsers.filter(person => weeklyCombinedDatas.find(weeklyCombinedData => weeklyCombinedData.personId === person.id));
 
-    const emails = timebankUsers.map(person => {
-      let email = TimeBankUtilities.combineSprintData(weeklyCombinedDatas.filter(weeklyCombinedData => weeklyCombinedData.personId == person.id))
+    const emails = filteredTimebankUsers.map(person => {
+      let email = TimeBankUtilities.combineSprintData(weeklyCombinedDatas.filter(weeklyCombinedData => weeklyCombinedData.personId == person.id));
 
       if (email.mailData.percentage < person.minimumBillableRate) {
-        return email
+        return email;
       }
     });
 

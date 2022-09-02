@@ -1,11 +1,11 @@
 import { ValidatedAPIGatewayProxyEvent, ValidatedEventAPIGatewayProxyEvent, formatJSONResponse, DailyHandlerResponse } from "../../libs/api-gateway";
 import { middyfy } from "../../libs/lambda";
 import schema from "../schema";
-import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
+import TimeBankApiProvider from "src/features/timebank/timebank-api";
 import TimeBankUtilities from "src/features/timebank/timebank-utils";
-import SlackApiUtilities from "src/features/slackapi/slackapi-utils";
+import SlackApiUtilities from "src/features/slack/slackapi-utils";
 import { DailyEntry } from "src/generated/client/api";
-import ForecastApiUtilities from "src/features/forecastapi/forecast-api";
+import ForecastApiUtilities from "src/features/forecast/forecast-api";
 import TimeUtilities from "src/features/generic/time-utils";
 import Auth from "src/features/auth/auth-provider";
 
@@ -20,27 +20,27 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
     const previousWorkDays = TimeUtilities.getPreviousTwoWorkdays();
     const { yesterday, dayBeforeYesterday } = previousWorkDays;
 
-    let timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
+    const timebankUsers = await TimeBankApiProvider.getTimebankUsers(accessToken);
     const slackUsers = await SlackApiUtilities.getSlackUsers();
     const timeRegistrations = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
     const NonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
 
     if (!timebankUsers) {
-      throw new Error("No persons retrieved from Timebank")
+      throw new Error("No persons retrieved from Timebank");
     }
 
     const dailyEntries: DailyEntry[] = [];
 
     for (const timebankUser of timebankUsers) {
-      let dailyEntry = await TimeBankApiProvider.getDailyEntries(timebankUser.id, yesterday, yesterday, accessToken)
+      const dailyEntry = await TimeBankApiProvider.getDailyEntries(timebankUser.id, yesterday, yesterday, accessToken);
       if (dailyEntry && !dailyEntry.isVacation) {
-        dailyEntries.push(dailyEntry)
+        dailyEntries.push(dailyEntry);
       }
     }
     
-    timebankUsers = timebankUsers.filter(person => dailyEntries.find(dailyEntry => dailyEntry.person === person.id))
+    const filteredTimebankUsers = timebankUsers.filter(person => dailyEntries.find(dailyEntry => dailyEntry.person === person.id));
 
-    const dailyCombinedData = TimeBankUtilities.combineDailyData(timebankUsers, dailyEntries, slackUsers);
+    const dailyCombinedData = TimeBankUtilities.combineDailyData(filteredTimebankUsers, dailyEntries, slackUsers);
     const messagesSent = await SlackApiUtilities.postDailyMessageToUsers(dailyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
     
     const errors = messagesSent.filter(messageSent => messageSent.response.error);

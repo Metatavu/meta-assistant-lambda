@@ -1,4 +1,4 @@
-import { sendWeeklyMessageHandler } from "../functions/sendWeeklyMessage/handler";
+import { sendWeeklyMessageHandler } from "../functions/send-weekly-message/handler";
 import TestHelpers from "./utilities/test-utils";
 import { slackPostMock, slackUserMock } from "./__mocks__/slackMocks";
 import { WeeklyHandlerResponse } from "../libs/api-gateway";

@@ -1,5 +1,5 @@
 import TimeUtilities from "../features/generic/time-utils";
-import TimeBankApiProvider from "../features/timebank/timebank-API-provider";
+import TimeBankApiProvider from "../features/timebank/timebank-api";
 import TestHelpers from "./utilities/test-utils";
 import { Timespan, DailyEntry } from "src/generated/client/api";
 import { personsMock2, dailyEntryMock3, dailyEntryMock4, dailyEntryArrayMock, personMock1, personMock2, personTotalTimeMock1, personTotalTimeMock2 } from "./__mocks__/timebankMocks";

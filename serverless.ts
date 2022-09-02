@@ -2,8 +2,8 @@ import type { AWS } from "@serverless/typescript";
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
 
-import sendDailyMessage from "@functions/sendDailyMessage";
-import sendWeeklyMessage from "@functions/sendWeeklyMessage";
+import sendDailyMessage from "src/functions/send-daily-message";
+import sendWeeklyMessage from "src/functions/send-weekly-message";
 
 const serverlessConfiguration: AWS = {
   service: "meta-assistant-lambda",

@@ -25,7 +25,7 @@ namespace ForecastApiUtilities {
 
       return result.filter(nonProjectTime => !nonProjectTime.is_internal_time);
     } catch (error) {
-      throw new Error(`Error while loading non project times, ${error.message}`)
+      throw new Error(`Error while loading non project times, ${error.message}`);
     }
   };
 
@@ -46,9 +46,9 @@ namespace ForecastApiUtilities {
       return result.filter(timeRegistration => timeRegistration.non_project_time);
     } catch (error) {
       if (error instanceof TypeError) {
-        throw error
+        throw error;
       }
-      throw new Error(`Error while loading time registrations, ${error.message}`)
+      throw new Error(`Error while loading time registrations, ${error.message}`);
     }
   };
 }

@@ -1,2 +1,2 @@
-export { default as sendDailyMessage } from "./sendDailyMessage";
-export { default as sendWeeklyMessage } from "./sendWeeklyMessage";
+export { default as sendDailyMessage } from "./send-daily-message";
+export { default as sendWeeklyMessage } from "./send-weekly-message";

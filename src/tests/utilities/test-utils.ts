@@ -1,12 +1,9 @@
 import { IncomingMessage } from "http";
 import { Socket } from "net";
-import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
+import TimeBankApiProvider from "src/features/timebank/timebank-api";
 import slackApiUtilities from "src/features/slackapi/slackapi-utils";
-import { personsMock, dailyEntryMock1, dailyEntryMock2, dailyEntryMock3, personTotalTimeMock1, personTotalTimeMock2, personTotalTimeMock3 } from "../__mocks__/timebankMocks";
-import { slackUserMock, slackPostMock, slackPostErrorMock } from "../__mocks__/slackMocks";
-import fetch, { FetchError } from "node-fetch";
-import { forecastMockNonProjectTimes, forecastMockTimeRegistrations } from "../__mocks__/forecastMocks";
-import { DailyMessageData, DailyMessageResult, WeeklyMessageData, WeeklyMessageResult } from "src/functions/schema";
+import fetch from "node-fetch";
+import { DailyMessageResult, WeeklyMessageResult } from "src/functions/schema";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import * as KeycloakMock from "keycloak-mock";
 
@@ -32,14 +29,14 @@ namespace TestHelpers {
    * @returns IncomingMessage 
    */
   const createIncomingMessage = (status: number, body: any): any => {
-      let message = new IncomingMessage(new Socket);
-      message.statusCode = status;
+    let message = new IncomingMessage(new Socket);
+    message.statusCode = status;
 
-      return {
-        response: message,
-        body: body
-      }
-  }
+    return {
+      response: message,
+      body: body
+    };
+  };
 
   /**
    * Creates Forecast API matching response
@@ -49,8 +46,8 @@ namespace TestHelpers {
    * @returns Response
    */
   const createResponse = (status: number, body: any): any => {
-    return new Response(JSON.stringify(body), { status: status })
-  }
+    return new Response(JSON.stringify(body), { status: status });
+  };
 
   /**
    * Create mock Keycloak instance that intercepts requests to given authServerUrl
@@ -59,12 +56,12 @@ namespace TestHelpers {
    */
   const mockKeycloak = async (): Promise<KeycloakMock.MockInstance> => {
     const keycloak = await KeycloakMock.createMockInstance({
-        authServerURL: "http://localhost:8080",
-        realm: "quarkus",
-        clientID: "meta-assistant",
-        clientSecret: "zoxruqJ6bBYptkJwewhu9bqmkgwxatzS"
+      authServerURL: "http://localhost:8080",
+      realm: "quarkus",
+      clientID: "meta-assistant",
+      clientSecret: "zoxruqJ6bBYptkJwewhu9bqmkgwxatzS"
     });
-    const mock = KeycloakMock.activateMock(keycloak)
+    const mock = KeycloakMock.activateMock(keycloak);
     keycloak.database.createUser({
       firstName: "test",
       email: "test@test.test",
@@ -74,8 +71,8 @@ namespace TestHelpers {
     });
     KeycloakMock.deactivateMock(mock);
 
-    return keycloak
-  }
+    return keycloak;
+  };
 
   /**
    * Mocks access token to access mock Timebank API through tests
@@ -86,8 +83,8 @@ namespace TestHelpers {
     const keycloak = await mockKeycloak();
     const user = keycloak.database.allUsers();
 
-    return new Response(JSON.stringify({access_token: keycloak.createBearerToken(user[0].profile.id)}))
-  }
+    return new Response(JSON.stringify({ access_token: keycloak.createBearerToken(user[0].profile.id) }));
+  };
 
   /**
    * Configures mock listDailyEntries response
@@ -98,12 +95,12 @@ namespace TestHelpers {
   export const mockTimebankDailyEntries = (statusCode: number, body: any) => {
     const dailyEntriesSpy = jest.spyOn(dailyEntriesClient, "listDailyEntries");
     if (statusCode !== 200) {
-      dailyEntriesSpy.mockReturnValueOnce(createIncomingMessage(statusCode, body))
-    } 
+      dailyEntriesSpy.mockReturnValueOnce(createIncomingMessage(statusCode, body));
+    }
     for (let i = 0; i < body.length; i++) {
       dailyEntriesSpy.mockReturnValueOnce(createIncomingMessage(statusCode, body[i]));
     }
-  }
+  };
 
   /**
    * Configures mock listPersons response
@@ -113,8 +110,8 @@ namespace TestHelpers {
    */
   export const mockTimebankPersons = (statusCode: number, body: any) => {
     jest.spyOn(personsClient, "listPersons")
-      .mockReturnValueOnce(createIncomingMessage(statusCode, body))
-  }
+      .mockReturnValueOnce(createIncomingMessage(statusCode, body));
+  };
 
   /**
    * Configures mock listPersonTotalTime response
@@ -127,7 +124,7 @@ namespace TestHelpers {
     for (let i = 0; i < body.length; i++) {
       personTotalTimesSpy.mockReturnValueOnce(createIncomingMessage(statusCode, body[i]));
     }
-  }
+  };
 
   /**
    * Configures mock fetch to Forecast API to return given data.
@@ -147,7 +144,7 @@ namespace TestHelpers {
     for (let i = 0; i < body.length; i++) {
       fetchSpy.mockReturnValueOnce(createResponse(statusCode, body[i]));
     }
-  }
+  };
 
   /**
    * Configures mock list response 
@@ -188,11 +185,6 @@ namespace TestHelpers {
     const slackNameMatches = slackUsers.find(user => user.real_name === name);
     const date = new Date(displayDate);
 
-    if (date.getDay() > 1) {
-      expect(message.includes("Yesterday")).toBeTruthy();
-    } else {
-      expect(message.includes("Last friday")).toBeTruthy();
-    }
     expect(message).toBeDefined();
     expect(typeof message).toEqual(typeof "string");
     expect(name).toBeDefined();

@@ -3,9 +3,9 @@ import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DailyEntry, Person } from "src/generated/client/api";
 
 /**
- * Namespace for timebank utilities
+ * Namespace for Timebank utilities
  */
-namespace TimeBankUtilities {
+namespace TimebankUtilities {
 
   /**
    * Combines daily timebank data with slack data
@@ -32,11 +32,14 @@ namespace TimeBankUtilities {
         return {
           name: combinedName,
           firstName: firstName,
+          minimumBillableRate: person.minimumBillableRate,
           slackId: slackUser?.id,
           personId: person.id,
           expected: personsTimeEntries[0].expected,
           logged: personsTimeEntries[0].logged,
-          projectTime: personsTimeEntries[0].projectTime,
+          loggedProjectTime: personsTimeEntries[0].loggedProjectTime,
+          billableProjectTime: personsTimeEntries[0].billableProjectTime,
+          nonBillableProjectTime: personsTimeEntries[0].nonBillableProjectTime,
           internalTime: personsTimeEntries[0].internalTime,
           balance: personsTimeEntries[0].balance,
           date: personsTimeEntries[0].date
@@ -61,4 +64,4 @@ namespace TimeBankUtilities {
   );
 }
 
-export default TimeBankUtilities;
+export default TimebankUtilities;

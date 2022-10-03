@@ -40,19 +40,23 @@ namespace TimeUtilities {
    * @returns human friendly time formats
    */
   export const handleTimeConversion = (user: PersonTotalTime): DisplayValues => {
-    const { logged, expected, internalTime, balance, projectTime } = user;
+    const { logged, expected, internalTime, balance, loggedProjectTime, billableProjectTime, nonBillableProjectTime } = user;
 
     const displayLogged = TimeUtilities.timeConversion(logged);
+    const displayLoggedProject = TimeUtilities.timeConversion(loggedProjectTime);
     const displayExpected = TimeUtilities.timeConversion(expected);
     const displayDifference = TimeUtilities.timeConversion(balance);
-    const displayProject = TimeUtilities.timeConversion(projectTime);
+    const displayBillableProject = TimeUtilities.timeConversion(billableProjectTime);
+    const displayNonBillableProjectTime = TimeUtilities.timeConversion(nonBillableProjectTime);
     const displayInternal = TimeUtilities.timeConversion(internalTime);
 
     return {
       logged: displayLogged,
+      loggedProject: displayLoggedProject,
       expected: displayExpected,
       difference: displayDifference,
-      project: displayProject,
+      billableProject: displayBillableProject,
+      nonBillableProject: displayNonBillableProjectTime,
       internal: displayInternal
     };
   };
@@ -64,9 +68,9 @@ namespace TimeUtilities {
    * @returns a message based on the worked time and the percentage of billable hours
    */
   export const calculateWorkedTimeAndBillableHours = (user: PersonTotalTime | DailyCombinedData): CalculateWorkedTimeAndBillableHoursResponse => {
-    const { balance, projectTime, logged } = user;
+    const { balance, billableProjectTime, logged } = user;
 
-    const billableHoursPercentage = logged === 0 ? "0" : (projectTime/logged * 100).toFixed(0);
+    const billableHoursPercentage = logged === 0 ? "0" : (billableProjectTime/logged * 100).toFixed(0);
 
     const undertime = TimeUtilities.timeConversion(balance * -1);
     const overtime = TimeUtilities.timeConversion(balance);

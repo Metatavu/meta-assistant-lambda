@@ -20,9 +20,12 @@ export interface DailyCombinedData {
   name: string;
   firstName: string;
   personId: number;
+  minimumBillableRate: number;
   expected: number;
   logged: number;
-  projectTime: number;
+  loggedProjectTime: number;
+  billableProjectTime: number;
+  nonBillableProjectTime: number;
   internalTime: number;
   date: string;
   balance: number;
@@ -96,8 +99,10 @@ export interface DailyMessageData {
   name: string;
   displayDate?: string;
   displayLogged: string;
+  displayLoggedProject: string;
   displayExpected: string;
-  displayProject: string;
+  displayBillableProject: string;
+  displayNonBillableProject: string;
   displayInternal: string;
   billableHoursPercentage: string;
 }
@@ -107,9 +112,11 @@ export interface DailyMessageData {
  */
 export interface DisplayValues {
   logged: string;
+  loggedProject: string;
   expected: string;
   difference: string;
-  project: string;
+  billableProject: string;
+  nonBillableProject: string;
   internal: string;
 }
 
@@ -131,8 +138,10 @@ export interface WeeklyMessageData {
   startDate: string,
   endDate: string,
   displayLogged: string;
+  displayLoggedProject: string;
   displayExpected: string;
-  displayProject: string;
+  displayBillableProject: string;
+  displayNonBillableProject: string;
   displayInternal: string;
   billableHoursPercentage: string;
 }

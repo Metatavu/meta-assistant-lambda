@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { DailyCombinedData, WeeklyCombinedData, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DailyMessageData, DailyMessageResult, WeeklyMessageData, WeeklyMessageResult } from "@functions/schema";
 import { ChatPostMessageResponse, LogLevel, WebClient } from "@slack/web-api";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
@@ -34,15 +35,17 @@ namespace SlackApiUtilities {
    * @returns string message if id match
    */
   const constructDailyMessage = (user: DailyCombinedData, numberOfToday: number): DailyMessageData => {
-    const { name, date, firstName } = user;
+    const { name, date, firstName, minimumBillableRate } = user;
 
     const displayDate = DateTime.fromISO(date).toFormat("dd.MM.yyyy");
 
     const {
       logged,
+      loggedProject,
       expected,
       internal,
-      project
+      billableProject,
+      nonBillableProject
     } = TimeUtilities.handleTimeConversion(user);
 
     const {
@@ -54,17 +57,20 @@ namespace SlackApiUtilities {
 Hi ${firstName},
 ${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${logged} with an expected time of ${expected}.
 ${message}
-Project time: ${project}, Internal time: ${internal}.
-Your percentage of billable hours was: ${billableHoursPercentage}% ${+billableHoursPercentage >= 75 ? ":+1:" : ":-1:"}
+Logged project time: ${loggedProject}, Billable project time: ${billableProject}, Non billable project time: ${nonBillableProject}, Internal time: ${internal}.
+Your percentage of billable hours was: ${billableHoursPercentage}% ${parseInt(billableHoursPercentage) >= minimumBillableRate ? ":+1:" : ":-1:"}
 Have a great rest of the day!
     `;
+
     return {
       message: customMessage,
       name: name,
       displayDate: displayDate,
       displayLogged: logged,
+      displayLoggedProject: loggedProject,
       displayExpected: expected,
-      displayProject: project,
+      displayBillableProject: billableProject,
+      displayNonBillableProject: nonBillableProject,
       displayInternal: internal,
       billableHoursPercentage: billableHoursPercentage
     };
@@ -80,16 +86,18 @@ Have a great rest of the day!
    */
   const constructWeeklySummaryMessage = (user: WeeklyCombinedData, weekStart: string, weekEnd: string): WeeklyMessageData => {
     const { name, firstName } = user;
-    const week = Number(user.selectedWeek.timePeriod.split(",")[2])
+    const week = Number(user.selectedWeek.timePeriod.split(",")[2]);
 
     const startDate = DateTime.fromISO(weekStart).toFormat("dd.MM.yyyy");
     const endDate = DateTime.fromISO(weekEnd).toFormat("dd.MM.yyyy");
 
     const {
       logged,
+      loggedProject,
       expected,
       internal,
-      project
+      billableProject,
+      nonBillableProject
     } = TimeUtilities.handleTimeConversion(user.selectedWeek);
 
     const {
@@ -101,11 +109,12 @@ Have a great rest of the day!
 Hi ${firstName},
 Last week (week: ${week}, ${startDate} - ${endDate}) you worked ${logged} with an expected time of ${expected}.
 ${message}
-Project time: ${project}, Internal time: ${internal}.
+Logged project time: ${loggedProject}, Billable project time: ${billableProject}, Non billable project time: ${nonBillableProject}, Internal time: ${internal}.
 Your percentage of billable hours was: ${billableHoursPercentage}%
 You ${+billableHoursPercentage >= 75 ? "worked the target 75% billable hours last week:+1:" : "did not work the target 75% billable hours last week:-1:"}.
 Have a great week!
     `;
+
     return {
       message: customMessage,
       name: name,
@@ -113,8 +122,10 @@ Have a great week!
       startDate: startDate,
       endDate: endDate,
       displayLogged: logged,
+      displayLoggedProject: loggedProject,
       displayExpected: expected,
-      displayProject: project,
+      displayBillableProject: billableProject,
+      displayNonBillableProject: nonBillableProject,
       displayInternal: internal,
       billableHoursPercentage: billableHoursPercentage
     };
@@ -205,7 +216,7 @@ Have a great week!
       }
     }
 
-    return messageResults
+    return messageResults;
   };
 }
 

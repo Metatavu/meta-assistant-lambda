@@ -1,5 +1,5 @@
-import { sendWeeklyMessageHandler } from "../functions/sendWeeklyMessage/handler";
-import { sendDailyMessageHandler } from "../functions/sendDailyMessage/handler";
+import { sendWeeklyMessageHandler } from "../functions/send-weekly-message/handler";
+import { sendDailyMessageHandler } from "../functions/send-daily-message/handler";
 import TestHelpers from "./utilities/test-utils";
 import { forecastMockError, forecastMockNonProjectTimes, forecastMockTimeRegistrations } from "./__mocks__/forecastMocks";
 import { personsErrorMock, dailyEntryErrorMock,personTotalTimeErrorMock, personMock1, personsMock, dailyEntryMock1, dailyEntryMock2, dailyEntryMock3, personTotalTimeMock1, personTotalTimeMock2, personTotalTimeMock3, personTotalTimeMock4 } from "./__mocks__/timebankMocks";

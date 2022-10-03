@@ -1,5 +1,6 @@
+/* eslint-disable no-plusplus */
 import TimeUtilities from "../features/generic/time-utils";
-import TimeBankApiProvider from "../features/timebank/timebank-API-provider";
+import TimeBankApiProvider from "../features/timebank/timebank-api";
 import TestHelpers from "./utilities/test-utils";
 import { Timespan, DailyEntry } from "src/generated/client/api";
 import { personsMock2, dailyEntryMock3, dailyEntryMock4, dailyEntryArrayMock, personMock1, personMock2, personTotalTimeMock1, personTotalTimeMock2 } from "./__mocks__/timebankMocks";
@@ -10,7 +11,7 @@ const consoleSpy = jest.spyOn(console, "error");
 
 beforeAll( async () => {
   accessToken = await TestHelpers.mockAccessToken();
-})
+});
 
 beforeEach(() => {
   jest.resetAllMocks();
@@ -58,11 +59,11 @@ describe("timebank-api-provider tests", () => {
     });
 
     it("Should return all time registrations if no date", async () => {
-      TestHelpers.mockTimebankDailyEntries(200, dailyEntryArrayMock)
+      TestHelpers.mockTimebankDailyEntries(200, dailyEntryArrayMock);
 
-      let amountOfCalls = 0
+      let amountOfCalls = 0;
 
-      let result: DailyEntry[] = []; 
+      let result: DailyEntry[] = [];
       for (let i = 0; i < dailyEntryArrayMock.length; i++) {
         result.push(await TimeBankApiProvider.getDailyEntries(1, undefined, undefined, accessToken));
         amountOfCalls++;

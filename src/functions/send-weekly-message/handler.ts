@@ -3,8 +3,8 @@ import { middyfy } from "../../libs/lambda";
 import ForecastApiUtilities from "src/features/forecastapi/forecast-api";
 import TimeUtilities from "src/features/generic/time-utils";
 import SlackApiUtilities from "src/features/slackapi/slackapi-utils";
-import TimeBankApiProvider from "src/features/timebank/timebank-API-provider";
-import TimeBankUtilities from "src/features/timebank/timebank-utils";
+import TimeBankApiProvider from "src/features/timebank/timebank-api";
+import TimebankUtilities from "src/features/timebank/timebank-utils";
 import schema, { WeeklyCombinedData } from "../schema";
 import { Timespan } from "src/generated/client/api";
 import Auth from "src/features/auth/auth-provider";
@@ -26,20 +26,27 @@ export const sendWeeklyMessageHandler = async (): Promise<WeeklyHandlerResponse>
     const NonProjectTimes = await ForecastApiUtilities.getNonProjectTime();
 
     if (!timebankUsers) {
-      throw new Error("No persons retrieved from Timebank")
+      throw new Error("No persons retrieved from Timebank");
     }
 
     const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
     const personTotalTimes: WeeklyCombinedData[] = [];
 
     for (const timebankUser of timebankUsers) {
-      let personTotalTime = await TimeBankApiProvider.getPersonTotalEntries(Timespan.WEEK, timebankUser, weekStartDate.year, weekStartDate.month, weekEndDate.weekNumber, accessToken);
+      const personTotalTime = await TimeBankApiProvider.getPersonTotalEntries(
+        Timespan.WEEK,
+        timebankUser,
+        weekStartDate.year,
+        weekStartDate.month,
+        weekEndDate.weekNumber,
+        accessToken
+      );
       if (personTotalTime) {
         personTotalTimes.push(personTotalTime);
       }
     }
 
-    const weeklyCombinedData = TimeBankUtilities.combineWeeklyData(personTotalTimes, slackUsers);
+    const weeklyCombinedData = TimebankUtilities.combineWeeklyData(personTotalTimes, slackUsers);
 
     const messagesSent = await SlackApiUtilities.postWeeklyMessageToUsers(weeklyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
 

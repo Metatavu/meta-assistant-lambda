@@ -179,7 +179,7 @@ namespace TestHelpers {
       displayExpected,
       displayInternal,
       displayLogged,
-      displayProject
+      displayBillableProject
     } = data.message;
 
     const slackNameMatches = slackUsers.find(user => user.real_name === name);
@@ -193,7 +193,7 @@ namespace TestHelpers {
     expect(displayExpected).toBeDefined();
     expect(displayInternal).toBeDefined();
     expect(displayLogged).toBeDefined();
-    expect(displayProject).toBeDefined();
+    expect(displayBillableProject).toBeDefined();
     expect(slackNameMatches).toBeDefined();
   };
 
@@ -214,7 +214,7 @@ namespace TestHelpers {
       displayExpected,
       displayInternal,
       displayLogged,
-      displayProject
+      displayBillableProject
     } = data.message;
 
     const slackNameMatches = slackUsers.find(user => user.real_name === name);
@@ -229,7 +229,7 @@ namespace TestHelpers {
     expect(displayExpected).toBeDefined();
     expect(displayInternal).toBeDefined();
     expect(displayLogged).toBeDefined();
-    expect(displayProject).toBeDefined();
+    expect(displayBillableProject).toBeDefined();
     expect(slackNameMatches).toBeDefined();
   };
 }

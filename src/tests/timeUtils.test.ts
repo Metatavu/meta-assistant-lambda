@@ -64,7 +64,7 @@ describe("time-utils functions testing", () => {
       expect(result.expected).toBe("2h 0 minutes");
       expect(result.internal).toBe("1h 0 minutes");
       expect(result.logged).toBe("1h 0 minutes");
-      expect(result.project).toBe("1h 0 minutes");
+      expect(result.billableProject).toBe("1h 0 minutes");
       expect(result.difference).toBe("0h 0 minutes");
     });
 

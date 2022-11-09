@@ -98,10 +98,10 @@ describe("timebank-api-provider tests", () => {
       expect(result1.selectedWeek.logged).toBe(2175);
       expect(result1.selectedWeek.expected).toBe(2175);
       expect(result1.selectedWeek.internalTime).toBe(2175);
-      expect(result1.selectedWeek.projectTime).toBe(50);
+      expect(result1.selectedWeek.billableProjectTime).toBe(50);
       expect(result2.personId).toBe(3);
       expect(result2.name).toBe("tester3 test");
-      expect(result2.selectedWeek.projectTime).toBe(75);
+      expect(result2.selectedWeek.billableProjectTime).toBe(75);
       expect(result2.selectedWeek.expected).toBe(100);
       expect(result2.selectedWeek.internalTime).toBe(25);
       expect(result2.selectedWeek.logged).toBe(100);

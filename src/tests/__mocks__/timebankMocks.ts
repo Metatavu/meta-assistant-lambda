@@ -19,7 +19,8 @@ export const personsMock: Person[] = [
     language: "test",
     startDate: "test",
     unspentVacations: 0,
-    spentVacations: 0
+    spentVacations: 0,
+    minimumBillableRate: 0
   },
   {
     id: 4040,
@@ -37,7 +38,8 @@ export const personsMock: Person[] = [
     language: "test",
     startDate: "test",
     unspentVacations: 0,
-    spentVacations: 0
+    spentVacations: 0,
+    minimumBillableRate: 0
   },
   {
     id: 124,
@@ -55,7 +57,8 @@ export const personsMock: Person[] = [
     language: "test",
     startDate: "test",
     unspentVacations: 0,
-    spentVacations: 0
+    spentVacations: 0,
+    minimumBillableRate: 0
   }
 ];
 
@@ -76,7 +79,8 @@ export const personsMock2: Person[] = [
     language: "test",
     startDate: "test",
     unspentVacations: 0,
-    spentVacations: 0
+    spentVacations: 0,
+    minimumBillableRate: 0
   },
   {
     id: 2,
@@ -94,7 +98,8 @@ export const personsMock2: Person[] = [
     language: "test",
     startDate: "test",
     unspentVacations: 0,
-    spentVacations: 0
+    spentVacations: 0,
+    minimumBillableRate: 0
   },
   {
     id: 3,
@@ -112,7 +117,8 @@ export const personsMock2: Person[] = [
     language: "test",
     startDate: "test",
     unspentVacations: 0,
-    spentVacations: 0
+    spentVacations: 0,
+    minimumBillableRate: 0
   }
 ];
 
@@ -132,7 +138,8 @@ export const personMock1: Person = {
   language: "test",
   startDate: "test",
   unspentVacations: 0,
-  spentVacations: 0
+  spentVacations: 0,
+  minimumBillableRate: 0
 };
 
 export const personMock2: Person = {
@@ -151,7 +158,8 @@ export const personMock2: Person = {
   language: "test",
   startDate: "test",
   unspentVacations: 0,
-  spentVacations: 0
+  spentVacations: 0,
+  minimumBillableRate: 0
 };
 
 export const personsErrorMock = {
@@ -163,7 +171,9 @@ export const dailyEntryMock1: DailyEntry[] = [
   {
     person: 123,
     internalTime: 123,
-    projectTime: 100,
+    billableProjectTime: 100,
+    nonBillableProjectTime: 0,
+    loggedProjectTime: 0,
     logged: 123,
     expected: 123,
     balance: 1,
@@ -176,7 +186,9 @@ export const dailyEntryMock2: DailyEntry[] = [
   {
     person: 4040,
     internalTime: 600,
-    projectTime: 500,
+    billableProjectTime: 500,
+    nonBillableProjectTime: 0,
+    loggedProjectTime: 0,
     logged: 600,
     expected: 500,
     balance: 123,
@@ -189,7 +201,9 @@ export const dailyEntryMock3: DailyEntry[] = [
   {
     person: 124,
     internalTime: 0,
-    projectTime: 0,
+    billableProjectTime: 100,
+    nonBillableProjectTime: 0,
+    loggedProjectTime: 0,
     logged: 0,
     expected: 100,
     balance: 0,
@@ -202,7 +216,9 @@ export const dailyEntryMock4: DailyEntry[] = [
   {
     person: 3,
     internalTime: 600,
-    projectTime: 0,
+    billableProjectTime: 100,
+    nonBillableProjectTime: 0,
+    loggedProjectTime: 0,
     logged: 600,
     expected: 1000,
     balance: -400,
@@ -220,7 +236,9 @@ export const dailyEntryArrayMock: DailyEntry[] = [
   {
     person: 1,
     internalTime: 76,
-    projectTime: 0,
+    billableProjectTime: 100,
+    nonBillableProjectTime: 0,
+    loggedProjectTime: 0,
     logged: 600,
     expected: 1000,
     balance: 100,
@@ -230,7 +248,9 @@ export const dailyEntryArrayMock: DailyEntry[] = [
   {
     person: 3,
     internalTime: 600,
-    projectTime: 0,
+    billableProjectTime: 100,
+    nonBillableProjectTime: 0,
+    loggedProjectTime: 0,
     logged: 600,
     expected: 1000,
     balance: -400,
@@ -240,7 +260,9 @@ export const dailyEntryArrayMock: DailyEntry[] = [
   {
     person: 3,
     internalTime: 600,
-    projectTime: 0,
+    billableProjectTime: 100,
+    nonBillableProjectTime: 0,
+    loggedProjectTime: 0,
     logged: 600,
     expected: 1000,
     balance: 10,
@@ -250,7 +272,9 @@ export const dailyEntryArrayMock: DailyEntry[] = [
   {
     person: 3,
     internalTime: 600,
-    projectTime: 0,
+    billableProjectTime: 100,
+    nonBillableProjectTime: 0,
+    loggedProjectTime: 0,
     logged: 600,
     expected: 1000,
     balance: 100,
@@ -260,7 +284,9 @@ export const dailyEntryArrayMock: DailyEntry[] = [
   {
     person: 4040,
     internalTime: 600,
-    projectTime: 500,
+    billableProjectTime: 100,
+    nonBillableProjectTime: 0,
+    loggedProjectTime: 0,
     logged: 600,
     expected: 500,
     balance: 123,
@@ -277,7 +303,9 @@ export const personTotalTimeMock: PersonTotalTime = {
   logged: 60,
   expected: 120,
   internalTime: 60,
-  projectTime: 60
+  billableProjectTime: 60,
+  nonBillableProjectTime: 0,
+  loggedProjectTime: 0,
 };
 
 export const personTotalTimeMock1: PersonTotalTime[] = [
@@ -287,7 +315,9 @@ export const personTotalTimeMock1: PersonTotalTime[] = [
     logged: 2175,
     expected: 2175,
     internalTime: 2175,
-    projectTime: 50,
+    billableProjectTime: 50,
+    nonBillableProjectTime: 0,
+    loggedProjectTime: 0,
     timePeriod: `${weekStartDate.year},${weekStartDate.month},${weekStartDate.weekNumber}`
   }
 ];
@@ -299,7 +329,9 @@ export const personTotalTimeMock2: PersonTotalTime[] = [
     logged: 100,
     expected: 100,
     internalTime: 25,
-    projectTime: 75,
+    billableProjectTime: 75,
+    nonBillableProjectTime: 0,
+    loggedProjectTime: 0,
     timePeriod: `${weekStartDate.year},${weekStartDate.month},${weekStartDate.weekNumber}`
   }
 ];
@@ -311,7 +343,9 @@ export const personTotalTimeMock3: PersonTotalTime[] = [
     logged: 0,
     expected: 100,
     internalTime: 0,
-    projectTime: 0,
+    billableProjectTime: 100,
+    nonBillableProjectTime: 0,
+    loggedProjectTime: 0,
     timePeriod: `${weekStartDate.year},${weekStartDate.month},${weekStartDate.weekNumber}`
   }
 ];
@@ -323,7 +357,9 @@ export const personTotalTimeMock4: PersonTotalTime[] = [
     logged: 0,
     expected: 100,
     internalTime: 0,
-    projectTime: 0,
+    billableProjectTime: 100,
+    nonBillableProjectTime: 0,
+    loggedProjectTime: 0,
     timePeriod: `${weekStartDate.year},${weekStartDate.month},${weekStartDate.weekNumber}`
   },
   {
@@ -332,7 +368,9 @@ export const personTotalTimeMock4: PersonTotalTime[] = [
     logged: 0,
     expected: 100,
     internalTime: 0,
-    projectTime: 0,
+    billableProjectTime: 100,
+    nonBillableProjectTime: 0,
+    loggedProjectTime: 0,
     timePeriod: `${weekStartDate.year},${weekStartDate.month},${weekStartDate.weekNumber}`
   }
 ];
@@ -348,7 +386,10 @@ export const dailyCombinedDataMock1: DailyCombinedData = {
   personId: 1,
   expected: 100,
   logged: 100,
-  projectTime: 100,
+  minimumBillableRate: 0,
+  billableProjectTime: 100,
+  nonBillableProjectTime: 0,
+  loggedProjectTime: 0,
   internalTime: 0,
   balance: 0,
   date: "2022-04-29"
@@ -360,7 +401,10 @@ export const dailyCombinedDataMock2: DailyCombinedData = {
   personId: 2,
   expected: 150,
   logged: 100,
-  projectTime: 0,
+  minimumBillableRate: 0,
+  billableProjectTime: 0,
+  nonBillableProjectTime: 0,
+  loggedProjectTime: 0,
   internalTime: 100,
   balance: -50,
   date: "2022-04-29"
@@ -372,7 +416,10 @@ export const dailyCombinedDataMock3: DailyCombinedData = {
   personId: 3,
   expected: 100,
   logged: 100,
-  projectTime: 50,
+  minimumBillableRate: 0,
+  billableProjectTime: 50,
+  nonBillableProjectTime: 0,
+  loggedProjectTime: 0,
   internalTime: 50,
   balance: 0,
   date: "2022-04-29"
@@ -384,7 +431,10 @@ export const dailyCombinedDataMock4: DailyCombinedData = {
   personId: 4,
   expected: 100,
   logged: 150,
-  projectTime: 100,
+  minimumBillableRate: 0,
+  billableProjectTime: 100,
+  nonBillableProjectTime: 0,
+  loggedProjectTime: 0,
   internalTime: 50,
   balance: 50,
   date: "2022-04-29"
@@ -409,14 +459,17 @@ export const personSpecialCharsMock: Person[] = [
     language: "test",
     startDate: "test",
     unspentVacations: 0,
-    spentVacations: 0
+    spentVacations: 0,
+    minimumBillableRate: 0
   }
 ];
 
 export const dailyEntrySpecialCharsMock: DailyEntry[] = [{
   person: 123,
   internalTime: 600,
-  projectTime: 500,
+  billableProjectTime: 0,
+  nonBillableProjectTime: 0,
+  loggedProjectTime: 600,
   logged: 600,
   expected: 500,
   balance: 123,

@@ -12,6 +12,7 @@ namespace TimebankApi {
    * Get list of timebank users from TimeBank API
    *
    * @returns valid persons data
+   * @param keycloak access token
    */
   export const getTimebankUsers = async (accessToken: string): Promise<Person[]> => {
     try {
@@ -37,10 +38,11 @@ namespace TimebankApi {
    * @param before string for timebank dates
    * @param after string for timebank dates
    * @returns Array of time entries for person
+   * @param accessToken string for timebank accessToken
    */
   export const getDailyEntries = async (id: number, before: string, after: string, accessToken: string): Promise<DailyEntry> => {
     try {
-      if (id === null) throw new Error("Invalid ID was given (expecting a number)");
+      if (!id) throw new Error("Invalid ID was given (expecting a number)");
       const request = await dailyEntriesClient.listDailyEntries(id, before, after, undefined, {
         headers:
           { "Authorization": `Bearer ${accessToken}` }
@@ -63,6 +65,8 @@ namespace TimebankApi {
    * @param person person data from timebank
    * @param year of data to request
    * @param week of data to request
+   * @param month of data to request
+   * @param accessToken of data to request
    * @returns total time data with user name
    */
   export const getPersonTotalEntries = async (
@@ -76,7 +80,7 @@ namespace TimebankApi {
     try {
       let filteredWeeks: PersonTotalTime[];
       
-      if (person.id === null) throw new Error("No ID on person");
+      if (!person.id) throw new Error("No ID on person");
       const request = await personsClient.listPersonTotalTime(person.id, timespan, {
         headers:
           { "Authorization": `Bearer ${accessToken}` }

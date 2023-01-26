@@ -10,7 +10,7 @@ export const slackUserMock: UsersListResponse =
     ]
   };
 
-export const slackUserSpecialMock: UsersListResponse ={
+export const slackUserSpecialCharacterMock: UsersListResponse ={
   ok: true,
   members: [
     { id: "123", real_name: "Ñöä!£ Çøæé" }

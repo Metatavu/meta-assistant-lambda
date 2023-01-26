@@ -6,6 +6,7 @@ import fetch from "node-fetch";
 import { DailyMessageResult, WeeklyMessageResult } from "src/functions/schema";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import * as KeycloakMock from "keycloak-mock";
+import { Message } from "json-schema-to-ts/lib/meta-types/error";
 
 /**
  * Helper functions for testing suites.
@@ -132,6 +133,7 @@ namespace TestHelpers {
    * 
    * @param statusCode API response statusCode
    * @param body API response body
+   * @param keycloakMock API response keyCloakMock
    */
   export const mockForecastResponse = (statusCode: number, body: any, keycloakMock: boolean) => {
     const fetchSpy = jest.spyOn(mockedFetch, "fetch");

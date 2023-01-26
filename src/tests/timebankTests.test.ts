@@ -50,11 +50,11 @@ describe("timebank-api-provider tests", () => {
     });
 
     it("Should print corresponding error to console if no person id", async () => {
-      TestHelpers.mockTimebankDailyEntries(404, dailyEntryMock3)
+      TestHelpers.mockTimebankDailyEntries(404, dailyEntryMock3);
 
       TimeBankApiProvider.getDailyEntries(null, "2022-04-22", "2022-04-22", accessToken);
 
-      expect(consoleSpy).toHaveBeenCalledWith("Error: Invalid ID was given (expecting a number)")
+      expect(consoleSpy).toHaveBeenCalledWith("Error: Invalid ID was given (expecting a number)");
       expect(consoleSpy).toHaveBeenCalledTimes(1);
     });
 

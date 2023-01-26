@@ -160,7 +160,7 @@ Have a great week!
   ): Promise<DailyMessageResult[]> => {
     const { numberOfToday, yesterday, today } = previousWorkDays;
 
-    let messageResults: any[] = [];
+    let messageResults: DailyMessageResult[] = [];
     for (const userData of dailyCombinedData) {
       const { slackId, personId, expected } = userData;
 
@@ -176,7 +176,6 @@ Have a great week!
         });
       }
     }
-
     return messageResults;
   };
 
@@ -197,7 +196,7 @@ Have a great week!
     const { weekStartDate, weekEndDate } = TimeUtilities.lastWeekDateProvider();
     const { yesterday, today } = previousWorkDays;
 
-    const messageResults: any[] = [];
+    const messageResults: WeeklyMessageResult[] = [];
 
     for (const userData of weeklyCombinedData) {
       const { slackId, personId, expected } = userData;
@@ -214,7 +213,6 @@ Have a great week!
         });
       }
     }
-
     return messageResults;
   };
 }

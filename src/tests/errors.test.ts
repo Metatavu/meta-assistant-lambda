@@ -90,8 +90,8 @@ describe("timebank api get total time entries error response", () => {
 
     expect(consoleSpy).toHaveBeenCalledWith("Error: Found more than one PersonTotalTime for given year and week");
     expect(consoleSpy).toHaveBeenCalledTimes(1);
-  })
-}); 
+  });
+});
 
 describe("timebank api get users error response", () => {
   it("should respond with corresponding error response", async () => {
@@ -149,7 +149,7 @@ describe("Slack API error handling in daily message handler", () => {
     const messageData: DailyHandlerResponse = await sendDailyMessageHandler();
 
     expect(messageData).toBeDefined();
-    expect(messageData.message).toMatch("Everything went well sending the daily, see data for message breakdown...")
+    expect(messageData.message).toMatch("Everything went well sending the daily, see data for message breakdown...");
     expect(consoleSpy).toHaveBeenCalledWith("Error while posting slack messages, too_many_attachments\n");
     expect(consoleSpy).toHaveBeenCalledTimes(1);
   });

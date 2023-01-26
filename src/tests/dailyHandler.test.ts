@@ -1,7 +1,7 @@
 import { sendDailyMessageHandler } from "../functions/send-daily-message/handler";
 import TestHelpers from "./utilities/test-utils";
 import { dailyEntryMock1, dailyEntryMock2, dailyEntryMock3, personsMock, personSpecialCharsMock } from "./__mocks__/timebankMocks";
-import { slackUserMock, slackUserSpecialMock, slackPostMock } from "./__mocks__/slackMocks";
+import { slackUserMock, slackUserSpecialCharacterMock, slackPostMock } from "./__mocks__/slackMocks";
 import { DailyHandlerResponse } from "../libs/api-gateway";
 import { forecastMockNonProjectTimes, forecastMockTimeRegistrations } from "./__mocks__/forecastMocks";
 
@@ -50,7 +50,7 @@ describe("mock the daily handler", () => {
       TestHelpers.mockTimebankPersons(200, personSpecialCharsMock);
       TestHelpers.mockTimebankDailyEntries(200, [dailyEntryMock1, dailyEntryMock2, dailyEntryMock3]);
       TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations, forecastMockNonProjectTimes], true);
-      TestHelpers.mockSlackUsers(slackUserSpecialMock);
+      TestHelpers.mockSlackUsers(slackUserSpecialCharacterMock);
       TestHelpers.mockSlackPostMessage(slackPostMock);
 
       const messageData: DailyHandlerResponse = await sendDailyMessageHandler();

@@ -23,7 +23,6 @@ const serverlessConfiguration: AWS = {
       NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000",
       METATAVU_BOT_TOKEN: process.env.METATAVU_BOT_TOKEN,
       TIMEBANK_BASE_URL: process.env.TIMEBANK_BASE_URL,
-      forecast_v3_url: process.env.forecast_v3_url,
       X_FORECAST_API_KEY: process.env.X_FORECAST_API_KEY,
       FORECAST_BASE_URL: process.env.FORECAST_BASE_URL
     }

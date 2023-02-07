@@ -1,6 +1,6 @@
 import { ChatPostMessageResponse } from "@slack/web-api/dist/response/ChatPostMessageResponse";
 import { DateTime } from "luxon";
-import { TimeEntryTotalDto } from "src/generated/client/api";
+import { PersonTotalTime } from "src/generated/client/api";
 
 /**
  * Serverless schema type
@@ -20,12 +20,15 @@ export interface DailyCombinedData {
   name: string;
   firstName: string;
   personId: number;
+  minimumBillableRate: number;
   expected: number;
   logged: number;
-  projectTime: number;
+  loggedProjectTime: number;
+  billableProjectTime: number;
+  nonBillableProjectTime: number;
   internalTime: number;
-  total: number;
   date: string;
+  balance: number;
   slackId?: string;
 }
 
@@ -33,7 +36,7 @@ export interface DailyCombinedData {
  * WeeklyCombinedData interface
  */
 export interface WeeklyCombinedData {
-  selectedWeek: TimeEntryTotalDto;
+  selectedWeek: PersonTotalTime;
   name: string;
   firstName: string;
   slackId?: string;
@@ -55,16 +58,6 @@ export interface WeeklyBreakdownCombinedData {
 export interface Dates {
   weekStartDate: DateTime;
   weekEndDate: DateTime;
-}
-
-/**
- * Enum for TimePeriod
- */
-export enum TimePeriod {
-  ALL_TIME = "ALL_TIME",
-  YEAR ="YEAR",
-  MONTH = "MONTH",
-  WEEK = "WEEK"
 }
 
 /**
@@ -106,8 +99,10 @@ export interface DailyMessageData {
   name: string;
   displayDate?: string;
   displayLogged: string;
+  displayLoggedProject: string;
   displayExpected: string;
-  displayProject: string;
+  displayBillableProject: string;
+  displayNonBillableProject: string;
   displayInternal: string;
   billableHoursPercentage: string;
 }
@@ -117,9 +112,11 @@ export interface DailyMessageData {
  */
 export interface DisplayValues {
   logged: string;
+  loggedProject: string;
   expected: string;
   difference: string;
-  project: string;
+  billableProject: string;
+  nonBillableProject: string;
   internal: string;
 }
 
@@ -141,8 +138,10 @@ export interface WeeklyMessageData {
   startDate: string,
   endDate: string,
   displayLogged: string;
+  displayLoggedProject: string;
   displayExpected: string;
-  displayProject: string;
+  displayBillableProject: string;
+  displayNonBillableProject: string;
   displayInternal: string;
   billableHoursPercentage: string;
 }
@@ -161,4 +160,11 @@ export interface WeeklyMessageResult {
 export interface DailyMessageResult {
   message: DailyMessageData;
   response: ChatPostMessageResponse;
+}
+
+/**
+ * Interface for Parsed Access Token
+ */
+export interface ParsedAccessToken {
+  accessToken: string;
 }

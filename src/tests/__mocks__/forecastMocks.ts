@@ -1,7 +1,9 @@
 import { DateTime } from "luxon";
 import { NonProjectTime, TimeRegistrations } from "src/functions/schema";
 
-export const forecastMockNonProjectTime: NonProjectTime[] = [
+const dateNow = DateTime.now();
+
+export const forecastMockNonProjectTimes: NonProjectTime[] = [
   {
     id : 123,
     name: "vacation",
@@ -19,9 +21,7 @@ export const forecastMockNonProjectTime: NonProjectTime[] = [
   }
 ];
 
-const date = DateTime.now();
-
-export const mockForecastTimeRegistrations: TimeRegistrations[] = [
+export const forecastMockTimeRegistrations: TimeRegistrations[] = [
   {
     id: 16841456,
     person: 1,
@@ -71,34 +71,13 @@ export const mockForecastTimeRegistrations: TimeRegistrations[] = [
     person: 124,
     non_project_time: 123,
     time_registered: 100,
-    date: date.toISODate(),
+    date: dateNow.toISODate(),
     approval_status: "sure"
   }
 ];
 
-export const emptyTimeRegistrationsArray: TimeRegistrations[] = [
-  {
-    id: 4040,
-    person: 1244,
-    non_project_time: null,
-    time_registered: 600,
-    date: "22,22,22",
-    approval_status: "sure"
-  }
-];
-
-//Forecast error mock 1
-export const forecastErrorMock =
+export const forecastMockError =
   {
     status: 401,
     message: "Server failed to authenticate the request."
   };
-
-//Forecast error mock 2
-export const emptyNonProjecTimeArray: NonProjectTime[] = [
-  {
-    id: 4040,
-    name: "something",
-    is_internal_time: true
-  }
-];

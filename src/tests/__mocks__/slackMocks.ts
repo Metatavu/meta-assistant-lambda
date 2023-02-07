@@ -1,6 +1,6 @@
 import { UsersListResponse } from "@slack/web-api/dist/response/UsersListResponse";
 
-export const slackUserData: UsersListResponse =
+export const slackUserMock: UsersListResponse =
   {
     ok: true,
     members: [
@@ -10,23 +10,23 @@ export const slackUserData: UsersListResponse =
     ]
   };
 
-export const slackUserDataError = {
-  ok: false,
-  error: "invalid_cursor"
-};
-
-export const slackPostMessageMock = {
-  ok: true
-};
-
-export const slackSpecialCharsMock: UsersListResponse ={
+export const slackUserSpecialCharacterMock: UsersListResponse ={
   ok: true,
   members: [
     { id: "123", real_name: "Ñöä!£ Çøæé" }
   ]
 };
 
-export const slackPostMessageError = {
+export const slackUserErrorMock = {
+  ok: false,
+  error: "invalid_cursor"
+};
+
+export const slackPostMock = {
+  ok: true
+};
+
+export const slackPostErrorMock = {
   ok: false,
   error: "too_many_attachments"
 };

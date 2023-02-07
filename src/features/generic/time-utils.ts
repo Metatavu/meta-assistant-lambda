@@ -1,6 +1,6 @@
 import { DailyCombinedData, Dates, TimeRegistrations, PreviousWorkdayDates, NonProjectTime, DisplayValues, CalculateWorkedTimeAndBillableHoursResponse } from "@functions/schema";
 import { DateTime, Duration } from "luxon";
-import { TimeEntryTotalDto } from "src/generated/client/api";
+import { PersonTotalTime } from "src/generated/client/api";
 
 /**
  * Namespace for time utilities
@@ -39,20 +39,24 @@ namespace TimeUtilities {
    * @param user data from timebank
    * @returns human friendly time formats
    */
-  export const handleTimeConversion = (user: TimeEntryTotalDto): DisplayValues => {
-    const { logged, expected, internalTime, total, projectTime } = user;
+  export const handleTimeConversion = (user: PersonTotalTime): DisplayValues => {
+    const { logged, expected, internalTime, balance, loggedProjectTime, billableProjectTime, nonBillableProjectTime } = user;
 
     const displayLogged = TimeUtilities.timeConversion(logged);
+    const displayLoggedProject = TimeUtilities.timeConversion(loggedProjectTime);
     const displayExpected = TimeUtilities.timeConversion(expected);
-    const displayDifference = TimeUtilities.timeConversion(total);
-    const displayProject = TimeUtilities.timeConversion(projectTime);
+    const displayDifference = TimeUtilities.timeConversion(balance);
+    const displayBillableProject = TimeUtilities.timeConversion(billableProjectTime);
+    const displayNonBillableProjectTime = TimeUtilities.timeConversion(nonBillableProjectTime);
     const displayInternal = TimeUtilities.timeConversion(internalTime);
 
     return {
       logged: displayLogged,
+      loggedProject: displayLoggedProject,
       expected: displayExpected,
       difference: displayDifference,
-      project: displayProject,
+      billableProject: displayBillableProject,
+      nonBillableProject: displayNonBillableProjectTime,
       internal: displayInternal
     };
   };
@@ -63,20 +67,20 @@ namespace TimeUtilities {
    * @param user data from timebank
    * @returns a message based on the worked time and the percentage of billable hours
    */
-  export const calculateWorkedTimeAndBillableHours = (user: TimeEntryTotalDto | DailyCombinedData): CalculateWorkedTimeAndBillableHoursResponse => {
-    const { total, projectTime, logged } = user;
+  export const calculateWorkedTimeAndBillableHours = (user: PersonTotalTime | DailyCombinedData): CalculateWorkedTimeAndBillableHoursResponse => {
+    const { balance, billableProjectTime, logged } = user;
 
-    const billableHoursPercentage = logged === 0 ? "0" : (projectTime/logged * 100).toFixed(0);
+    const billableHoursPercentage = logged === 0 ? "0" : (billableProjectTime/logged * 100).toFixed(0);
 
-    const undertime = TimeUtilities.timeConversion(total * -1);
-    const overtime = TimeUtilities.timeConversion(total);
+    const undertime = TimeUtilities.timeConversion(balance * -1);
+    const overtime = TimeUtilities.timeConversion(balance);
 
     let message = "You worked the expected amount of time";
-    if (total > 0) {
+    if (balance > 0) {
       message = `Overtime: ${overtime}`;
     }
 
-    if (total < 0) {
+    if (balance < 0) {
       message = `Undertime: ${undertime}`;
     }
     

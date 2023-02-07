@@ -1,20 +1,13 @@
-import fetch from "node-fetch";
 import ForecastApiUtilities from "../features/forecastapi/forecast-api";
-import { forecastMockNonProjectTime, emptyTimeRegistrationsArray, mockForecastTimeRegistrations, emptyNonProjecTimeArray } from "./__mocks__/forecastMocks";
-
-const mockedFetch = {
-  fetch: fetch
-};
+import TestHelpers from "./utilities/test-utils";
+import { forecastMockNonProjectTimes, forecastMockTimeRegistrations, forecastMockError } from "./__mocks__/forecastMocks";
 
 jest.mock("node-fetch");
-const { Response } = jest.requireActual("node-fetch");
 
 describe("forecast api tests", () => {
   describe("forecast getNonProjectTimes", () => {
-    const mockNonProjectTime = forecastMockNonProjectTime;
-
     it("should return mocked data", async () => {
-      jest.spyOn(mockedFetch, "fetch").mockReturnValueOnce(new Response(JSON.stringify(mockNonProjectTime)));
+      TestHelpers.mockForecastResponse(200, [forecastMockNonProjectTimes], false);
 
       const results = await ForecastApiUtilities.getNonProjectTime();
 
@@ -28,14 +21,13 @@ describe("forecast api tests", () => {
     });
 
     it("should throw error if no non project times", async () => {
-      const mockEmptyNonProjectTimeArray = emptyNonProjecTimeArray;
-      jest.spyOn(mockedFetch, "fetch").mockReturnValueOnce(new Response(JSON.stringify(mockEmptyNonProjectTimeArray)));
+      TestHelpers.mockForecastResponse(401, forecastMockError, false);
 
-      const expectedError = new Error("Error while loading non project time, undefined");
+      const expectedError = new Error("Error while loading non project times, Server failed to authenticate the request.");
 
-      try{
-        const result = await ForecastApiUtilities.getNonProjectTime();
-      }catch(error){
+      try {
+        await ForecastApiUtilities.getNonProjectTime();
+      } catch(error) {
         expect(error).toEqual(expectedError);
       }
     });
@@ -43,11 +35,10 @@ describe("forecast api tests", () => {
 
   describe("forecast api get time registrations", () => {
     it("should return mock data", async () => {
-      const dayBeforeYesterday = "2020-04-19";
+      TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations], false);
 
-      jest.spyOn(mockedFetch, "fetch").mockReturnValueOnce(new Response(JSON.stringify(mockForecastTimeRegistrations)));
+      const results = await ForecastApiUtilities.getTimeRegistrations("2020-04-22");
 
-      const results = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
       expect(results[0].person).toBe(1);
       expect(results[0].non_project_time).toBe(228255);
       expect(results[0].time_registered).toBe(435);
@@ -63,25 +54,22 @@ describe("forecast api tests", () => {
     });
 
     it("should throw error if no time registrations", async () => {
-      const dayBeforeYesterday = "2020-04-30";
+      TestHelpers.mockForecastResponse(401, forecastMockError, false);
 
-      jest.spyOn(mockedFetch, "fetch").mockReturnValueOnce(new Response(JSON.stringify(emptyTimeRegistrationsArray)));
-      const expectedError = new Error("Error while loading time registrations");
+      const expectedError = new Error("Error while loading time registrations, Server failed to authenticate the request.");
 
       try {
-        const result = await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
+        const result = await ForecastApiUtilities.getTimeRegistrations("2022-04-22");
       } catch(error) {
         expect(error).toEqual(expectedError);
       }
     });
 
     it("should throw error if missing date", async () => {
-      const dayBeforeYesterday = null;
-
-      jest.spyOn(mockedFetch, "fetch").mockReturnValueOnce(new Response(JSON.stringify(mockForecastTimeRegistrations)));
+      TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations], false);
 
       expect( async () => {
-        await ForecastApiUtilities.getTimeRegistrations(dayBeforeYesterday);
+        await ForecastApiUtilities.getTimeRegistrations(null);
       }).rejects.toThrow(TypeError);
     });
   });

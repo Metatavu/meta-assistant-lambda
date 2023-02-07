@@ -8,7 +8,8 @@ module.exports = {
   },
   coveragePathIgnorePatterns: [
     "src/generated/*",
-    "src/tests/*"
+    "src/tests/*",
+    "src/libs/*"
   ],
 }
 

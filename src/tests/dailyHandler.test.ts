@@ -1,8 +1,9 @@
-import { sendDailyMessageHandler } from "../functions/sendDailyMessage/handler";
+import { sendDailyMessageHandler } from "../functions/send-daily-message/handler";
 import TestHelpers from "./utilities/test-utils";
-import { timebankSpecialCharsMock } from "./__mocks__/timebankMocks";
-import { slackUserData, slackSpecialCharsMock } from "./__mocks__/slackMocks";
+import { dailyEntryMock1, dailyEntryMock2, dailyEntryMock3, personsMock, personSpecialCharsMock } from "./__mocks__/timebankMocks";
+import { slackUserMock, slackUserSpecialCharacterMock, slackPostMock } from "./__mocks__/slackMocks";
 import { DailyHandlerResponse } from "../libs/api-gateway";
+import { forecastMockNonProjectTimes, forecastMockTimeRegistrations } from "./__mocks__/forecastMocks";
 
 jest.mock("node-fetch");
 
@@ -13,11 +14,11 @@ beforeEach(() => {
 describe("mock the daily handler", () => {
   describe("handler is mocked and run to send a message", () => {
     it("should return all expected message data", async () => {
-      TestHelpers.mockTimebankUsers();
-      TestHelpers.mockSlackUsers();
-      TestHelpers.mockForecastData();
-      TestHelpers.mockTimebankTimeEntries();
-      TestHelpers.mockSlackPostMessage();
+      TestHelpers.mockTimebankPersons(200, personsMock);
+      TestHelpers.mockTimebankDailyEntries(200, [dailyEntryMock1, dailyEntryMock2, dailyEntryMock3]);
+      TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations, forecastMockNonProjectTimes], true);
+      TestHelpers.mockSlackUsers(slackUserMock);
+      TestHelpers.mockSlackPostMessage(slackPostMock);
 
       const messageBody: DailyHandlerResponse = await sendDailyMessageHandler();
       const messageData = messageBody.data;
@@ -25,19 +26,18 @@ describe("mock the daily handler", () => {
       const spy = jest.spyOn(TestHelpers, "validateDailyMessage");
 
       messageData.forEach(messageData => {
-        TestHelpers.validateDailyMessage(messageData, slackUserData.members);
+        TestHelpers.validateDailyMessage(messageData, slackUserMock.members);
       });
     });
   });
 
-  // @todo find out why tests below won't work when reorganized
   describe("Daily vacation time test", () => {
     it("Should not return user who is on vacation", async () => {
-      TestHelpers.mockTimebankUsers();
-      TestHelpers.mockSlackUsers();
-      TestHelpers.mockForecastData();
-      TestHelpers.mockTimebankTimeEntries();
-      TestHelpers.mockSlackPostMessage();
+      TestHelpers.mockTimebankPersons(200, personsMock);
+      TestHelpers.mockTimebankDailyEntries(200, [dailyEntryMock1, dailyEntryMock2, dailyEntryMock3]);
+      TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations, forecastMockNonProjectTimes], true);
+      TestHelpers.mockSlackUsers(slackUserMock);
+      TestHelpers.mockSlackPostMessage(slackPostMock);
 
       const messageData: DailyHandlerResponse = await sendDailyMessageHandler();
       
@@ -45,14 +45,13 @@ describe("mock the daily handler", () => {
     });
   });
 
-  // Unexpected behaviour with special characters passed to timebank time entries, causes Typeerror Found non-callable @@iterator- requires further investigation.
   describe("special character test", () => {
     it("should return expected data",async () => {
-      TestHelpers.mockTimebankUsersCustom(timebankSpecialCharsMock);
-      TestHelpers.mockSlackUsersCustom(slackSpecialCharsMock);
-      TestHelpers.mockForecastData();
-      TestHelpers.mockTimebankTimeEntries();
-      TestHelpers.mockSlackPostMessage();
+      TestHelpers.mockTimebankPersons(200, personSpecialCharsMock);
+      TestHelpers.mockTimebankDailyEntries(200, [dailyEntryMock1, dailyEntryMock2, dailyEntryMock3]);
+      TestHelpers.mockForecastResponse(200, [forecastMockTimeRegistrations, forecastMockNonProjectTimes], true);
+      TestHelpers.mockSlackUsers(slackUserSpecialCharacterMock);
+      TestHelpers.mockSlackPostMessage(slackPostMock);
 
       const messageData: DailyHandlerResponse = await sendDailyMessageHandler();
 

@@ -9,7 +9,7 @@ import TimeUtilities from "../generic/time-utils";
  */
 namespace SlackApiUtilities {
 
-  export const client = new WebClient(process.env.metatavu_bot_token, {
+  export const client = new WebClient(process.env.METATAVU_BOT_TOKEN, {
     logLevel: LogLevel.DEBUG
   });
 
@@ -21,7 +21,7 @@ namespace SlackApiUtilities {
   export const getSlackUsers = async (): Promise<Member[]> => {
     const result = await client.users.list();
 
-    if (!result.members) throw new Error(`Error while loading slack users list, ${result.error}`);
+    if (!result.ok) throw new Error(`Error while loading slack users list, ${result.error}`);
 
     return result.members;
   };
@@ -34,15 +34,17 @@ namespace SlackApiUtilities {
    * @returns string message if id match
    */
   const constructDailyMessage = (user: DailyCombinedData, numberOfToday: number): DailyMessageData => {
-    const { name, date, firstName } = user;
+    const { name, date, firstName, minimumBillableRate } = user;
 
     const displayDate = DateTime.fromISO(date).toFormat("dd.MM.yyyy");
 
     const {
       logged,
+      loggedProject,
       expected,
       internal,
-      project
+      billableProject,
+      nonBillableProject
     } = TimeUtilities.handleTimeConversion(user);
 
     const {
@@ -54,17 +56,20 @@ namespace SlackApiUtilities {
 Hi ${firstName},
 ${numberOfToday === 1 ? "Last friday" :"Yesterday"} (${displayDate}) you worked ${logged} with an expected time of ${expected}.
 ${message}
-Project time: ${project}, Internal time: ${internal}.
-Your percentage of billable hours was: ${billableHoursPercentage}% ${+billableHoursPercentage >= 75 ? ":+1:" : ":-1:"}
+Logged project time: ${loggedProject}, Billable project time: ${billableProject}, Non billable project time: ${nonBillableProject}, Internal time: ${internal}.
+Your percentage of billable hours was: ${billableHoursPercentage}% ${parseInt(billableHoursPercentage) >= minimumBillableRate ? ":+1:" : ":-1:"}
 Have a great rest of the day!
     `;
+
     return {
       message: customMessage,
       name: name,
       displayDate: displayDate,
       displayLogged: logged,
+      displayLoggedProject: loggedProject,
       displayExpected: expected,
-      displayProject: project,
+      displayBillableProject: billableProject,
+      displayNonBillableProject: nonBillableProject,
       displayInternal: internal,
       billableHoursPercentage: billableHoursPercentage
     };
@@ -79,16 +84,19 @@ Have a great rest of the day!
    * @returns message
    */
   const constructWeeklySummaryMessage = (user: WeeklyCombinedData, weekStart: string, weekEnd: string): WeeklyMessageData => {
-    const { name, selectedWeek: { id: { week } }, firstName } = user;
+    const { name, firstName } = user;
+    const week = Number(user.selectedWeek.timePeriod.split(",")[2]);
 
     const startDate = DateTime.fromISO(weekStart).toFormat("dd.MM.yyyy");
     const endDate = DateTime.fromISO(weekEnd).toFormat("dd.MM.yyyy");
 
     const {
       logged,
+      loggedProject,
       expected,
       internal,
-      project
+      billableProject,
+      nonBillableProject
     } = TimeUtilities.handleTimeConversion(user.selectedWeek);
 
     const {
@@ -98,13 +106,14 @@ Have a great rest of the day!
 
     const customMessage = `
 Hi ${firstName},
-Last week (week: ${ week }, ${startDate} - ${endDate}) you worked ${logged} with an expected time of ${expected}.
+Last week (week: ${week}, ${startDate} - ${endDate}) you worked ${logged} with an expected time of ${expected}.
 ${message}
-Project time: ${project}, Internal time: ${internal}.
+Logged project time: ${loggedProject}, Billable project time: ${billableProject}, Non billable project time: ${nonBillableProject}, Internal time: ${internal}.
 Your percentage of billable hours was: ${billableHoursPercentage}%
 You ${+billableHoursPercentage >= 75 ? "worked the target 75% billable hours last week:+1:" : "did not work the target 75% billable hours last week:-1:"}.
 Have a great week!
     `;
+
     return {
       message: customMessage,
       name: name,
@@ -112,8 +121,10 @@ Have a great week!
       startDate: startDate,
       endDate: endDate,
       displayLogged: logged,
+      displayLoggedProject: loggedProject,
       displayExpected: expected,
-      displayProject: project,
+      displayBillableProject: billableProject,
+      displayNonBillableProject: nonBillableProject,
       displayInternal: internal,
       billableHoursPercentage: billableHoursPercentage
     };
@@ -150,7 +161,6 @@ Have a great week!
     const { numberOfToday, yesterday, today } = previousWorkDays;
 
     let messageResults: DailyMessageResult[] = [];
-
     for (const userData of dailyCombinedData) {
       const { slackId, personId, expected } = userData;
 
@@ -158,16 +168,15 @@ Have a great week!
       const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
       const message = constructDailyMessage(userData, numberOfToday);
-
+      
       if (!isAway && !firstDayBack) {
         messageResults.push({
           message: message,
           response: await sendMessage(slackId, message.message)
         });
       }
-
-      return messageResults;
     }
+    return messageResults;
   };
 
   /**
@@ -204,8 +213,7 @@ Have a great week!
         });
       }
     }
-
-    return messageResults
+    return messageResults;
   };
 }
 

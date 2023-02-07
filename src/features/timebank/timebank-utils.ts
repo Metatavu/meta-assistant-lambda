@@ -1,11 +1,11 @@
 import { DailyCombinedData, WeeklyCombinedData } from "@functions/schema";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
-import { PersonDto, TimeEntry } from "src/generated/client/api";
+import { DailyEntry, Person } from "src/generated/client/api";
 
 /**
- * Namespace for timebank utilities
+ * Namespace for Timebank utilities
  */
-namespace TimeBankUtilities {
+namespace TimebankUtilities {
 
   /**
    * Combines daily timebank data with slack data
@@ -16,8 +16,8 @@ namespace TimeBankUtilities {
    * @returns list of combined daily slack data
    */
   export const combineDailyData = (
-    personData: PersonDto[],
-    timeData: TimeEntry[],
+    personData: Person[],
+    timeData: DailyEntry[],
     slackUsers: Member[]
   ): DailyCombinedData[] => (
     personData.map(person => {
@@ -32,14 +32,17 @@ namespace TimeBankUtilities {
         return {
           name: combinedName,
           firstName: firstName,
+          minimumBillableRate: person.minimumBillableRate,
           slackId: slackUser?.id,
           personId: person.id,
           expected: personsTimeEntries[0].expected,
           logged: personsTimeEntries[0].logged,
-          projectTime: personsTimeEntries[0].projectTime,
+          loggedProjectTime: personsTimeEntries[0].loggedProjectTime,
+          billableProjectTime: personsTimeEntries[0].billableProjectTime,
+          nonBillableProjectTime: personsTimeEntries[0].nonBillableProjectTime,
           internalTime: personsTimeEntries[0].internalTime,
-          total: personsTimeEntries[0].total,
-          date: personsTimeEntries[0].date.toISOString()
+          balance: personsTimeEntries[0].balance,
+          date: personsTimeEntries[0].date
         };
       }
     })
@@ -61,4 +64,4 @@ namespace TimeBankUtilities {
   );
 }
 
-export default TimeBankUtilities;
+export default TimebankUtilities;

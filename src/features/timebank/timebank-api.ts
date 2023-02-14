@@ -103,7 +103,8 @@ namespace TimebankApi {
         name: combinedName,
         firstName: person.firstName,
         personId: person.id,
-        expected: person.monday
+        expected: person.monday,
+        minimumBillableRate: person.minimumBillableRate
       };
     } catch (error) {
       console.error(error.toString());

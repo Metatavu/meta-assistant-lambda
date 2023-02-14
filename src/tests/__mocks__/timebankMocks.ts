@@ -80,7 +80,7 @@ export const personsMock2: Person[] = [
     startDate: "test",
     unspentVacations: 0,
     spentVacations: 0,
-    minimumBillableRate: 0
+    minimumBillableRate: 50
   },
   {
     id: 2,
@@ -99,7 +99,7 @@ export const personsMock2: Person[] = [
     startDate: "test",
     unspentVacations: 0,
     spentVacations: 0,
-    minimumBillableRate: 0
+    minimumBillableRate: 50
   },
   {
     id: 3,
@@ -118,7 +118,7 @@ export const personsMock2: Person[] = [
     startDate: "test",
     unspentVacations: 0,
     spentVacations: 0,
-    minimumBillableRate: 0
+    minimumBillableRate: 50
   }
 ];
 

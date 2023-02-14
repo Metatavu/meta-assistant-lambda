@@ -84,7 +84,7 @@ Have a great rest of the day!
    * @returns message
    */
   const constructWeeklySummaryMessage = (user: WeeklyCombinedData, weekStart: string, weekEnd: string): WeeklyMessageData => {
-    const { name, firstName } = user;
+    const { name, firstName, minimumBillableRate } = user;
     const week = Number(user.selectedWeek.timePeriod.split(",")[2]);
 
     const startDate = DateTime.fromISO(weekStart).toFormat("dd.MM.yyyy");
@@ -110,7 +110,7 @@ Last week (week: ${week}, ${startDate} - ${endDate}) you worked ${logged} with a
 ${message}
 Logged project time: ${loggedProject}, Billable project time: ${billableProject}, Non billable project time: ${nonBillableProject}, Internal time: ${internal}.
 Your percentage of billable hours was: ${billableHoursPercentage}%
-You ${+billableHoursPercentage >= 75 ? "worked the target 75% billable hours last week:+1:" : "did not work the target 75% billable hours last week:-1:"}.
+You ${+parseInt(billableHoursPercentage) >= minimumBillableRate ? `worked the target ${minimumBillableRate}% billable hours last week:+1:` : `did not work the target ${minimumBillableRate}% billable hours last week:-1:`}.
 Have a great week!
     `;
 
@@ -168,7 +168,7 @@ Have a great week!
       const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
       const message = constructDailyMessage(userData, numberOfToday);
-      
+
       if (!isAway && !firstDayBack) {
         messageResults.push({
           message: message,

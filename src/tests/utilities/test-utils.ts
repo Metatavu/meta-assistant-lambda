@@ -4,7 +4,7 @@ import TimeBankApiProvider from "src/features/timebank/timebank-api";
 import slackApiUtilities from "src/features/slackapi/slackapi-utils";
 import fetch from "node-fetch";
 import { DailyMessageResult, WeeklyMessageResult } from "src/functions/schema";
-import { Member } from "@slack/web-api/dist/response/UsersListResponse";
+import { Member, UsersListResponse } from "@slack/web-api/dist/response/UsersListResponse";
 import * as KeycloakMock from "keycloak-mock";
 import { Message } from "json-schema-to-ts/lib/meta-types/error";
 
@@ -153,7 +153,7 @@ namespace TestHelpers {
    * 
    * @param mockData response mockData
    */
-  export const mockSlackUsers = (mockData: any) => {
+  export const mockSlackUsers = (mockData: UsersListResponse) => {
     jest.spyOn(slackUsersClient.users, "list").mockReturnValueOnce(Promise.resolve(mockData));
   };
 
@@ -162,7 +162,7 @@ namespace TestHelpers {
    * 
    * @param mockData response mockData 
    */
-  export const mockSlackPostMessage = (mockData: any) => {
+  export const mockSlackPostMessage = (mockData: UsersListResponse) => {
     jest.spyOn(slackUsersClient.chat, "postMessage").mockImplementation(() => Promise.resolve(mockData));
   };
 

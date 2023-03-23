@@ -166,14 +166,20 @@ Have a great week!
 
       const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
       const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
+      const listOfIds = process.env.STAGING_IDS.split(",");
 
       const message = constructDailyMessage(userData, numberOfToday);
 
       if (!isAway && !firstDayBack) {
-        messageResults.push({
+        for (id of listOfIds){
+          /*
+          messageResults.push({
           message: message,
-          response: await sendMessage(slackId, message.message)
-        });
+          response: await sendMessage(id, message.message)
+          });
+          */
+          console.log("slackid " + slackId, "Id " + id, "Userdata " + userData, "message " + message.message);
+        }
       }
     }
     return messageResults;
@@ -206,11 +212,13 @@ Have a great week!
 
       const message = constructWeeklySummaryMessage(userData, weekStartDate.toISODate(), weekEndDate.toISODate());
 
-      if (!isAway && !firstDayBack) {
+      if (!isAway && !firstDayBack && slackId !== undefined) {
+        /*
         messageResults.push({
           message: message,
           response: await sendMessage(slackId, message.message)
         });
+        */
       }
     }
     return messageResults;

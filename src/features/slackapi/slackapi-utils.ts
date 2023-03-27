@@ -173,11 +173,19 @@ Have a great week!
 
 
       if (!isAway && !firstDayBack) {
-        for (stagingid of listOfIds){
+        if (listOfIds.length === 0) {
           messageResults.push({
             message: message,
-            response: await sendMessage(stagingid, message.message)
-          });
+              response: await sendMessage(slackId, message.message)
+              });
+              }
+        else {
+          for (stagingid of listOfIds){
+            messageResults.push({
+              message: message,
+              response: await sendMessage(stagingid, message.message)
+            });
+          }
         }
       }
     }
@@ -211,8 +219,14 @@ Have a great week!
 
       const message = constructWeeklySummaryMessage(userData, weekStartDate.toISODate(), weekEndDate.toISODate());
       if (!isAway && !firstDayBack) {
-        for (stagingid of listOfIds){
+        if (listOfIds.length === 0) {
           messageResults.push({
+            message: message,
+            response: await sendMessage(slackId, message.message)
+          });
+        } else {
+          for (stagingid of listOfIds){
+            messageResults.push({
               message: message,
               response: await sendMessage(stagingid, message.message)
             });

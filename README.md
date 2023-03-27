@@ -94,3 +94,10 @@ The project code base is mainly located within the `src` folder. This folder is 
 ### Advanced usage
 
 Any tsconfig.json can be used, but if you do, set the environment variable `TS_NODE_CONFIG` for building the application, eg `TS_NODE_CONFIG=./tsconfig.app.json npx serverless webpack`
+
+### Staging usage
+
+Staging implementation on selecting slack user ids (through a .env variable) who will receive all the messages sent by daily or weekly messages.
+
+first off you have to have your branch version as staging in order to use the STAGING_IDS environment variable. If this variable does not exist or is empty the program runs normally. Copy the variable and add it (`STAGING_IDS=<slackid>`) to the `.env` file.
+When you have the variable make sure to insert your selected slackid or ids (multible ids need to be divided by `,` for example `STAGING_IDS=xxxxxxx,xxxxxxx,xxxxxxx`)

@@ -166,19 +166,18 @@ Have a great week!
 
       const isAway = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, today, nonProjectTimes);
       const firstDayBack= TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
-      const listOfIds = process.env.STAGING_IDS.split(",");
 
       const message = constructDailyMessage(userData, numberOfToday);
 
+      const listOfIds = process.env.STAGING_IDS.split(",");
+
+
       if (!isAway && !firstDayBack) {
-        for (id of listOfIds){
-          /*
+        for (stagingid of listOfIds){
           messageResults.push({
-          message: message,
-          response: await sendMessage(id, message.message)
+            message: message,
+            response: await sendMessage(stagingid, message.message)
           });
-          */
-          console.log("slackid " + slackId, "Id " + id, "Userdata " + userData, "message " + message.message);
         }
       }
     }
@@ -211,14 +210,14 @@ Have a great week!
       const firstDayBack = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
       const message = constructWeeklySummaryMessage(userData, weekStartDate.toISODate(), weekEndDate.toISODate());
-
-      if (!isAway && !firstDayBack && slackId !== undefined) {
-        /*
-        messageResults.push({
-          message: message,
-          response: await sendMessage(slackId, message.message)
-        });
-        */
+      if (!isAway && !firstDayBack) {
+        for (stagingid of listOfIds){
+          messageResults.push({
+              message: message,
+              response: await sendMessage(stagingid, message.message)
+            });
+          }
+        }
       }
     }
     return messageResults;

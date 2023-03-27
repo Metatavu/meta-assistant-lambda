@@ -62,24 +62,6 @@ namespace TimebankUtilities {
       return slackUser ? { ...entry, slackId: slackUser.id } : entry;
     })
   );
-  /**
-   * Filters staging users only when staging IDs are in the envs
-   * 
-   * @param filteredTimebankUsers list of users after filtering
-   * @param listOfIds list of staging IDs in the envs
-   * @returns list of users with the matching staging IDs
-   */
-  export const filterStagingUsers = (filteredTimebankUsers: Person[], listOfIds: string[]): Person[] => {
-    return filteredTimebankUsers.filter(person => {
-      if (listOfIds.length === 0) {
-        return true;
-      } else if (listOfIds.includes(person.id.toString())) {
-        return true;
-      } else {
-        return false;
-      }
-    });
-  };
 }
 
 export default TimebankUtilities;

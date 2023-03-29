@@ -171,9 +171,8 @@ Have a great week!
 
       const listOfIds = process.env.STAGING_IDS.split(",");
 
-
       if (!isAway && !firstDayBack) {
-        if (listOfIds.length === 0) {
+        if (!listOfIds) {
           messageResults.push({
             message: message,
               response: await sendMessage(slackId, message.message)
@@ -219,7 +218,7 @@ Have a great week!
 
       const message = constructWeeklySummaryMessage(userData, weekStartDate.toISODate(), weekEndDate.toISODate());
       if (!isAway && !firstDayBack) {
-        if (listOfIds.length === 0) {
+        if (!listOfIds) {
           messageResults.push({
             message: message,
             response: await sendMessage(slackId, message.message)

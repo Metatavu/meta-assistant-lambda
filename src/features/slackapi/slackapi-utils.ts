@@ -179,7 +179,7 @@ Have a great week!
               });
               }
         else {
-          for (stagingid of listOfIds){
+          for (const stagingid of listOfIds){
             messageResults.push({
               message: message,
               response: await sendMessage(stagingid, message.message)

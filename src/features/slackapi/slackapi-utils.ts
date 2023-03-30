@@ -225,7 +225,7 @@ Have a great week!
             response: await sendMessage(slackId, message.message)
           });
         } else {
-          for (stagingid of listOfIds){
+          for (const stagingid of listOfIds){
             messageResults.push({
               message: message,
               response: await sendMessage(stagingid, message.message)

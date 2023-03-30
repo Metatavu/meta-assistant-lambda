@@ -217,6 +217,7 @@ Have a great week!
       const firstDayBack = TimeUtilities.checkIfUserIsAwayOrIsItFirstDayBack(timeRegistrations, personId, expected, yesterday, nonProjectTimes);
 
       const message = constructWeeklySummaryMessage(userData, weekStartDate.toISODate(), weekEndDate.toISODate());
+
       if (!isAway && !firstDayBack) {
         if (!listOfIds) {
           messageResults.push({

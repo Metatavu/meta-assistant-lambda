@@ -13,6 +13,8 @@ namespace SlackApiUtilities {
     logLevel: LogLevel.DEBUG
   });
 
+  const listOfIds = process.env.STAGING_IDS ? process.env.STAGING_IDS.split(",") : undefined;
+
   /**
    * Get list of slack users
    *
@@ -169,15 +171,13 @@ Have a great week!
 
       const message = constructDailyMessage(userData, numberOfToday);
 
-      const listOfIds = process.env.STAGING_IDS.split(",");
-
       if (!isAway && !firstDayBack) {
         if (!listOfIds) {
           messageResults.push({
             message: message,
-              response: await sendMessage(slackId, message.message)
-              });
-              }
+            response: await sendMessage(slackId, message.message)
+          });
+        }
         else {
           for (const stagingid of listOfIds) {
             messageResults.push({

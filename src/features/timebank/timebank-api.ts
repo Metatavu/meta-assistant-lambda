@@ -20,7 +20,7 @@ namespace TimebankApi {
         headers:
           { "Authorization": `Bearer ${accessToken}` }
       });
-      
+
       if (request.response.statusCode === 200) {
         return request.body;
       }
@@ -43,15 +43,15 @@ namespace TimebankApi {
   export const getDailyEntries = async (id: number, before: string, after: string, accessToken: string): Promise<DailyEntry> => {
     try {
       if (!id) throw new Error("Invalid ID was given (expecting a number)");
+
       const request = await dailyEntriesClient.listDailyEntries(id, before, after, undefined, {
-        headers:
-          { "Authorization": `Bearer ${accessToken}` }
+        headers: { "Authorization": `Bearer ${accessToken}` }
       });
 
       if (request.response.statusCode === 200) {
         return request.body[0];
       }
-      
+
       throw new Error(`Error while loading DailyEntries for person ${id} from Timebank`);
     } catch (error) {
       console.error(error.toString());
@@ -79,19 +79,20 @@ namespace TimebankApi {
   ): Promise<WeeklyCombinedData> => {
     try {
       let filteredWeeks: PersonTotalTime[];
-      
+
       if (!person.id) throw new Error("No ID on person");
-      const request = await personsClient.listPersonTotalTime(person.id, timespan, {
+
+      const request = await personsClient.listPersonTotalTime(person.id, timespan, undefined, undefined, {
         headers:
           { "Authorization": `Bearer ${accessToken}` }
       });
-      
+
       if (request.response.statusCode === 200) {
         filteredWeeks = request.body.filter(personTotalTime => personTotalTime.timePeriod === `${year},${month},${week}`);
       } else {
         throw new Error(`Error while loading PersonTotalTimes for person ${person.id} from Timebank`);
       }
-      
+
       if (filteredWeeks.length > 1) throw new Error("Found more than one PersonTotalTime for given year and week");
 
       const selectedWeek = filteredWeeks[0];

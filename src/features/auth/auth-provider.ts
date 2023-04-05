@@ -1,12 +1,13 @@
 import fetch from "node-fetch";
 import { ParsedAccessToken } from "@functions/schema";
+const env = require("./envalidconfig.js");
 
 /**
  * Namespace for Authentication
  */
 namespace Auth {
 
-  const { KEYCLOAK_BASE_URL, KEYCLOAK_REALM, KEYCLOAK_USERNAME, KEYCLOAK_PASSWORD, KEYCLOAK_CLIENT, KEYCLOAK_CLIENT_SECRET } = process.env;
+  const { KEYCLOAK_BASE_URL, KEYCLOAK_REALM, KEYCLOAK_USERNAME, KEYCLOAK_PASSWORD, KEYCLOAK_CLIENT, KEYCLOAK_CLIENT_SECRET } = env;
 
   export const getAccessToken = async (): Promise<ParsedAccessToken> => {
     const headers = {};

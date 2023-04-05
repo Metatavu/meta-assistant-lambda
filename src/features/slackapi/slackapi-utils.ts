@@ -3,13 +3,14 @@ import { ChatPostMessageResponse, LogLevel, WebClient } from "@slack/web-api";
 import { Member } from "@slack/web-api/dist/response/UsersListResponse";
 import { DateTime } from "luxon";
 import TimeUtilities from "../generic/time-utils";
+const env = require("./envalidconfig.js");
 
 /**
  * Namespace for Slack API utilities
  */
 namespace SlackApiUtilities {
 
-  export const client = new WebClient(process.env.METATAVU_BOT_TOKEN, {
+  export const client = new WebClient(env.METATAVU_BOT_TOKEN, {
     logLevel: LogLevel.DEBUG
   });
 

@@ -13,6 +13,8 @@ namespace SlackApiUtilities {
     logLevel: LogLevel.DEBUG
   });
 
+  const listOfIds = process.env.STAGING_IDS ? process.env.STAGING_IDS.split(",") : undefined;
+
   /**
    * Get list of slack users
    *
@@ -170,10 +172,20 @@ Have a great week!
       const message = constructDailyMessage(userData, numberOfToday);
 
       if (!isAway && !firstDayBack) {
-        messageResults.push({
-          message: message,
-          response: await sendMessage(slackId, message.message)
-        });
+        if (!listOfIds) {
+          messageResults.push({
+            message: message,
+            response: await sendMessage(slackId, message.message)
+          });
+        }
+        else {
+          for (const stagingid of listOfIds) {
+            messageResults.push({
+              message: message,
+              response: await sendMessage(stagingid, message.message)
+            });
+          }
+        }
       }
     }
     return messageResults;
@@ -207,10 +219,19 @@ Have a great week!
       const message = constructWeeklySummaryMessage(userData, weekStartDate.toISODate(), weekEndDate.toISODate());
 
       if (!isAway && !firstDayBack) {
-        messageResults.push({
-          message: message,
-          response: await sendMessage(slackId, message.message)
-        });
+        if (!listOfIds) {
+          messageResults.push({
+            message: message,
+            response: await sendMessage(slackId, message.message)
+          });
+        } else {
+          for (const stagingid of listOfIds){
+            messageResults.push({
+              message: message,
+              response: await sendMessage(stagingid, message.message)
+            });
+          }
+        }
       }
     }
     return messageResults;

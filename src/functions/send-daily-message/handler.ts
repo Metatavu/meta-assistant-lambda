@@ -37,12 +37,12 @@ export const sendDailyMessageHandler = async (): Promise<DailyHandlerResponse> =
         dailyEntries.push(dailyEntry);
       }
     }
-    
+
     const filteredTimebankUsers = timebankUsers.filter(person => dailyEntries.find(dailyEntry => dailyEntry.person === person.id));
 
     const dailyCombinedData = TimebankUtilities.combineDailyData(filteredTimebankUsers, dailyEntries, slackUsers);
     const messagesSent = await SlackApiUtilities.postDailyMessageToUsers(dailyCombinedData, timeRegistrations, previousWorkDays, NonProjectTimes);
-    
+
     const errors = messagesSent.filter(messageSent => messageSent.response.error);
 
     if (errors.length) {

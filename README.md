@@ -94,3 +94,16 @@ The project code base is mainly located within the `src` folder. This folder is 
 ### Advanced usage
 
 Any tsconfig.json can be used, but if you do, set the environment variable `TS_NODE_CONFIG` for building the application, eg `TS_NODE_CONFIG=./tsconfig.app.json npx serverless webpack`
+
+### Staging usage
+
+Staging implementation for selecting slack user ids (through an environment variable) who will receive all the messages sent by daily or weekly messages.
+
+For use in staging environment/ develop branch use the STAGING_IDS environment variable. If this variable does not exist or is empty the program runs normally. Copy the variable and add it (`STAGING_IDS=<slackid>`) to the `.env` file.
+Multiple ids must be divided by `,` for example `STAGING_IDS=xxxxxxx,xxxxxxx,xxxxxxx`
+
+##### Getting your slack id
+1. Click on a user profile within Slack.
+2. Click on "View full profile" in the menu that appears.
+3. Click the ellipses (three dots).
+4. Click on `Copy Member ID`.

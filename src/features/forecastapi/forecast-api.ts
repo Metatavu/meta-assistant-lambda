@@ -1,13 +1,12 @@
 import { NonProjectTime, TimeRegistrations } from "@functions/schema";
 import fetch, { Headers } from "node-fetch";
-const env = require("./envalidconfig.js");
 
 /**
  * Namespace for forecast-api
  */
 namespace ForecastApiUtilities {
   const header ={
-    "X-FORECAST-API-KEY": env.X_FORECAST_API_KEY
+    "X-FORECAST-API-KEY": process.env.X_FORECAST_API_KEY
   };
 
   const headers = new Headers(header);
@@ -19,7 +18,7 @@ namespace ForecastApiUtilities {
    */
   export const getNonProjectTime = async (): Promise<NonProjectTime[]> => {
     try {
-      const request: any = await fetch(`${env.FORECAST_BASE_URL}/v1/non_project_time`, { headers: headers });
+      const request: any = await fetch(`${process.env.FORECAST_BASE_URL}/v1/non_project_time`, { headers: headers });
       const result: any = await request.json();
 
       if (request.status !== 200) throw new Error(result.message);
@@ -39,7 +38,7 @@ namespace ForecastApiUtilities {
   export const getTimeRegistrations = async (dayBeforeYesterday: string): Promise<TimeRegistrations[]> => {
     try {
       const dayBeforeYesterdayUrl = dayBeforeYesterday.replace(/[-]/g, "");
-      const request: any = await fetch(`${env.FORECAST_BASE_URL}/v3/time_registrations?date_after=${dayBeforeYesterdayUrl}`, { headers: headers });
+      const request: any = await fetch(`${process.env.FORECAST_BASE_URL}/v3/time_registrations?date_after=${dayBeforeYesterdayUrl}`, { headers: headers });
       const result: any = await request.json();
 
       if (request.status !== 200) throw new Error(result.message);

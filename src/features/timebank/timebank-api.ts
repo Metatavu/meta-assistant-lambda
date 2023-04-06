@@ -1,13 +1,12 @@
 import { WeeklyCombinedData } from "@functions/schema";
 import { Person, DailyEntriesApi, PersonsApi, DailyEntry, Timespan, PersonTotalTime } from "src/generated/client/api";
-const env = require("./envalidconfig.js");
 
 /**
  * Namespace for Timebank API
  */
 namespace TimebankApi {
-  export const personsClient = new PersonsApi(env.TIMEBANK_BASE_URL);
-  export const dailyEntriesClient = new DailyEntriesApi(env.TIMEBANK_BASE_URL);
+  export const personsClient = new PersonsApi(process.env.TIMEBANK_BASE_URL);
+  export const dailyEntriesClient = new DailyEntriesApi(process.env.TIMEBANK_BASE_URL);
 
   /**
    * Get list of timebank users from TimeBank API

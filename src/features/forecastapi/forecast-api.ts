@@ -13,17 +13,19 @@ namespace ForecastApiUtilities {
 
   /**
    * Gets non project time types from forecast
-   * 
+   *
    * @returns All non project times where is_internal_time is false
    */
   export const getNonProjectTime = async (): Promise<NonProjectTime[]> => {
     try {
-      const result = await fetch(`${process.env.forecast_base_url}non_project_time`, { headers: headers });
-      const NonProjectTimes: NonProjectTime[] = await result.json();
-      return NonProjectTimes.filter(NonProjectTime => NonProjectTime.is_internal_time !== true);
-    } catch(error) {
-      console.error("Error while loading non project time");
-      Promise.reject(error);
+      const request: any = await fetch(`${process.env.FORECAST_BASE_URL}/v1/non_project_time`, { headers: headers });
+      const result: any = await request.json();
+
+      if (request.status !== 200) throw new Error(result.message);
+
+      return result.filter(nonProjectTime => !nonProjectTime.is_internal_time);
+    } catch (error) {
+      throw new Error(`Error while loading non project times, ${error.message}`);
     }
   };
 
@@ -36,12 +38,17 @@ namespace ForecastApiUtilities {
   export const getTimeRegistrations = async (dayBeforeYesterday: string): Promise<TimeRegistrations[]> => {
     try {
       const dayBeforeYesterdayUrl = dayBeforeYesterday.replace(/[-]/g, "");
-      const result = await fetch(`${process.env.forecast_v3_url}time_registrations?date_after=${dayBeforeYesterdayUrl}`, { headers: headers });
-      const timeRegistrations: TimeRegistrations[] = await result.json();
-      return timeRegistrations.filter(timeRegistrations => timeRegistrations.non_project_time !== null);
-    } catch(error) {
-      console.error("Error while loading time registrations");
-      Promise.reject(error);
+      const request: any = await fetch(`${process.env.FORECAST_BASE_URL}/v3/time_registrations?date_after=${dayBeforeYesterdayUrl}`, { headers: headers });
+      const result: any = await request.json();
+
+      if (request.status !== 200) throw new Error(result.message);
+
+      return result.filter(timeRegistration => timeRegistration.non_project_time);
+    } catch (error) {
+      if (error instanceof TypeError) {
+        throw error;
+      }
+      throw new Error(`Error while loading time registrations, ${error.message}`);
     }
   };
 }

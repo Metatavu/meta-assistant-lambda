@@ -1,7 +1,5 @@
-# Coveralls
-[![Coverage Status](https://coveralls.io/repos/github/Metatavu/meta-assistant-lambda/badge.svg?branch=develop)](https://coveralls.io/github/Metatavu/meta-assistant-lambda?branch=develop)
-
 # Serverless - AWS Node.js Typescript
+[![Coverage Status](https://coveralls.io/repos/github/Metatavu/meta-assistant-lambda/badge.svg?branch=feature-15-migrate-new-api)](https://coveralls.io/github/Metatavu/meta-assistant-lambda?branch=feature-15-migrate-new-api)
 
 This project has been generated using the `aws-nodejs-typescript` template from the [Serverless framework](https://www.serverless.com/).
 
@@ -11,7 +9,7 @@ For detailed instructions, please refer to the [documentation](https://www.serve
 
 Depending on your preferred package manager, follow the instructions below to deploy your project.
 
-> **Requirements**: NodeJS `lts/fermium (v.14.15.0)`. If you're using [nvm](https://github.com/nvm-sh/nvm), run `nvm use` to ensure you're using the same Node version in local and in your lambda's runtime.
+> **Requirements**: NodeJS For Windows: `lts/fermium (v.14.15.0)` and for Linux: `v.18.4.0`. If you're using [nvm](https://github.com/nvm-sh/nvm), run `nvm use` to ensure you're using the same Node version in local and in your lambda's runtime.
 
 ### Using NPM
 
@@ -96,3 +94,16 @@ The project code base is mainly located within the `src` folder. This folder is 
 ### Advanced usage
 
 Any tsconfig.json can be used, but if you do, set the environment variable `TS_NODE_CONFIG` for building the application, eg `TS_NODE_CONFIG=./tsconfig.app.json npx serverless webpack`
+
+### Staging usage
+
+Staging implementation for selecting slack user ids (through an environment variable) who will receive all the messages sent by daily or weekly messages.
+
+For use in staging environment/ develop branch use the STAGING_IDS environment variable. If this variable does not exist or is empty the program runs normally. Copy the variable and add it (`STAGING_IDS=<slackid>`) to the `.env` file.
+Multiple ids must be divided by `,` for example `STAGING_IDS=xxxxxxx,xxxxxxx,xxxxxxx`
+
+##### Getting your slack id
+1. Click on a user profile within Slack.
+2. Click on "View full profile" in the menu that appears.
+3. Click the ellipses (three dots).
+4. Click on `Copy Member ID`.

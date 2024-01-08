@@ -86,8 +86,10 @@ Have a great rest of the day!
    * @returns message
    */
   const constructWeeklySummaryMessage = (user: WeeklyCombinedData, weekStart: string, weekEnd: string): WeeklyMessageData => {
-    const { name, firstName, minimumBillableRate } = user;
+    const { name, firstName } = user;
     const week = Number(user.selectedWeek.timePeriod.split(",")[2]);
+    // TODO: minimumBillableRate should come from the user but this needs to be updated on the back end for most users, so using this for now
+    const minimumBillableRate = 75;
 
     const startDate = DateTime.fromISO(weekStart).toFormat("dd.MM.yyyy");
     const endDate = DateTime.fromISO(weekEnd).toFormat("dd.MM.yyyy");
